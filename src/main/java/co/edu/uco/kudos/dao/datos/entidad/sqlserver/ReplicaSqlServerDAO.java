@@ -7,7 +7,6 @@ import co.edu.uco.kudos.entidad.ReplicaEntidad;
 import co.edu.uco.kudos.entidad.UsuarioEntidad;
 import co.edu.uco.kudos.transversal.catalogo.CatalogoMensajes;
 import co.edu.uco.kudos.transversal.excepciones.KudosDatosExcepcion;
-import co.edu.uco.kudos.transversal.utilitario.UtilId;
 import co.edu.uco.kudos.transversal.utilitario.UtilTexto;
 
 import java.sql.Connection;
@@ -88,22 +87,10 @@ public class ReplicaSqlServerDAO extends SqlDAO implements ReplicaDAO {
     public List<ReplicaEntidad> consultarPorFiltro(ReplicaEntidad filtro) {
         var condiciones = new ArrayList<String>();
         var parametros = new ArrayList<Object>();
-        if (!UtilId.esValorDefecto(filtro.getId())) {
-            condiciones.add("t.id_replica = ?");
-            parametros.add(filtro.getId());
-        }
-        if (!UtilId.esValorDefecto(filtro.getAutor().getId())) {
-            condiciones.add("t.id_autor = ?");
-            parametros.add(filtro.getAutor().getId());
-        }
-        if (!UtilId.esValorDefecto(filtro.getKudo().getId())) {
-            condiciones.add("t.id_kudo = ?");
-            parametros.add(filtro.getKudo().getId());
-        }
-        if (!UtilId.esValorDefecto(filtro.getIdReplicaPadre())) {
-            condiciones.add("t.id_replica_padre = ?");
-            parametros.add(filtro.getIdReplicaPadre());
-        }
+        agregarCondicionId(condiciones, parametros, "t.id_replica", filtro.getId());
+        agregarCondicionId(condiciones, parametros, "t.id_autor", filtro.getAutor().getId());
+        agregarCondicionId(condiciones, parametros, "t.id_kudo", filtro.getKudo().getId());
+        agregarCondicionId(condiciones, parametros, "t.id_replica_padre", filtro.getIdReplicaPadre());
         if (!UtilTexto.getUtilTexto().esVacia(filtro.getEstado())) {
             condiciones.add("t.estado = ?");
             parametros.add(filtro.getEstado());

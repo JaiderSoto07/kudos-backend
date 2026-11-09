@@ -42,7 +42,7 @@ public final class UtilTexto {
 
     public String primeraLetraMayuscula(String valor) {
         var valorSanitizado = quitarEspaciosEnBlanco(valor).toLowerCase();
-        return esVacia(valorSanitizado)
+        return valorSanitizado.isEmpty()
                 ? VACIO
                 : valorSanitizado.substring(0, 1).toUpperCase() + valorSanitizado.substring(1);
     }

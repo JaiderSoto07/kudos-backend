@@ -27,6 +27,13 @@ public abstract class SqlDAO {
         return conexion;
     }
 
+    protected void agregarCondicionId(List<String> condiciones, List<Object> parametros, String columna, UUID valor) {
+        if (!UtilId.esValorDefecto(valor)) {
+            condiciones.add(columna + " = ?");
+            parametros.add(valor);
+        }
+    }
+
     protected void asignarParametros(PreparedStatement sentencia, List<Object> parametros) throws SQLException {
         for (var indice = 0; indice < parametros.size(); indice++) {
             sentencia.setObject(indice + 1, parametros.get(indice));

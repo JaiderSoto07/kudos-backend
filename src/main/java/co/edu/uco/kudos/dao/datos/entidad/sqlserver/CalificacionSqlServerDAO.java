@@ -8,7 +8,6 @@ import co.edu.uco.kudos.entidad.ReplicaEntidad;
 import co.edu.uco.kudos.entidad.UsuarioEntidad;
 import co.edu.uco.kudos.transversal.catalogo.CatalogoMensajes;
 import co.edu.uco.kudos.transversal.excepciones.KudosDatosExcepcion;
-import co.edu.uco.kudos.transversal.utilitario.UtilId;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -86,22 +85,10 @@ public class CalificacionSqlServerDAO extends SqlDAO implements CalificacionDAO 
     public List<CalificacionEntidad> consultarPorFiltro(CalificacionEntidad filtro) {
         var condiciones = new ArrayList<String>();
         var parametros = new ArrayList<Object>();
-        if (!UtilId.esValorDefecto(filtro.getId())) {
-            condiciones.add("t.id_calificacion = ?");
-            parametros.add(filtro.getId());
-        }
-        if (!UtilId.esValorDefecto(filtro.getAutor().getId())) {
-            condiciones.add("t.id_autor = ?");
-            parametros.add(filtro.getAutor().getId());
-        }
-        if (!UtilId.esValorDefecto(filtro.getKudo().getId())) {
-            condiciones.add("t.id_kudo = ?");
-            parametros.add(filtro.getKudo().getId());
-        }
-        if (!UtilId.esValorDefecto(filtro.getReplica().getId())) {
-            condiciones.add("t.id_replica = ?");
-            parametros.add(filtro.getReplica().getId());
-        }
+        agregarCondicionId(condiciones, parametros, "t.id_calificacion", filtro.getId());
+        agregarCondicionId(condiciones, parametros, "t.id_autor", filtro.getAutor().getId());
+        agregarCondicionId(condiciones, parametros, "t.id_kudo", filtro.getKudo().getId());
+        agregarCondicionId(condiciones, parametros, "t.id_replica", filtro.getReplica().getId());
         var sentenciaSql = CONSULTA_BASE + (condiciones.isEmpty() ? "" : " where " + String.join(" and ", condiciones)) + ORDEN;
         return consultar(sentenciaSql, parametros, CatalogoMensajes.CalificacionSqlServerDAO.USUARIO_ERROR_CONSULTANDO_POR_FILTRO, CatalogoMensajes.CalificacionSqlServerDAO.USUARIO_ERROR_NO_CONTROLADO_CONSULTANDO_POR_FILTRO);
     }

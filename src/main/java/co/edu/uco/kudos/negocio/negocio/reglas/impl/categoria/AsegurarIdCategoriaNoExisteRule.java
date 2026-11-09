@@ -10,12 +10,12 @@ import java.util.UUID;
 
 public final class AsegurarIdCategoriaNoExisteRule implements Rule<Object> {
 
-    private static final Rule<Object> INSTANCIA = new AsegurarIdCategoriaNoExisteRule();
+    private static final AsegurarIdCategoriaNoExisteRule INSTANCIA = new AsegurarIdCategoriaNoExisteRule();
 
     private AsegurarIdCategoriaNoExisteRule() {
     }
 
-    public static Rule<Object> obtenerInstancia() {
+    public static AsegurarIdCategoriaNoExisteRule obtenerInstancia() {
         return INSTANCIA;
     }
 

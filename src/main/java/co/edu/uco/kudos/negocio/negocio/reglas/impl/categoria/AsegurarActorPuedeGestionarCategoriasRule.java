@@ -15,12 +15,12 @@ import java.util.UUID;
 
 public final class AsegurarActorPuedeGestionarCategoriasRule implements Rule<Object> {
 
-    private static final Rule<Object> INSTANCIA = new AsegurarActorPuedeGestionarCategoriasRule();
+    private static final AsegurarActorPuedeGestionarCategoriasRule INSTANCIA = new AsegurarActorPuedeGestionarCategoriasRule();
 
     private AsegurarActorPuedeGestionarCategoriasRule() {
     }
 
-    public static Rule<Object> obtenerInstancia() {
+    public static AsegurarActorPuedeGestionarCategoriasRule obtenerInstancia() {
         return INSTANCIA;
     }
 

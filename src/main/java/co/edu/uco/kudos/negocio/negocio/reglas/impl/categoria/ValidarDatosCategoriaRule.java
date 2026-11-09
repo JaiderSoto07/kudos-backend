@@ -14,12 +14,12 @@ public final class ValidarDatosCategoriaRule implements Rule<CategoriaDominio> {
     private static final int LONGITUD_MINIMA_DESCRIPCION = 10;
     private static final int LONGITUD_MAXIMA_DESCRIPCION = 250;
 
-    private static final Rule<CategoriaDominio> INSTANCIA = new ValidarDatosCategoriaRule();
+    private static final ValidarDatosCategoriaRule INSTANCIA = new ValidarDatosCategoriaRule();
 
     private ValidarDatosCategoriaRule() {
     }
 
-    public static Rule<CategoriaDominio> obtenerInstancia() {
+    public static ValidarDatosCategoriaRule obtenerInstancia() {
         return INSTANCIA;
     }
 
