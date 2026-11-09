@@ -85,7 +85,7 @@ public final class ModeracionEntidad {
             kudo = new KudoEntidad.Builder().build();
             replica = new ReplicaEntidad.Builder().build();
             moderador = new UsuarioEntidad.Builder().build();
-            estado = "EN_CURSO";
+            estado = UtilTexto.VACIO;
             fechaInicio = UtilFecha.FECHA_HORA_POR_DEFECTO;
             fechaCierre = UtilFecha.FECHA_HORA_POR_DEFECTO;
             decision = UtilTexto.VACIO;
@@ -113,7 +113,7 @@ public final class ModeracionEntidad {
         }
 
         public Builder estado(String estado) {
-            this.estado = UtilTexto.getUtilTexto().quitarEspaciosEnBlancoOValorDefecto(estado, "EN_CURSO");
+            this.estado = UtilTexto.getUtilTexto().quitarEspaciosEnBlanco(estado);
             return this;
         }
 

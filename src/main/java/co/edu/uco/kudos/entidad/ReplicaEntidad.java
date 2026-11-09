@@ -89,7 +89,7 @@ public final class ReplicaEntidad {
             idReplicaPadre = UtilId.VALOR_DEFECTO;
             contenido = UtilTexto.VACIO;
             fechaCreacion = UtilFecha.FECHA_HORA_POR_DEFECTO;
-            estado = "CREADO";
+            estado = UtilTexto.VACIO;
             promedioCalificacion = BigDecimal.ZERO;
             cantidadCalificaciones = UtilNumero.CERO;
         }
@@ -125,7 +125,7 @@ public final class ReplicaEntidad {
         }
 
         public Builder estado(String estado) {
-            this.estado = UtilTexto.getUtilTexto().quitarEspaciosEnBlancoOValorDefecto(estado, "CREADO");
+            this.estado = UtilTexto.getUtilTexto().quitarEspaciosEnBlanco(estado);
             return this;
         }
 

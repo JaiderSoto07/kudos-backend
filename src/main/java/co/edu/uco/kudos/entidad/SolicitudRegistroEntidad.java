@@ -93,7 +93,7 @@ public final class SolicitudRegistroEntidad {
             rolSolicitado = UtilTexto.VACIO;
             facultad = new FacultadEntidad.Builder().build();
             programa = new ProgramaAcademicoEntidad.Builder().build();
-            estado = "PENDIENTE";
+            estado = UtilTexto.VACIO;
             fechaSolicitud = UtilFecha.FECHA_HORA_POR_DEFECTO;
             decididaPor = new UsuarioEntidad.Builder().build();
             fechaDecision = UtilFecha.FECHA_HORA_POR_DEFECTO;
@@ -126,7 +126,7 @@ public final class SolicitudRegistroEntidad {
         }
 
         public Builder estado(String estado) {
-            this.estado = UtilTexto.getUtilTexto().quitarEspaciosEnBlancoOValorDefecto(estado, "PENDIENTE");
+            this.estado = UtilTexto.getUtilTexto().quitarEspaciosEnBlanco(estado);
             return this;
         }
 

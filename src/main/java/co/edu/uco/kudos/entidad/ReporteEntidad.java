@@ -88,7 +88,7 @@ public final class ReporteEntidad {
             motivo = UtilTexto.VACIO;
             descripcion = UtilTexto.VACIO;
             fechaReporte = UtilFecha.FECHA_HORA_POR_DEFECTO;
-            estado = "PENDIENTE";
+            estado = UtilTexto.VACIO;
             moderacion = new ModeracionEntidad.Builder().build();
         }
 
@@ -128,7 +128,7 @@ public final class ReporteEntidad {
         }
 
         public Builder estado(String estado) {
-            this.estado = UtilTexto.getUtilTexto().quitarEspaciosEnBlancoOValorDefecto(estado, "PENDIENTE");
+            this.estado = UtilTexto.getUtilTexto().quitarEspaciosEnBlanco(estado);
             return this;
         }
 

@@ -1,0 +1,3 @@
+basedatos.url=jdbc:sqlserver://localhost:1433;databaseName=Kudos;encrypt=true;trustServerCertificate=true
+basedatos.usuario=kudosUser
+basedatos.clave=CambieEstaClave#2026

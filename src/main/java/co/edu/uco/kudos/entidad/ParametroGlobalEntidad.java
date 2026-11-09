@@ -62,7 +62,7 @@ public final class ParametroGlobalEntidad {
             id = UtilId.VALOR_DEFECTO;
             clave = UtilTexto.VACIO;
             valor = UtilTexto.VACIO;
-            tipoDato = "TEXTO";
+            tipoDato = UtilTexto.VACIO;
             descripcion = UtilTexto.VACIO;
             fechaModificacion = UtilFecha.FECHA_HORA_POR_DEFECTO;
         }
@@ -83,7 +83,7 @@ public final class ParametroGlobalEntidad {
         }
 
         public Builder tipoDato(String tipoDato) {
-            this.tipoDato = UtilTexto.getUtilTexto().quitarEspaciosEnBlancoOValorDefecto(tipoDato, "TEXTO");
+            this.tipoDato = UtilTexto.getUtilTexto().quitarEspaciosEnBlanco(tipoDato);
             return this;
         }
 

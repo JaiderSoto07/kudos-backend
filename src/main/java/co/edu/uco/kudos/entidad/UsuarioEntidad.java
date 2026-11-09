@@ -103,7 +103,7 @@ public final class UsuarioEntidad {
             celularVerificado = false;
             contrasena = UtilTexto.VACIO;
             aprobada = false;
-            estadoCuenta = "PENDIENTE_APROBACION";
+            estadoCuenta = UtilTexto.VACIO;
             fechaRegistro = UtilFecha.FECHA_HORA_POR_DEFECTO;
         }
 
@@ -153,7 +153,7 @@ public final class UsuarioEntidad {
         }
 
         public Builder estadoCuenta(String estadoCuenta) {
-            this.estadoCuenta = UtilTexto.getUtilTexto().quitarEspaciosEnBlancoOValorDefecto(estadoCuenta, "PENDIENTE_APROBACION");
+            this.estadoCuenta = UtilTexto.getUtilTexto().quitarEspaciosEnBlanco(estadoCuenta);
             return this;
         }
 

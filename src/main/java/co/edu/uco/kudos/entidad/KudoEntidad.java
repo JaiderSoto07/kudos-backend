@@ -96,7 +96,7 @@ public final class KudoEntidad {
             categoria = new CategoriaEntidad.Builder().build();
             contenido = UtilTexto.VACIO;
             fechaCreacion = UtilFecha.FECHA_HORA_POR_DEFECTO;
-            estado = "CREADO";
+            estado = UtilTexto.VACIO;
             cantidadVisualizaciones = UtilNumero.CERO;
             promedioCalificacion = BigDecimal.ZERO;
             cantidadCalificaciones = UtilNumero.CERO;
@@ -133,7 +133,7 @@ public final class KudoEntidad {
         }
 
         public Builder estado(String estado) {
-            this.estado = UtilTexto.getUtilTexto().quitarEspaciosEnBlancoOValorDefecto(estado, "CREADO");
+            this.estado = UtilTexto.getUtilTexto().quitarEspaciosEnBlanco(estado);
             return this;
         }
 

@@ -47,7 +47,7 @@ public final class FacultadEntidad {
         public Builder() {
             id = UtilId.VALOR_DEFECTO;
             nombre = UtilTexto.VACIO;
-            estado = "EN_CONFORMACION";
+            estado = UtilTexto.VACIO;
             fechaCreacion = UtilFecha.FECHA_HORA_POR_DEFECTO;
         }
 
@@ -62,7 +62,7 @@ public final class FacultadEntidad {
         }
 
         public Builder estado(String estado) {
-            this.estado = UtilTexto.getUtilTexto().quitarEspaciosEnBlancoOValorDefecto(estado, "EN_CONFORMACION");
+            this.estado = UtilTexto.getUtilTexto().quitarEspaciosEnBlanco(estado);
             return this;
         }
 
