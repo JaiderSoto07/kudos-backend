@@ -1,0 +1,12 @@
+# Normaliza los finales de línea para que el historial no muestre cambios falsos entre Windows y Linux.
+* text=auto
+
+# Scripts de Windows con CRLF y scripts de Unix con LF.
+*.cmd text eol=crlf
+*.bat text eol=crlf
+mvnw text eol=lf
+*.sh text eol=lf
+
+# Binarios.
+*.png binary
+*.jar binary

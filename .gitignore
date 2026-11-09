@@ -1,0 +1,48 @@
+### Configuración local con credenciales (nunca se sube; ver basedatos.properties.ejemplo) ###
+src/main/resources/basedatos.properties
+.env
+
+### Maven ###
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+### IntelliJ IDEA ###
+.idea/
+*.iml
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### Eclipse ###
+.metadata/
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### SonarLint (configuración local del editor) ###
+.sonarlint/
+
+### Sistema operativo ###
+.DS_Store
+Thumbs.db
+
+### Archivos temporales de draw.io ###
+*.bkp
+*.dtmp
