@@ -345,4 +345,32 @@ public final class CatalogoMensajes {
         public static final String USUARIO_ERROR_ACTUALIZANDO = "Se presentó un problema actualizando la notificación." + INTENTE_DE_NUEVO;
         public static final String USUARIO_ERROR_NO_CONTROLADO_ACTUALIZANDO = "Se presentó un problema NO CONTROLADO actualizando la notificación." + INTENTE_DE_NUEVO;
     }
+
+    public static final class CategoriaNegocioImpl {
+
+        private CategoriaNegocioImpl() {
+        }
+
+        public static final String ACTOR_NO_PUEDE_GESTIONAR_CATEGORIAS = "No tiene permiso para gestionar categorías. Solo el Administrador, el Rector y el Coordinador Académico pueden crear, modificar, activar, desactivar o ver las categorías inactivas.";
+        public static final String DATOS_CATEGORIA_OBLIGATORIOS = "No es posible guardar la categoría porque no se recibió su información. Por favor diligencie los datos de la categoría e intente de nuevo.";
+        public static final String NOMBRE_CATEGORIA_OBLIGATORIO = "El nombre de la categoría es obligatorio. Por favor ingrese un nombre e intente de nuevo.";
+        public static final String NOMBRE_CATEGORIA_LONGITUD_INVALIDA = "El nombre de la categoría debe tener entre 3 y 50 caracteres. Por favor corrija el nombre e intente de nuevo.";
+        public static final String DESCRIPCION_CATEGORIA_OBLIGATORIA = "La descripción de la categoría es obligatoria. Por favor describa qué reconoce la categoría e intente de nuevo.";
+        public static final String DESCRIPCION_CATEGORIA_LONGITUD_INVALIDA = "La descripción de la categoría debe tener entre 10 y 250 caracteres. Por favor corrija la descripción e intente de nuevo.";
+        public static final String NOMBRE_CATEGORIA_YA_EXISTE = "Ya existe una categoría con ese nombre. Por favor elija un nombre diferente e intente de nuevo.";
+        public static final String ID_CATEGORIA_YA_EXISTE = "No es posible registrar la categoría porque el identificador generado ya está en uso." + INTENTE_DE_NUEVO;
+        public static final String CATEGORIA_NO_EXISTE = "No es posible realizar la operación porque la categoría indicada no existe. Por favor verifique la categoría e intente de nuevo.";
+    }
+
+    public static final class CategoriaFachadaImpl {
+
+        private CategoriaFachadaImpl() {
+        }
+
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_REGISTRANDO_CATEGORIA = "Se presentó un problema inesperado registrando la categoría." + INTENTE_DE_NUEVO;
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_MODIFICANDO_CATEGORIA = "Se presentó un problema inesperado modificando la categoría." + INTENTE_DE_NUEVO;
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_ACTIVANDO_CATEGORIA = "Se presentó un problema inesperado activando la categoría." + INTENTE_DE_NUEVO;
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_DESACTIVANDO_CATEGORIA = "Se presentó un problema inesperado desactivando la categoría." + INTENTE_DE_NUEVO;
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_CONSULTANDO_CATEGORIAS = "Se presentó un problema inesperado consultando las categorías." + INTENTE_DE_NUEVO;
+    }
 }
