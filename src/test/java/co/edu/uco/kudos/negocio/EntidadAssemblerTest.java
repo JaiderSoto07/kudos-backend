@@ -47,7 +47,7 @@ class EntidadAssemblerTest {
     void usuario() {
         var dominio = new UsuarioDominio.Builder().id(UtilId.generarId()).nombres("Ana").apellidos("Giraldo")
                 .correoInstitucional("agiraldo@uco.edu.co").correoVerificado(true).numeroCelular("3001234567")
-                .celularVerificado(true).contrasena("hash").aprobada(true).estadoCuenta(EstadoCuenta.ACTIVA)
+                .celularVerificado(true).aprobada(true).estadoCuenta(EstadoCuenta.ACTIVA)
                 .fechaRegistro(UtilFecha.fechaActual()).build();
 
         var entidad = UsuarioEntidadAssembler.getInstance().convertirAEntidad(dominio);

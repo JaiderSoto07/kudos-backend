@@ -26,7 +26,6 @@ public class UsuarioSqlServerDAO extends SqlDAO implements UsuarioDAO {
                    t.correo_verificado,
                    t.numero_celular,
                    t.celular_verificado,
-                   t.contrasena,
                    t.aprobada,
                    t.estado_cuenta,
                    t.fecha_registro
@@ -41,8 +40,8 @@ public class UsuarioSqlServerDAO extends SqlDAO implements UsuarioDAO {
     @Override
     public void crear(UsuarioEntidad entidad) {
         var sentenciaSql = """
-                insert into usuario (id_usuario, nombres, apellidos, correo_institucional, correo_verificado, numero_celular, celular_verificado, contrasena, aprobada, estado_cuenta, fecha_registro)
-                values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                insert into usuario (id_usuario, nombres, apellidos, correo_institucional, correo_verificado, numero_celular, celular_verificado, aprobada, estado_cuenta, fecha_registro)
+                values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """;
         try (var sentencia = getConexion().prepareStatement(sentenciaSql)) {
             sentencia.setObject(1, entidad.getId());
@@ -113,12 +112,12 @@ public class UsuarioSqlServerDAO extends SqlDAO implements UsuarioDAO {
     @Override
     public void actualizar(UUID id, UsuarioEntidad entidad) {
         var sentenciaSql = """
-                update usuario set nombres = ?, apellidos = ?, correo_institucional = ?, correo_verificado = ?, numero_celular = ?, celular_verificado = ?, contrasena = ?, aprobada = ?, estado_cuenta = ?, fecha_registro = ?
+                update usuario set nombres = ?, apellidos = ?, correo_institucional = ?, correo_verificado = ?, numero_celular = ?, celular_verificado = ?, aprobada = ?, estado_cuenta = ?, fecha_registro = ?
                 where id_usuario = ?
                 """;
         try (var sentencia = getConexion().prepareStatement(sentenciaSql)) {
             asignarDatosUsuario(sentencia, entidad, 1);
-            sentencia.setObject(11, id);
+            sentencia.setObject(10, id);
             sentencia.executeUpdate();
         } catch (SQLException excepcion) {
             throw KudosDatosExcepcion.crear(CatalogoMensajes.UsuarioSqlServerDAO.USUARIO_ERROR_ACTUALIZANDO, excepcion.getMessage(), excepcion);
@@ -134,10 +133,9 @@ public class UsuarioSqlServerDAO extends SqlDAO implements UsuarioDAO {
         sentencia.setBoolean(posicionInicial + 3, entidad.isCorreoVerificado());
         sentencia.setString(posicionInicial + 4, entidad.getNumeroCelular());
         sentencia.setBoolean(posicionInicial + 5, entidad.isCelularVerificado());
-        sentencia.setString(posicionInicial + 6, entidad.getContrasena());
-        sentencia.setBoolean(posicionInicial + 7, entidad.isAprobada());
-        sentencia.setString(posicionInicial + 8, entidad.getEstadoCuenta());
-        sentencia.setObject(posicionInicial + 9, entidad.getFechaRegistro());
+        sentencia.setBoolean(posicionInicial + 6, entidad.isAprobada());
+        sentencia.setString(posicionInicial + 7, entidad.getEstadoCuenta());
+        sentencia.setObject(posicionInicial + 8, entidad.getFechaRegistro());
     }
 
     private List<UsuarioEntidad> consultar(String sentenciaSql, List<Object> parametros, String mensajeError, String mensajeErrorNoControlado) {
@@ -165,7 +163,6 @@ public class UsuarioSqlServerDAO extends SqlDAO implements UsuarioDAO {
                 .correoVerificado(resultado.getBoolean("correo_verificado"))
                 .numeroCelular(resultado.getString("numero_celular"))
                 .celularVerificado(resultado.getBoolean("celular_verificado"))
-                .contrasena(resultado.getString("contrasena"))
                 .aprobada(resultado.getBoolean("aprobada"))
                 .estadoCuenta(resultado.getString("estado_cuenta"))
                 .fechaRegistro(leerFecha(resultado, "fecha_registro"))

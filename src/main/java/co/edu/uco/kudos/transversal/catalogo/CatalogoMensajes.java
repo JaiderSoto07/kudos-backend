@@ -373,4 +373,13 @@ public final class CatalogoMensajes {
         public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_DESACTIVANDO_CATEGORIA = "Se presentó un problema inesperado desactivando la categoría." + INTENTE_DE_NUEVO;
         public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_CONSULTANDO_CATEGORIAS = "Se presentó un problema inesperado consultando las categorías." + INTENTE_DE_NUEVO;
     }
+
+    public static final class AbstractRestController {
+
+        private AbstractRestController() {
+        }
+
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_EN_CONTROLADOR = "Se presentó un problema inesperado llevando a cabo la operación." + INTENTE_DE_NUEVO;
+        public static final String USUARIO_ERROR_RECURSO_NO_EXISTE = "Este recurso no existe: ";
+    }
 }

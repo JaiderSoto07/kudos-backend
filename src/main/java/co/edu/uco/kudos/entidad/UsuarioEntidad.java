@@ -16,7 +16,6 @@ public final class UsuarioEntidad {
     private final boolean correoVerificado;
     private final String numeroCelular;
     private final boolean celularVerificado;
-    private final String contrasena;
     private final boolean aprobada;
     private final String estadoCuenta;
     private final LocalDateTime fechaRegistro;
@@ -29,7 +28,6 @@ public final class UsuarioEntidad {
         this.correoVerificado = builder.correoVerificado;
         this.numeroCelular = builder.numeroCelular;
         this.celularVerificado = builder.celularVerificado;
-        this.contrasena = builder.contrasena;
         this.aprobada = builder.aprobada;
         this.estadoCuenta = builder.estadoCuenta;
         this.fechaRegistro = builder.fechaRegistro;
@@ -63,10 +61,6 @@ public final class UsuarioEntidad {
         return celularVerificado;
     }
 
-    public String getContrasena() {
-        return contrasena;
-    }
-
     public boolean isAprobada() {
         return aprobada;
     }
@@ -88,7 +82,6 @@ public final class UsuarioEntidad {
         private boolean correoVerificado;
         private String numeroCelular;
         private boolean celularVerificado;
-        private String contrasena;
         private boolean aprobada;
         private String estadoCuenta;
         private LocalDateTime fechaRegistro;
@@ -101,7 +94,6 @@ public final class UsuarioEntidad {
             correoVerificado = false;
             numeroCelular = UtilTexto.VACIO;
             celularVerificado = false;
-            contrasena = UtilTexto.VACIO;
             aprobada = false;
             estadoCuenta = UtilTexto.VACIO;
             fechaRegistro = UtilFecha.FECHA_HORA_POR_DEFECTO;
@@ -139,11 +131,6 @@ public final class UsuarioEntidad {
 
         public Builder celularVerificado(boolean celularVerificado) {
             this.celularVerificado = celularVerificado;
-            return this;
-        }
-
-        public Builder contrasena(String contrasena) {
-            this.contrasena = UtilTexto.obtenerValorDefecto(contrasena);
             return this;
         }
 

@@ -19,7 +19,6 @@ public final class UsuarioDominio {
     private boolean correoVerificado;
     private String numeroCelular;
     private boolean celularVerificado;
-    private final String contrasena;
     private boolean aprobada;
     private EstadoCuenta estadoCuenta;
     private final LocalDateTime fechaRegistro;
@@ -32,7 +31,6 @@ public final class UsuarioDominio {
         this.correoVerificado = builder.correoVerificado;
         this.numeroCelular = builder.numeroCelular;
         this.celularVerificado = builder.celularVerificado;
-        this.contrasena = builder.contrasena;
         this.aprobada = builder.aprobada;
         this.estadoCuenta = builder.estadoCuenta;
         this.fechaRegistro = builder.fechaRegistro;
@@ -150,10 +148,6 @@ public final class UsuarioDominio {
         return celularVerificado;
     }
 
-    public String getContrasena() {
-        return contrasena;
-    }
-
     public boolean isAprobada() {
         return aprobada;
     }
@@ -175,7 +169,6 @@ public final class UsuarioDominio {
         private boolean correoVerificado;
         private String numeroCelular;
         private boolean celularVerificado;
-        private String contrasena;
         private boolean aprobada;
         private EstadoCuenta estadoCuenta;
         private LocalDateTime fechaRegistro;
@@ -188,7 +181,6 @@ public final class UsuarioDominio {
             correoVerificado = false;
             numeroCelular = UtilTexto.VACIO;
             celularVerificado = false;
-            contrasena = UtilTexto.VACIO;
             aprobada = false;
             estadoCuenta = EstadoCuenta.PENDIENTE_APROBACION;
             fechaRegistro = UtilFecha.FECHA_HORA_POR_DEFECTO;
@@ -226,11 +218,6 @@ public final class UsuarioDominio {
 
         public Builder celularVerificado(boolean celularVerificado) {
             this.celularVerificado = celularVerificado;
-            return this;
-        }
-
-        public Builder contrasena(String contrasena) {
-            this.contrasena = UtilTexto.getUtilTexto().quitarEspaciosEnBlanco(contrasena);
             return this;
         }
 

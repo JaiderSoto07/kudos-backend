@@ -1,6 +1,6 @@
 -- Datos de demostración de UCO Kudos (opcional). Ejecutar después de datos-iniciales-kudos.sql.
 -- Crea una estructura académica y usuarios ACTIVOS de cada rol para probar la plataforma y para la sustentación.
--- Todos los usuarios de demostración tienen la contraseña Kudos2026*.
+-- El ingreso es con Google (D-09): para entrar con un usuario, cambie su correo por el de una cuenta de Google real.
 
 use Kudos;
 go
@@ -21,15 +21,15 @@ declare @excelencia uniqueidentifier = (select id_categoria from categoria where
 declare @valores uniqueidentifier = (select id_categoria from categoria where nombre = N'Valores institucionales');
 declare @liderazgo uniqueidentifier = (select id_categoria from categoria where nombre = N'Liderazgo');
 
-insert into usuario (id_usuario, nombres, apellidos, correo_institucional, correo_verificado, numero_celular, celular_verificado, contrasena, aprobada, estado_cuenta) values
-(@rector, N'María Fernanda', N'Gómez Arango', 'mgomez@uco.edu.co', 1, '3104567890', 1, '$2a$10$UcoKudosPlataformaSaledWBSYILlSOw.OTRuopx3TD3bGCYZqWa', 1, 'ACTIVA'),
-(@academico, N'Carlos Andrés', N'Restrepo Mejía', 'crestrepo@uco.edu.co', 1, '3127788990', 1, '$2a$10$UcoKudosPlataformaSaledWBSYILlSOw.OTRuopx3TD3bGCYZqWa', 1, 'ACTIVA'),
-(@coordFacultad, N'Luisa Fernanda', N'Ospina Duque', 'lospina@uco.edu.co', 1, '3154433221', 1, '$2a$10$UcoKudosPlataformaSaledWBSYILlSOw.OTRuopx3TD3bGCYZqWa', 1, 'ACTIVA'),
-(@coordPrograma, N'Juan Pablo', N'Zuluaga Henao', 'jzuluaga@uco.edu.co', 1, '3186655443', 1, '$2a$10$UcoKudosPlataformaSaledWBSYILlSOw.OTRuopx3TD3bGCYZqWa', 1, 'ACTIVA'),
-(@docente, N'Andrea Marcela', N'Giraldo Ríos', 'agiraldo@uco.edu.co', 1, '3017766554', 1, '$2a$10$UcoKudosPlataformaSaledWBSYILlSOw.OTRuopx3TD3bGCYZqWa', 1, 'ACTIVA'),
-(@estudiante1, N'Santiago', N'Henao Cardona', 'shenao@uco.edu.co', 1, '3209988776', 1, '$2a$10$UcoKudosPlataformaSaledWBSYILlSOw.OTRuopx3TD3bGCYZqWa', 1, 'ACTIVA'),
-(@estudiante2, N'Valentina', N'Cardona López', 'vcardona@uco.edu.co', 1, '3051239876', 1, '$2a$10$UcoKudosPlataformaSaledWBSYILlSOw.OTRuopx3TD3bGCYZqWa', 1, 'ACTIVA'),
-(@pendiente, N'Mateo', N'Arango Valencia', 'marango@uco.edu.co', 0, '3112345678', 0, '$2a$10$UcoKudosPlataformaSaledWBSYILlSOw.OTRuopx3TD3bGCYZqWa', 0, 'PENDIENTE_APROBACION');
+insert into usuario (id_usuario, nombres, apellidos, correo_institucional, correo_verificado, numero_celular, celular_verificado, aprobada, estado_cuenta) values
+(@rector, N'María Fernanda', N'Gómez Arango', 'mgomez@uco.edu.co', 1, '3104567890', 1, 1, 'ACTIVA'),
+(@academico, N'Carlos Andrés', N'Restrepo Mejía', 'crestrepo@uco.edu.co', 1, '3127788990', 1, 1, 'ACTIVA'),
+(@coordFacultad, N'Luisa Fernanda', N'Ospina Duque', 'lospina@uco.edu.co', 1, '3154433221', 1, 1, 'ACTIVA'),
+(@coordPrograma, N'Juan Pablo', N'Zuluaga Henao', 'jzuluaga@uco.edu.co', 1, '3186655443', 1, 1, 'ACTIVA'),
+(@docente, N'Andrea Marcela', N'Giraldo Ríos', 'agiraldo@uco.edu.co', 1, '3017766554', 1, 1, 'ACTIVA'),
+(@estudiante1, N'Santiago', N'Henao Cardona', 'shenao@uco.edu.co', 1, '3209988776', 1, 1, 'ACTIVA'),
+(@estudiante2, N'Valentina', N'Cardona López', 'vcardona@uco.edu.co', 1, '3051239876', 1, 1, 'ACTIVA'),
+(@pendiente, N'Mateo', N'Arango Valencia', 'marango@uco.edu.co', 0, '3112345678', 0, 0, 'PENDIENTE_APROBACION');
 
 insert into facultad (id_facultad, nombre, estado) values
 (@ingenieria, N'Ingeniería', 'ACTIVA'),
