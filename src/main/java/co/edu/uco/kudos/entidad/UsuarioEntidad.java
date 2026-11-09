@@ -7,11 +7,6 @@ import co.edu.uco.kudos.transversal.utilitario.UtilTexto;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * Representa una fila de la tabla {@code usuario}.
- * <p>
- * La contraseña se guarda solo como hash BCrypt (RNF-003).
- */
 public final class UsuarioEntidad {
 
     private final UUID id;

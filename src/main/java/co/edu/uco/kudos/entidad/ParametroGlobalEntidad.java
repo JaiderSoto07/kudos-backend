@@ -7,9 +7,6 @@ import co.edu.uco.kudos.transversal.utilitario.UtilTexto;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * Representa una fila de la tabla {@code parametro_global}.
- */
 public final class ParametroGlobalEntidad {
 
     private final UUID id;

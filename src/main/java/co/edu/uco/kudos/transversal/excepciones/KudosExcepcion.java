@@ -6,11 +6,6 @@ import co.edu.uco.kudos.transversal.utilitario.UtilTexto;
 
 import java.io.Serial;
 
-/**
- * Clase padre de todas las excepciones de UCO Kudos.
- * Guarda la capa donde ocurrió el problema, el mensaje para el usuario,
- * el mensaje técnico (para el log) y la excepción raíz.
- */
 public class KudosExcepcion extends RuntimeException {
 
     @Serial

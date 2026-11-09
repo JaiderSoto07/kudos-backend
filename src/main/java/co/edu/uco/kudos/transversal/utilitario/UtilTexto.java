@@ -35,7 +35,6 @@ public final class UtilTexto {
         return obtenerValorDefecto(valor).trim();
     }
 
-    /** Quita los espacios y, si el resultado queda vacío, devuelve el valor por defecto. */
     public String quitarEspaciosEnBlancoOValorDefecto(String valor, String valorDefecto) {
         var valorSanitizado = quitarEspaciosEnBlanco(valor);
         return esVacia(valorSanitizado) ? valorDefecto : valorSanitizado;

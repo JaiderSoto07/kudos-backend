@@ -8,7 +8,6 @@ public final class UtilFecha {
 
     public static final ZoneId ZONA_COLOMBIA = ZoneId.of("America/Bogota");
 
-    /** Fecha que representa "sin fecha" (por ejemplo, una asignación que aún no termina). */
     public static final LocalDateTime FECHA_HORA_POR_DEFECTO = LocalDateTime.of(1000, 1, 1, 0, 0);
 
     private UtilFecha() {

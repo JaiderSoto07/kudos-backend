@@ -4,7 +4,6 @@ import java.util.UUID;
 
 public final class UtilId {
 
-    /** Identificador que representa "sin valor" (por ejemplo, una referencia opcional vacía). */
     public static final UUID VALOR_DEFECTO = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
     private UtilId() {

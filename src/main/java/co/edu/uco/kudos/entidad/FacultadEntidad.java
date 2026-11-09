@@ -7,9 +7,6 @@ import co.edu.uco.kudos.transversal.utilitario.UtilTexto;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * Representa una fila de la tabla {@code facultad}.
- */
 public final class FacultadEntidad {
 
     private final UUID id;

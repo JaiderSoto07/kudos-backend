@@ -9,9 +9,6 @@ import co.edu.uco.kudos.transversal.utilitario.UtilTexto;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * Representa una fila de la tabla {@code codigo_verificacion}.
- */
 public final class CodigoVerificacionEntidad {
 
     private final UUID id;

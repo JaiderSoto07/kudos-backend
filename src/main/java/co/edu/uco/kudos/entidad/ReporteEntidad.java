@@ -8,11 +8,6 @@ import co.edu.uco.kudos.transversal.utilitario.UtilTexto;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * Representa una fila de la tabla {@code reporte}.
- * <p>
- * Reporta un Kudo <b>o</b> una réplica, nunca ambos: la referencia que no aplica queda con su valor por defecto.
- */
 public final class ReporteEntidad {
 
     private final UUID id;

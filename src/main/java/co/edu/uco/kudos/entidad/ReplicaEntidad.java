@@ -10,13 +10,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * Representa una fila de la tabla {@code replica}.
- * <p>
- * La réplica padre se guarda como identificador y no como objeto: así no se carga el árbol
- * completo por cada fila. El árbol de la conversación lo arma el dominio (Composite, D-22).
- * {@code idReplicaPadre} con {@code UtilId.VALOR_DEFECTO} significa que responde directamente al Kudo.
- */
 public final class ReplicaEntidad {
 
     private final UUID id;

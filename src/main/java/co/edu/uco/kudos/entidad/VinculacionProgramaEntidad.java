@@ -8,9 +8,6 @@ import co.edu.uco.kudos.transversal.utilitario.UtilTexto;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * Representa una fila de la tabla {@code vinculacion_programa}.
- */
 public final class VinculacionProgramaEntidad {
 
     private final UUID id;

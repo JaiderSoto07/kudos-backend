@@ -6,10 +6,6 @@ import co.edu.uco.kudos.transversal.excepciones.KudosTransversalExcepcion;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-/**
- * Operaciones seguras sobre la conexión JDBC: validar, iniciar, confirmar y cancelar
- * la transacción, y cerrar la conexión. La fachada las usa para delimitar cada caso de uso.
- */
 public final class UtilSql {
 
     private UtilSql() {
@@ -35,7 +31,6 @@ public final class UtilSql {
         }
     }
 
-    /** Una transacción está iniciada cuando la conexión está abierta y sin confirmación automática. */
     public static boolean transaccionEstaIniciada(Connection conexion) {
         try {
             return conexionEstaAbierta(conexion) && !conexion.getAutoCommit();

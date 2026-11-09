@@ -8,11 +8,6 @@ import co.edu.uco.kudos.transversal.utilitario.UtilObjeto;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * Representa una fila de la tabla {@code calificacion}.
- * <p>
- * Califica un Kudo <b>o</b> una réplica, nunca ambos: la referencia que no aplica queda con su valor por defecto.
- */
 public final class CalificacionEntidad {
 
     private final UUID id;
