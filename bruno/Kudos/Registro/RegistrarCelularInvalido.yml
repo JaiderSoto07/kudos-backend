@@ -1,0 +1,26 @@
+info:
+  name: RegistrarCelularInvalido
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{baseUrl}}/registros"
+  body:
+    type: json
+    data: |-
+      {
+        "nombres": "Sofía",
+        "apellidos": "Henao",
+        "numeroCelular": "12345",
+        "rolSolicitado": "ESTUDIANTE",
+        "idPrograma": "{{idPrograma}}"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

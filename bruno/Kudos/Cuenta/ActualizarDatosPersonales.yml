@@ -1,0 +1,23 @@
+info:
+  name: ActualizarDatosPersonales
+  type: http
+  seq: 2
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/cuenta/datos-personales"
+  body:
+    type: json
+    data: |-
+      {
+        "nombres": "Sofía",
+        "apellidos": "Henao Ríos"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

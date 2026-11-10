@@ -1,0 +1,16 @@
+info:
+  name: ConsultarOpciones
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{baseUrl}}/registros/opciones"
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

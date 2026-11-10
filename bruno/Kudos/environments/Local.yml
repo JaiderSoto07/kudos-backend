@@ -4,6 +4,10 @@ variables:
     value: http://localhost:8080/api/v1
   - name: idCategoria
     value: 18FA1B97-BAC3-423C-AA01-D610D3150DD2
+  - name: idPrograma
+    value: EC9A4DB4-8DFB-4E5B-B3C8-52F28D740475
+  - name: codigo
+    value: "000000"
   - secret: true
     name: sesion
     description: ""

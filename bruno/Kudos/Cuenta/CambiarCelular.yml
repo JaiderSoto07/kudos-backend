@@ -1,0 +1,22 @@
+info:
+  name: CambiarCelular
+  type: http
+  seq: 3
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/cuenta/celular"
+  body:
+    type: json
+    data: |-
+      {
+        "numeroCelular": "3168889900"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

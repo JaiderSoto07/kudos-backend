@@ -1,0 +1,22 @@
+info:
+  name: CambiarCorreo
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/cuenta/correo"
+  body:
+    type: json
+    data: |-
+      {
+        "correoInstitucional": "sofia.henao@uco.net.co"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
