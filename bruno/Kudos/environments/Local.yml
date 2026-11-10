@@ -14,6 +14,10 @@ variables:
     value: 9B14BDA5-B2CF-4B8F-8D60-A9B23A116E06
   - name: idVinculo
     value: C99118CD-F222-4580-B331-35209FDC6109
+  - name: idKudo
+    value: 42D5EFB6-48AF-4E8A-975A-872CA1182C4E
+  - name: idPersona
+    value: 1FAD8C0E-5C87-4CEE-BFC6-CF7AACA8AC64
   - name: codigo
     value: "000000"
   - secret: true

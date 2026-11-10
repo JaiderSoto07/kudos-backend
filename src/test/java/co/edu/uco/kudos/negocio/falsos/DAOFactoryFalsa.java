@@ -21,6 +21,7 @@ import co.edu.uco.kudos.dominio.EstadoCuenta;
 import co.edu.uco.kudos.dominio.EstadoFacultad;
 import co.edu.uco.kudos.dominio.Rol;
 import co.edu.uco.kudos.entidad.AsignacionRolEntidad;
+import co.edu.uco.kudos.entidad.CategoriaEntidad;
 import co.edu.uco.kudos.entidad.FacultadEntidad;
 import co.edu.uco.kudos.entidad.ParametroGlobalEntidad;
 import co.edu.uco.kudos.entidad.ProgramaAcademicoEntidad;
@@ -45,6 +46,7 @@ public class DAOFactoryFalsa extends DAOFactory {
     private final CodigoVerificacionDAOFalso codigoVerificacionDAO = new CodigoVerificacionDAOFalso();
     private final NotificacionDAOFalso notificacionDAO = new NotificacionDAOFalso();
     private final VinculacionProgramaDAOFalso vinculacionProgramaDAO = new VinculacionProgramaDAOFalso();
+    private final KudoDAOFalso kudoDAO = new KudoDAOFalso();
 
     @Override
     protected void abrirConexion() {
@@ -199,6 +201,21 @@ public class DAOFactoryFalsa extends DAOFactory {
         return categoriaDAO;
     }
 
+    public KudoDAOFalso getKudoDAOFalso() {
+        return kudoDAO;
+    }
+
+    public UUID registrarCategoria(String nombre, boolean activa) {
+        var idCategoria = UtilId.generarId();
+        categoriaDAO.crear(new CategoriaEntidad.Builder()
+                .id(idCategoria)
+                .nombre(nombre)
+                .descripcion("Categoría de prueba para Kudos.")
+                .activa(activa)
+                .build());
+        return idCategoria;
+    }
+
     public FacultadDAOFalso getFacultadDAOFalso() {
         return facultadDAO;
     }
@@ -283,7 +300,7 @@ public class DAOFactoryFalsa extends DAOFactory {
 
     @Override
     public KudoDAO obtenerKudoDAO() {
-        return null;
+        return kudoDAO;
     }
 
     @Override

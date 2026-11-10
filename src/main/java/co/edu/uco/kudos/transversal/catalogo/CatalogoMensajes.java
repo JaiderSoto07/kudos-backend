@@ -530,6 +530,39 @@ public final class CatalogoMensajes {
         public static final String MENSAJE_CUENTA_REACTIVADA = "Tu cuenta se reactivó porque fuiste vinculado al Programa %s.";
     }
 
+    public static final class Kudo {
+
+        private Kudo() {
+        }
+
+        public static final String DESTINATARIO_OBLIGATORIO = "Elige a la persona que quieres reconocer.";
+        public static final String DESTINATARIO_ES_EL_AUTOR = "No puedes darte un Kudo a ti mismo. Elige a otra persona.";
+        public static final String DESTINATARIO_NO_ACTIVO = "Solo puedes reconocer a personas con la cuenta activa.";
+        public static final String CATEGORIA_OBLIGATORIA = "Elige la categoría del Kudo.";
+        public static final String CATEGORIA_NO_DISPONIBLE = "La categoría elegida no existe o está inactiva. Elige otra.";
+        public static final String CONTENIDO_OBLIGATORIO = "Escribe el mensaje del reconocimiento.";
+        public static final String KUDO_NO_EXISTE = "El Kudo indicado no existe.";
+        public static final String MENSAJE_KUDO_RECIBIDO = "%s te dio un Kudo en la categoría %s.";
+    }
+
+    public static final class KudoFachada {
+
+        private KudoFachada() {
+        }
+
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_CREANDO = "Se presentó un problema inesperado publicando el Kudo." + INTENTE_DE_NUEVO;
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_CONSULTANDO = "Se presentó un problema inesperado consultando los Kudos." + INTENTE_DE_NUEVO;
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_CONSULTANDO_PERSONAS = "Se presentó un problema inesperado buscando personas." + INTENTE_DE_NUEVO;
+    }
+
+    public static final class KudoControlador {
+
+        private KudoControlador() {
+        }
+
+        public static final String KUDO_PUBLICADO = "Tu Kudo quedó publicado en el muro.";
+    }
+
     public static final class OrganizacionFachada {
 
         private OrganizacionFachada() {
