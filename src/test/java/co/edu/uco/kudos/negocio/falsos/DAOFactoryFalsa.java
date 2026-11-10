@@ -25,6 +25,7 @@ import co.edu.uco.kudos.entidad.FacultadEntidad;
 import co.edu.uco.kudos.entidad.ParametroGlobalEntidad;
 import co.edu.uco.kudos.entidad.ProgramaAcademicoEntidad;
 import co.edu.uco.kudos.entidad.UsuarioEntidad;
+import co.edu.uco.kudos.entidad.VinculacionProgramaEntidad;
 import co.edu.uco.kudos.transversal.utilitario.UtilFecha;
 import co.edu.uco.kudos.transversal.utilitario.UtilId;
 
@@ -110,7 +111,7 @@ public class DAOFactoryFalsa extends DAOFactory {
         var idFacultad = UtilId.generarId();
         facultadDAO.crear(new FacultadEntidad.Builder()
                 .id(idFacultad)
-                .nombre("Facultad de Ingeniería")
+                .nombre("Facultad " + idFacultad)
                 .estado(estado.name())
                 .build());
         return idFacultad;
@@ -120,7 +121,7 @@ public class DAOFactoryFalsa extends DAOFactory {
         var idPrograma = UtilId.generarId();
         programaAcademicoDAO.crear(new ProgramaAcademicoEntidad.Builder()
                 .id(idPrograma)
-                .nombre("Ingeniería de Sistemas")
+                .nombre("Programa " + idPrograma)
                 .activo(activo)
                 .build());
         return idPrograma;
@@ -158,15 +159,48 @@ public class DAOFactoryFalsa extends DAOFactory {
                 .usuario(new UsuarioEntidad.Builder().id(idUsuario).build())
                 .rol(rol.name())
                 .facultad(new FacultadEntidad.Builder().id(idFacultad).build())
-                .programa(new ProgramaAcademicoEntidad.Builder().id(idPrograma).build())
+                .programa(idPrograma == null ? new ProgramaAcademicoEntidad.Builder().build() : programaAcademicoDAO.consultarPorId(idPrograma))
                 .fechaInicio(UtilFecha.fechaActual())
                 .fechaFin(UtilFecha.FECHA_HORA_POR_DEFECTO)
                 .build());
         return idUsuario;
     }
 
+    public UUID registrarPersona(String correo, Rol rol, EstadoCuenta estado) {
+        var idUsuario = registrarAutoridad(rol, null, null);
+        var usuario = usuarioDAO.consultarPorId(idUsuario);
+        usuarioDAO.actualizar(idUsuario, new UsuarioEntidad.Builder()
+                .id(idUsuario)
+                .nombres("Persona")
+                .apellidos(rol.name())
+                .correoInstitucional(correo)
+                .correoVerificado(true)
+                .celularVerificado(true)
+                .aprobada(usuario.isAprobada())
+                .estadoCuenta(estado.name())
+                .build());
+        return idUsuario;
+    }
+
+    public UUID registrarVinculo(UUID idUsuario, UUID idPrograma, String tipoVinculo) {
+        var idVinculo = UtilId.generarId();
+        vinculacionProgramaDAO.crear(new VinculacionProgramaEntidad.Builder()
+                .id(idVinculo)
+                .usuario(usuarioDAO.consultarPorId(idUsuario))
+                .programa(programaAcademicoDAO.consultarPorId(idPrograma))
+                .tipoVinculo(tipoVinculo)
+                .fechaInicio(UtilFecha.fechaActual())
+                .fechaFin(UtilFecha.FECHA_HORA_POR_DEFECTO)
+                .build());
+        return idVinculo;
+    }
+
     public CategoriaDAOFalso getCategoriaDAOFalso() {
         return categoriaDAO;
+    }
+
+    public FacultadDAOFalso getFacultadDAOFalso() {
+        return facultadDAO;
     }
 
     public UsuarioDAOFalso getUsuarioDAOFalso() {

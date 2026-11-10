@@ -2,6 +2,7 @@ package co.edu.uco.kudos.negocio.falsos;
 
 import co.edu.uco.kudos.dao.datos.entidad.VinculacionProgramaDAO;
 import co.edu.uco.kudos.entidad.VinculacionProgramaEntidad;
+import co.edu.uco.kudos.transversal.utilitario.UtilId;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,8 @@ public class VinculacionProgramaDAOFalso implements VinculacionProgramaDAO {
     public List<VinculacionProgramaEntidad> consultarPorFiltro(VinculacionProgramaEntidad filtro) {
         var encontradas = new ArrayList<VinculacionProgramaEntidad>();
         for (var vinculacion : vinculaciones) {
-            if (vinculacion.getUsuario().getId().equals(filtro.getUsuario().getId())) {
+            if ((UtilId.esValorDefecto(filtro.getUsuario().getId()) || vinculacion.getUsuario().getId().equals(filtro.getUsuario().getId()))
+                    && (UtilId.esValorDefecto(filtro.getPrograma().getId()) || vinculacion.getPrograma().getId().equals(filtro.getPrograma().getId()))) {
                 encontradas.add(vinculacion);
             }
         }

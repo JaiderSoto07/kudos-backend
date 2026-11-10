@@ -3,7 +3,6 @@ package co.edu.uco.kudos.negocio.negocio.impl;
 import co.edu.uco.kudos.dao.factoria.DAOFactory;
 import co.edu.uco.kudos.dominio.AsignacionRolDominio;
 import co.edu.uco.kudos.dominio.AuditoriaDominio;
-import co.edu.uco.kudos.dominio.EstadoCuenta;
 import co.edu.uco.kudos.dominio.EstadoSolicitud;
 import co.edu.uco.kudos.dominio.FacultadDominio;
 import co.edu.uco.kudos.dominio.NotificacionDominio;
@@ -15,11 +14,9 @@ import co.edu.uco.kudos.dominio.TipoVinculo;
 import co.edu.uco.kudos.dominio.UsuarioDominio;
 import co.edu.uco.kudos.dominio.VinculacionProgramaDominio;
 import co.edu.uco.kudos.entidad.AsignacionRolEntidad;
-import co.edu.uco.kudos.entidad.FacultadEntidad;
-import co.edu.uco.kudos.entidad.ProgramaAcademicoEntidad;
 import co.edu.uco.kudos.entidad.SolicitudRegistroEntidad;
-import co.edu.uco.kudos.entidad.UsuarioEntidad;
 import co.edu.uco.kudos.negocio.negocio.AuditoriaNegocio;
+import co.edu.uco.kudos.negocio.negocio.CargoNegocio;
 import co.edu.uco.kudos.negocio.negocio.NotificacionNegocio;
 import co.edu.uco.kudos.negocio.negocio.SolicitudNegocio;
 import co.edu.uco.kudos.negocio.negocio.assembler.impl.AsignacionRolEntidadAssembler;
@@ -46,19 +43,17 @@ public class SolicitudNegocioImpl implements SolicitudNegocio {
     private static final List<Rol> ROLES_APROBADORES = List.of(Rol.RECTOR, Rol.COORDINADOR_ACADEMICO,
             Rol.COORDINADOR_FACULTAD, Rol.COORDINADOR_PROGRAMA);
     private static final String TIPO_SOLICITUD = "SolicitudRegistro";
-    private static final String TIPO_ASIGNACION = "AsignacionRol";
     private static final String ACCION_APROBADA = "SolicitudAprobada";
     private static final String ACCION_RECHAZADA = "SolicitudRechazada";
-    private static final String ACCION_SUSTITUIDO = "CargoSustituido";
-    private static final String ESTADO_VIGENTE = "VIGENTE";
-    private static final String ESTADO_CERRADA = "CERRADA";
 
     private final DAOFactory daoFactory;
     private final NotificacionNegocio notificacionNegocio;
     private final AuditoriaNegocio auditoriaNegocio;
+    private final CargoNegocio cargoNegocio;
 
     public SolicitudNegocioImpl(DAOFactory daoFactory) {
         this.daoFactory = daoFactory;
+        this.cargoNegocio = new CargoNegocioImpl(daoFactory);
         this.notificacionNegocio = new NotificacionNegocioImpl(daoFactory);
         this.auditoriaNegocio = new AuditoriaNegocioImpl(daoFactory);
     }
@@ -67,7 +62,7 @@ public class SolicitudNegocioImpl implements SolicitudNegocio {
     public List<SolicitudRegistroDominio> consultarPendientes(UUID idActor) {
         AsegurarActorTieneRolRule.obtenerInstancia().ejecutar(idActor, daoFactory, ROLES_APROBADORES,
                 CatalogoMensajes.Aprobacion.ACTOR_NO_APRUEBA_SOLICITUDES);
-        var asignacionDelActor = consultarAsignacionVigente(idActor);
+        var asignacionDelActor = cargoNegocio.consultarAsignacionVigente(idActor);
 
         var filtro = new SolicitudRegistroEntidad.Builder().estado(EstadoSolicitud.PENDIENTE.name()).build();
         var pendientes = SolicitudRegistroEntidadAssembler.getInstance()
@@ -92,7 +87,9 @@ public class SolicitudNegocioImpl implements SolicitudNegocio {
 
         var rol = solicitud.getRolSolicitado();
         if (rol.esCoordinador()) {
-            sustituirTitularActual(idActor, solicitud);
+            var idFacultad = rol == Rol.COORDINADOR_FACULTAD ? solicitud.getFacultad().getId() : UtilId.VALOR_DEFECTO;
+            var idPrograma = rol == Rol.COORDINADOR_PROGRAMA ? solicitud.getPrograma().getId() : UtilId.VALOR_DEFECTO;
+            cargoNegocio.cerrarCargoVigente(idActor, rol, idFacultad, idPrograma, CatalogoMensajes.Aprobacion.MOTIVO_SUSTITUCION);
         }
         crearAsignacion(solicitud);
         if (rol == Rol.ESTUDIANTE || rol == Rol.DOCENTE) {
@@ -146,32 +143,7 @@ public class SolicitudNegocioImpl implements SolicitudNegocio {
         AsegurarSolicitudExisteRule.obtenerInstancia().ejecutar(solicitud);
         AsegurarSolicitudPendienteRule.obtenerInstancia().ejecutar(solicitud);
         AsegurarNoEsPropiaSolicitudRule.obtenerInstancia().ejecutar(idActor, solicitud);
-        AsegurarAutoridadCompetenteRule.obtenerInstancia().ejecutar(consultarAsignacionVigente(idActor), solicitud);
-    }
-
-    private void sustituirTitularActual(UUID idActor, SolicitudRegistroDominio solicitud) {
-        var rol = solicitud.getRolSolicitado();
-        var filtro = new AsignacionRolEntidad.Builder()
-                .rol(rol.name())
-                .facultad(new FacultadEntidad.Builder().id(rol == Rol.COORDINADOR_FACULTAD ? solicitud.getFacultad().getId() : UtilId.VALOR_DEFECTO).build())
-                .programa(new ProgramaAcademicoEntidad.Builder().id(rol == Rol.COORDINADOR_PROGRAMA ? solicitud.getPrograma().getId() : UtilId.VALOR_DEFECTO).build())
-                .build();
-        var asignaciones = AsignacionRolEntidadAssembler.getInstance()
-                .convertirADominio(daoFactory.obtenerAsignacionRolDAO().consultarPorFiltro(filtro));
-
-        for (var asignacion : asignaciones) {
-            if (asignacion.estaVigente()) {
-                asignacion.cerrar(CatalogoMensajes.Aprobacion.MOTIVO_SUSTITUCION);
-                daoFactory.obtenerAsignacionRolDAO().actualizar(asignacion.getId(), AsignacionRolEntidadAssembler.getInstance().convertirAEntidad(asignacion));
-
-                var titularSaliente = consultarUsuario(asignacion.getUsuario().getId());
-                if (titularSaliente.getEstadoCuenta() != EstadoCuenta.DESACTIVADA) {
-                    titularSaliente.desactivar();
-                    guardarUsuario(titularSaliente);
-                }
-                registrarAuditoria(idActor, ACCION_SUSTITUIDO, TIPO_ASIGNACION, asignacion.getId(), ESTADO_VIGENTE, ESTADO_CERRADA, asignacion.getMotivoFin());
-            }
-        }
+        AsegurarAutoridadCompetenteRule.obtenerInstancia().ejecutar(cargoNegocio.consultarAsignacionVigente(idActor), solicitud);
     }
 
     private void crearAsignacion(SolicitudRegistroDominio solicitud) {
@@ -196,18 +168,6 @@ public class SolicitudNegocioImpl implements SolicitudNegocio {
                 .fechaInicio(UtilFecha.fechaActual())
                 .build();
         daoFactory.obtenerVinculacionProgramaDAO().crear(VinculacionProgramaEntidadAssembler.getInstance().convertirAEntidad(vinculacion));
-    }
-
-    private AsignacionRolDominio consultarAsignacionVigente(UUID idUsuario) {
-        var filtro = new AsignacionRolEntidad.Builder().usuario(new UsuarioEntidad.Builder().id(idUsuario).build()).build();
-        var asignaciones = AsignacionRolEntidadAssembler.getInstance()
-                .convertirADominio(daoFactory.obtenerAsignacionRolDAO().consultarPorFiltro(filtro));
-        for (var asignacion : asignaciones) {
-            if (asignacion.estaVigente()) {
-                return asignacion;
-            }
-        }
-        return new AsignacionRolDominio.Builder().build();
     }
 
     private SolicitudRegistroDominio consultarSolicitud(UUID idSolicitud) {

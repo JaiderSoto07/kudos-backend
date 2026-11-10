@@ -28,7 +28,14 @@ public class FacultadDAOFalso implements FacultadDAO {
 
     @Override
     public List<FacultadEntidad> consultarPorFiltro(FacultadEntidad filtro) {
-        return new ArrayList<>(facultades);
+        var encontradas = new ArrayList<FacultadEntidad>();
+        for (var facultad : facultades) {
+            if ((filtro.getNombre().isEmpty() || facultad.getNombre().equalsIgnoreCase(filtro.getNombre()))
+                    && (filtro.getEstado().isEmpty() || facultad.getEstado().equals(filtro.getEstado()))) {
+                encontradas.add(facultad);
+            }
+        }
+        return encontradas;
     }
 
     @Override

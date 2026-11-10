@@ -493,6 +493,69 @@ public final class CatalogoMensajes {
         public static final String MENSAJE_CARGO_SUSTITUIDO = "Tu cargo como %s terminó porque se aprobó un nuevo titular.";
     }
 
+    public static final class Organizacion {
+
+        private Organizacion() {
+        }
+
+        public static final String ACTOR_NO_CONSULTA_ORGANIZACION = "No tienes permiso para consultar Facultades y Programas desde aquí. Puedes ver la estructura de la universidad en la opción Estructura.";
+        public static final String ACTOR_NO_GESTIONA_ORGANIZACION = "Solo el Coordinador Académico crea, modifica o inactiva Facultades y Programas.";
+        public static final String NOMBRE_FACULTAD_OBLIGATORIO = "El nombre de la Facultad es obligatorio.";
+        public static final String NOMBRE_FACULTAD_LONGITUD_INVALIDA = "El nombre de la Facultad debe tener entre 3 y 80 caracteres.";
+        public static final String NOMBRE_FACULTAD_YA_EXISTE = "Ya existe una Facultad con ese nombre. Por favor elige otro.";
+        public static final String NOMBRE_PROGRAMA_OBLIGATORIO = "El nombre del Programa es obligatorio.";
+        public static final String NOMBRE_PROGRAMA_LONGITUD_INVALIDA = "El nombre del Programa debe tener entre 3 y 100 caracteres.";
+        public static final String NOMBRE_PROGRAMA_YA_EXISTE = "Ya existe un Programa con ese nombre. Por favor elige otro.";
+        public static final String FACULTAD_NO_EXISTE = "La Facultad indicada no existe.";
+        public static final String PROGRAMA_NO_EXISTE = "El Programa indicado no existe.";
+        public static final String FACULTAD_NO_ADMITE_PROGRAMAS = "La Facultad está inactiva y no admite Programas nuevos.";
+        public static final String FACULTAD_YA_INACTIVA = "La Facultad ya está inactiva.";
+        public static final String FACULTAD_CON_PROGRAMAS_ACTIVOS = "No es posible inactivar la Facultad porque tiene Programas activos. Primero inactiva sus Programas.";
+        public static final String PROGRAMA_INACTIVO = "El Programa está inactivo.";
+        public static final String PROGRAMA_CON_VINCULOS = "No es posible inactivar el Programa porque tiene estudiantes o docentes vinculados. Primero desvincúlalos.";
+        public static final String FACULTAD_FUERA_DE_AMBITO = "No puedes consultar esa Facultad: está fuera de tu ámbito.";
+        public static final String PROGRAMA_FUERA_DE_AMBITO = "No puedes consultar ese Programa: está fuera de tu ámbito.";
+        public static final String ACTOR_NO_COORDINA_PROGRAMA = "Solo el Coordinador de este Programa puede vincular o desvincular personas.";
+        public static final String PERSONA_NO_REGISTRADA = "No hay una cuenta registrada con ese correo.";
+        public static final String TIPO_VINCULO_INVALIDO = "El tipo de vínculo debe ser Estudiante o Docente.";
+        public static final String ROL_NO_COINCIDE_CON_VINCULO = "El rol vigente de esa persona no corresponde al tipo de vínculo elegido. Un Docente solo se vincula como Docente y un Estudiante como Estudiante.";
+        public static final String VINCULO_YA_EXISTE = "Esa persona ya está vinculada a este Programa.";
+        public static final String VINCULO_NO_EXISTE = "El vínculo indicado no existe.";
+        public static final String VINCULO_YA_CERRADO = "Ese vínculo ya fue cerrado.";
+        public static final String MOTIVO_DESVINCULACION_OBLIGATORIO = "El motivo de la desvinculación es obligatorio.";
+        public static final String MOTIVO_DESVINCULACION_LONGITUD_INVALIDA = "El motivo de la desvinculación debe tener entre 10 y 250 caracteres.";
+        public static final String MOTIVO_FACULTAD_INACTIVADA = "La Facultad fue inactivada.";
+        public static final String MOTIVO_PROGRAMA_INACTIVADO = "El Programa fue inactivado.";
+        public static final String MENSAJE_CUENTA_SUSPENDIDA = "Tu cuenta quedó suspendida porque ya no estás vinculado a ningún Programa. Motivo: %s";
+        public static final String MENSAJE_CUENTA_REACTIVADA = "Tu cuenta se reactivó porque fuiste vinculado al Programa %s.";
+    }
+
+    public static final class OrganizacionFachada {
+
+        private OrganizacionFachada() {
+        }
+
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_CONSULTANDO = "Se presentó un problema inesperado consultando la estructura de la universidad." + INTENTE_DE_NUEVO;
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_GUARDANDO_FACULTAD = "Se presentó un problema inesperado guardando la Facultad." + INTENTE_DE_NUEVO;
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_GUARDANDO_PROGRAMA = "Se presentó un problema inesperado guardando el Programa." + INTENTE_DE_NUEVO;
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_GUARDANDO_VINCULO = "Se presentó un problema inesperado guardando el vínculo." + INTENTE_DE_NUEVO;
+    }
+
+    public static final class OrganizacionControlador {
+
+        private OrganizacionControlador() {
+        }
+
+        public static final String FACULTAD_REGISTRADA = "La Facultad quedó registrada en conformación. Pasará a activa cuando tenga su primer Programa.";
+        public static final String FACULTAD_MODIFICADA = "El nombre de la Facultad quedó actualizado.";
+        public static final String FACULTAD_INACTIVADA = "La Facultad quedó inactiva.";
+        public static final String PROGRAMA_REGISTRADO = "El Programa quedó registrado.";
+        public static final String PROGRAMA_MODIFICADO = "El nombre del Programa quedó actualizado.";
+        public static final String PROGRAMA_INACTIVADO = "El Programa quedó inactivo.";
+        public static final String PERSONA_VINCULADA = "La persona quedó vinculada al Programa.";
+        public static final String PERSONA_DESVINCULADA = "La persona quedó desvinculada del Programa.";
+    }
+
     public static final class AprobacionFachada {
 
         private AprobacionFachada() {

@@ -12,6 +12,7 @@ public class ProgramaAcademicoDto {
     private UUID idFacultad;
     private String nombreFacultad;
     private boolean activo;
+    private String nombreCoordinador;
 
     public ProgramaAcademicoDto() {
         setId(UtilId.VALOR_DEFECTO);
@@ -19,6 +20,7 @@ public class ProgramaAcademicoDto {
         setIdFacultad(UtilId.VALOR_DEFECTO);
         setNombreFacultad(UtilTexto.VACIO);
         setActivo(true);
+        setNombreCoordinador(UtilTexto.VACIO);
     }
 
     public UUID getId() {
@@ -59,5 +61,13 @@ public class ProgramaAcademicoDto {
 
     public void setActivo(boolean activo) {
         this.activo = activo;
+    }
+
+    public String getNombreCoordinador() {
+        return nombreCoordinador;
+    }
+
+    public void setNombreCoordinador(String nombreCoordinador) {
+        this.nombreCoordinador = UtilTexto.getUtilTexto().quitarEspaciosEnBlanco(nombreCoordinador);
     }
 }

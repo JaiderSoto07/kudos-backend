@@ -1,0 +1,22 @@
+info:
+  name: RegistrarFacultad
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseUrl}}/facultades"
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Ciencias Sociales"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

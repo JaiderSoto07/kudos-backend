@@ -10,11 +10,15 @@ public class FacultadDto {
     private UUID id;
     private String nombre;
     private String estado;
+    private int cantidadProgramas;
+    private String nombreCoordinador;
 
     public FacultadDto() {
         setId(UtilId.VALOR_DEFECTO);
         setNombre(UtilTexto.VACIO);
         setEstado(UtilTexto.VACIO);
+        setCantidadProgramas(0);
+        setNombreCoordinador(UtilTexto.VACIO);
     }
 
     public UUID getId() {
@@ -39,5 +43,21 @@ public class FacultadDto {
 
     public void setEstado(String estado) {
         this.estado = UtilTexto.getUtilTexto().quitarEspaciosEnBlanco(estado);
+    }
+
+    public int getCantidadProgramas() {
+        return cantidadProgramas;
+    }
+
+    public void setCantidadProgramas(int cantidadProgramas) {
+        this.cantidadProgramas = Math.max(cantidadProgramas, 0);
+    }
+
+    public String getNombreCoordinador() {
+        return nombreCoordinador;
+    }
+
+    public void setNombreCoordinador(String nombreCoordinador) {
+        this.nombreCoordinador = UtilTexto.getUtilTexto().quitarEspaciosEnBlanco(nombreCoordinador);
     }
 }

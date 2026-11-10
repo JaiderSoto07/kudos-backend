@@ -44,6 +44,34 @@ public final class AsignacionRolDominio {
         fechaFin = UtilFecha.fechaActual();
     }
 
+    public boolean puedeVerFacultad(UUID idFacultad) {
+        if (UtilId.esValorDefecto(id) || !estaVigente()) {
+            return false;
+        }
+        return switch (rol) {
+            case ADMINISTRADOR, RECTOR, COORDINADOR_ACADEMICO -> true;
+            case COORDINADOR_FACULTAD -> facultad.getId().equals(idFacultad);
+            case COORDINADOR_PROGRAMA -> programa.getFacultad().getId().equals(idFacultad);
+            default -> false;
+        };
+    }
+
+    public boolean puedeVerPrograma(ProgramaAcademicoDominio programaConsultado) {
+        if (UtilId.esValorDefecto(id) || !estaVigente()) {
+            return false;
+        }
+        return switch (rol) {
+            case ADMINISTRADOR, RECTOR, COORDINADOR_ACADEMICO -> true;
+            case COORDINADOR_FACULTAD -> facultad.getId().equals(programaConsultado.getFacultad().getId());
+            case COORDINADOR_PROGRAMA -> programa.getId().equals(programaConsultado.getId());
+            default -> false;
+        };
+    }
+
+    public boolean coordinaPrograma(UUID idPrograma) {
+        return !UtilId.esValorDefecto(id) && estaVigente() && rol == Rol.COORDINADOR_PROGRAMA && programa.getId().equals(idPrograma);
+    }
+
     public boolean puedeDecidir(SolicitudRegistroDominio solicitud) {
         if (UtilId.esValorDefecto(id) || !estaVigente() || rol != solicitud.getRolSolicitado().rolAprobador()) {
             return false;

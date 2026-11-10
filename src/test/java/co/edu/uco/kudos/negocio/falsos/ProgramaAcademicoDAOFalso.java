@@ -2,6 +2,7 @@ package co.edu.uco.kudos.negocio.falsos;
 
 import co.edu.uco.kudos.dao.datos.entidad.ProgramaAcademicoDAO;
 import co.edu.uco.kudos.entidad.ProgramaAcademicoEntidad;
+import co.edu.uco.kudos.transversal.utilitario.UtilId;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,14 @@ public class ProgramaAcademicoDAOFalso implements ProgramaAcademicoDAO {
 
     @Override
     public List<ProgramaAcademicoEntidad> consultarPorFiltro(ProgramaAcademicoEntidad filtro) {
-        return new ArrayList<>(programas);
+        var encontrados = new ArrayList<ProgramaAcademicoEntidad>();
+        for (var programa : programas) {
+            if ((filtro.getNombre().isEmpty() || programa.getNombre().equalsIgnoreCase(filtro.getNombre()))
+                    && (UtilId.esValorDefecto(filtro.getFacultad().getId()) || programa.getFacultad().getId().equals(filtro.getFacultad().getId()))) {
+                encontrados.add(programa);
+            }
+        }
+        return encontrados;
     }
 
     @Override

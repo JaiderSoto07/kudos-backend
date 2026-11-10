@@ -1,0 +1,23 @@
+info:
+  name: VincularDocente
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseUrl}}/programas/{{idProgramaSistemas}}/vinculos"
+  body:
+    type: json
+    data: |-
+      {
+        "correo": "agiraldo@uco.edu.co",
+        "tipoVinculo": "DOCENTE"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

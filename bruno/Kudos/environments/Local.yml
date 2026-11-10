@@ -8,6 +8,12 @@ variables:
     value: EC9A4DB4-8DFB-4E5B-B3C8-52F28D740475
   - name: idSolicitud
     value: 01A1C61E-CEB2-7D3E-AC41-A3CF807B1DCE
+  - name: idFacultad
+    value: D4F49293-3F9B-4B84-BCC6-FC6687D82881
+  - name: idProgramaSistemas
+    value: 9B14BDA5-B2CF-4B8F-8D60-A9B23A116E06
+  - name: idVinculo
+    value: C99118CD-F222-4580-B331-35209FDC6109
   - name: codigo
     value: "000000"
   - secret: true
