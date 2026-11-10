@@ -6,6 +6,8 @@ variables:
     value: 18FA1B97-BAC3-423C-AA01-D610D3150DD2
   - name: idPrograma
     value: EC9A4DB4-8DFB-4E5B-B3C8-52F28D740475
+  - name: idSolicitud
+    value: 01A1C61E-CEB2-7D3E-AC41-A3CF807B1DCE
   - name: codigo
     value: "000000"
   - secret: true

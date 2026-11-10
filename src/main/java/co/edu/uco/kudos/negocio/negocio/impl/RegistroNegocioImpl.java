@@ -9,13 +9,18 @@ import co.edu.uco.kudos.dominio.ProgramaAcademicoDominio;
 import co.edu.uco.kudos.dominio.Rol;
 import co.edu.uco.kudos.dominio.SolicitudRegistroDominio;
 import co.edu.uco.kudos.dominio.UsuarioDominio;
+import co.edu.uco.kudos.entidad.SolicitudRegistroEntidad;
+import co.edu.uco.kudos.entidad.UsuarioEntidad;
 import co.edu.uco.kudos.negocio.negocio.AuditoriaNegocio;
 import co.edu.uco.kudos.negocio.negocio.RegistroNegocio;
+import co.edu.uco.kudos.negocio.negocio.SolicitudNegocio;
 import co.edu.uco.kudos.negocio.negocio.VerificacionNegocio;
 import co.edu.uco.kudos.negocio.negocio.assembler.impl.FacultadEntidadAssembler;
 import co.edu.uco.kudos.negocio.negocio.assembler.impl.ProgramaAcademicoEntidadAssembler;
 import co.edu.uco.kudos.negocio.negocio.assembler.impl.SolicitudRegistroEntidadAssembler;
 import co.edu.uco.kudos.negocio.negocio.assembler.impl.UsuarioEntidadAssembler;
+import co.edu.uco.kudos.negocio.negocio.reglas.impl.aprobacion.AsegurarSolicitudRechazadaRule;
+import co.edu.uco.kudos.negocio.negocio.reglas.impl.autenticacion.AsegurarUsuarioRegistradoRule;
 import co.edu.uco.kudos.negocio.negocio.reglas.impl.identidad.AsegurarAmbitoSegunRolRule;
 import co.edu.uco.kudos.negocio.negocio.reglas.impl.identidad.AsegurarCelularNoRepetidoRule;
 import co.edu.uco.kudos.negocio.negocio.reglas.impl.identidad.AsegurarCorreoNoRepetidoRule;
@@ -39,11 +44,13 @@ public class RegistroNegocioImpl implements RegistroNegocio {
 
     private final DAOFactory daoFactory;
     private final VerificacionNegocio verificacionNegocio;
+    private final SolicitudNegocio solicitudNegocio;
     private final AuditoriaNegocio auditoriaNegocio;
 
     public RegistroNegocioImpl(DAOFactory daoFactory) {
         this.daoFactory = daoFactory;
         this.verificacionNegocio = new VerificacionNegocioImpl(daoFactory);
+        this.solicitudNegocio = new SolicitudNegocioImpl(daoFactory);
         this.auditoriaNegocio = new AuditoriaNegocioImpl(daoFactory);
     }
 
@@ -76,9 +83,26 @@ public class RegistroNegocioImpl implements RegistroNegocio {
                 .build();
         daoFactory.obtenerUsuarioDAO().crear(UsuarioEntidadAssembler.getInstance().convertirAEntidad(usuarioNuevo));
 
+        crearSolicitud(usuarioNuevo, rol, datos);
+        verificacionNegocio.enviarCodigoCelular(usuarioNuevo);
+    }
+
+    @Override
+    public void registrarNuevaSolicitud(UUID idUsuario, String rolSolicitado, SolicitudRegistroDominio datos) {
+        var usuario = UsuarioEntidadAssembler.getInstance().convertirADominio(daoFactory.obtenerUsuarioDAO().consultarPorId(idUsuario));
+        AsegurarUsuarioRegistradoRule.obtenerInstancia().ejecutar(usuario);
+        AsegurarSolicitudRechazadaRule.obtenerInstancia().ejecutar(consultarUltimaSolicitud(idUsuario));
+        AsegurarRolAutorregistrableRule.obtenerInstancia().ejecutar(rolSolicitado);
+        var rol = UtilEnum.obtenerValor(Rol.class, rolSolicitado, null);
+        AsegurarAmbitoSegunRolRule.obtenerInstancia().ejecutar(rol, datos.getFacultad().getId(), datos.getPrograma().getId(), daoFactory);
+
+        crearSolicitud(usuario, rol, datos);
+    }
+
+    private void crearSolicitud(UsuarioDominio solicitante, Rol rol, SolicitudRegistroDominio datos) {
         var solicitudNueva = new SolicitudRegistroDominio.Builder()
                 .id(UtilId.generarId())
-                .solicitante(usuarioNuevo)
+                .solicitante(solicitante)
                 .rolSolicitado(rol)
                 .facultad(rol == Rol.COORDINADOR_FACULTAD ? soloId(datos.getFacultad()) : new FacultadDominio.Builder().build())
                 .programa(necesitaPrograma(rol) ? soloId(datos.getPrograma()) : new ProgramaAcademicoDominio.Builder().build())
@@ -87,8 +111,19 @@ public class RegistroNegocioImpl implements RegistroNegocio {
                 .build();
         daoFactory.obtenerSolicitudRegistroDAO().crear(SolicitudRegistroEntidadAssembler.getInstance().convertirAEntidad(solicitudNueva));
 
-        verificacionNegocio.enviarCodigoCelular(usuarioNuevo);
-        registrarAuditoria(usuarioNuevo.getId(), solicitudNueva.getId(), rol);
+        solicitudNegocio.notificarAutoridades(solicitudNueva.getId());
+        registrarAuditoria(solicitante.getId(), solicitudNueva.getId(), rol);
+    }
+
+    private SolicitudRegistroDominio consultarUltimaSolicitud(UUID idUsuario) {
+        var filtro = new SolicitudRegistroEntidad.Builder()
+                .solicitante(new UsuarioEntidad.Builder().id(idUsuario).build())
+                .build();
+        var solicitudes = daoFactory.obtenerSolicitudRegistroDAO().consultarPorFiltro(filtro);
+        if (solicitudes.isEmpty()) {
+            return new SolicitudRegistroDominio.Builder().build();
+        }
+        return SolicitudRegistroEntidadAssembler.getInstance().convertirADominio(solicitudes.getFirst());
     }
 
     @Override

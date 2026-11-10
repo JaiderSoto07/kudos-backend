@@ -1,0 +1,23 @@
+info:
+  name: EnviarNuevaSolicitud
+  type: http
+  seq: 5
+
+http:
+  method: POST
+  url: "{{baseUrl}}/registros/nueva-solicitud"
+  body:
+    type: json
+    data: |-
+      {
+        "rolSolicitado": "DOCENTE",
+        "idPrograma": "{{idPrograma}}"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

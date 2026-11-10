@@ -2,6 +2,8 @@ package co.edu.uco.kudos.negocio.falsos;
 
 import co.edu.uco.kudos.dao.datos.entidad.AsignacionRolDAO;
 import co.edu.uco.kudos.entidad.AsignacionRolEntidad;
+import co.edu.uco.kudos.transversal.utilitario.UtilId;
+import co.edu.uco.kudos.transversal.utilitario.UtilTexto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +12,10 @@ import java.util.UUID;
 public class AsignacionRolDAOFalso implements AsignacionRolDAO {
 
     private final List<AsignacionRolEntidad> asignaciones = new ArrayList<>();
+
+    public List<AsignacionRolEntidad> getAsignaciones() {
+        return asignaciones;
+    }
 
     @Override
     public void crear(AsignacionRolEntidad entidad) {
@@ -30,11 +36,18 @@ public class AsignacionRolDAOFalso implements AsignacionRolDAO {
     public List<AsignacionRolEntidad> consultarPorFiltro(AsignacionRolEntidad filtro) {
         var encontradas = new ArrayList<AsignacionRolEntidad>();
         for (var asignacion : asignaciones) {
-            if (asignacion.getUsuario().getId().equals(filtro.getUsuario().getId())) {
+            if (mismoId(filtro.getUsuario().getId(), asignacion.getUsuario().getId())
+                    && (UtilTexto.getUtilTexto().esVacia(filtro.getRol()) || filtro.getRol().equals(asignacion.getRol()))
+                    && mismoId(filtro.getFacultad().getId(), asignacion.getFacultad().getId())
+                    && mismoId(filtro.getPrograma().getId(), asignacion.getPrograma().getId())) {
                 encontradas.add(asignacion);
             }
         }
         return encontradas;
+    }
+
+    private boolean mismoId(UUID idFiltro, UUID idAsignacion) {
+        return UtilId.esValorDefecto(idFiltro) || idFiltro.equals(idAsignacion);
     }
 
     @Override

@@ -35,8 +35,10 @@ public class SolicitudRegistroDAOFalso implements SolicitudRegistroDAO {
     public List<SolicitudRegistroEntidad> consultarPorFiltro(SolicitudRegistroEntidad filtro) {
         var encontradas = new ArrayList<SolicitudRegistroEntidad>();
         for (var solicitud : solicitudes) {
-            if (UtilId.esValorDefecto(filtro.getSolicitante().getId())
-                    || solicitud.getSolicitante().getId().equals(filtro.getSolicitante().getId())) {
+            var mismoSolicitante = UtilId.esValorDefecto(filtro.getSolicitante().getId())
+                    || solicitud.getSolicitante().getId().equals(filtro.getSolicitante().getId());
+            var mismoEstado = filtro.getEstado().isEmpty() || solicitud.getEstado().equals(filtro.getEstado());
+            if (mismoSolicitante && mismoEstado) {
                 encontradas.add(solicitud);
             }
         }

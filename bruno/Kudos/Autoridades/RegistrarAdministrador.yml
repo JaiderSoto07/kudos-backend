@@ -1,0 +1,26 @@
+info:
+  name: RegistrarAdministrador
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/autoridades"
+  body:
+    type: json
+    data: |-
+      {
+        "rol": "ADMINISTRADOR",
+        "nombres": "Laura",
+        "apellidos": "Mejía",
+        "correoInstitucional": "laura.mejia@gmail.com",
+        "numeroCelular": "3184445566"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

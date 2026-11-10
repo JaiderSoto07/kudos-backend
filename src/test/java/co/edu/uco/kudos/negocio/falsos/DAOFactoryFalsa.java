@@ -43,6 +43,7 @@ public class DAOFactoryFalsa extends DAOFactory {
     private final SolicitudRegistroDAOFalso solicitudRegistroDAO = new SolicitudRegistroDAOFalso();
     private final CodigoVerificacionDAOFalso codigoVerificacionDAO = new CodigoVerificacionDAOFalso();
     private final NotificacionDAOFalso notificacionDAO = new NotificacionDAOFalso();
+    private final VinculacionProgramaDAOFalso vinculacionProgramaDAO = new VinculacionProgramaDAOFalso();
 
     @Override
     protected void abrirConexion() {
@@ -125,6 +126,45 @@ public class DAOFactoryFalsa extends DAOFactory {
         return idPrograma;
     }
 
+    public UUID registrarPrograma(UUID idFacultad) {
+        var idPrograma = UtilId.generarId();
+        programaAcademicoDAO.crear(new ProgramaAcademicoEntidad.Builder()
+                .id(idPrograma)
+                .nombre("Programa " + idPrograma)
+                .facultad(new FacultadEntidad.Builder().id(idFacultad).estado(EstadoFacultad.ACTIVA.name()).build())
+                .activo(true)
+                .build());
+        return idPrograma;
+    }
+
+    public ProgramaAcademicoEntidad consultarPrograma(UUID idPrograma) {
+        return programaAcademicoDAO.consultarPorId(idPrograma);
+    }
+
+    public UUID registrarAutoridad(Rol rol, UUID idFacultad, UUID idPrograma) {
+        var idUsuario = UtilId.generarId();
+        usuarioDAO.crear(new UsuarioEntidad.Builder()
+                .id(idUsuario)
+                .nombres("Autoridad")
+                .apellidos(rol.name())
+                .correoInstitucional(idUsuario + "@gmail.com")
+                .correoVerificado(true)
+                .celularVerificado(true)
+                .aprobada(true)
+                .estadoCuenta(EstadoCuenta.ACTIVA.name())
+                .build());
+        asignacionRolDAO.crear(new AsignacionRolEntidad.Builder()
+                .id(UtilId.generarId())
+                .usuario(new UsuarioEntidad.Builder().id(idUsuario).build())
+                .rol(rol.name())
+                .facultad(new FacultadEntidad.Builder().id(idFacultad).build())
+                .programa(new ProgramaAcademicoEntidad.Builder().id(idPrograma).build())
+                .fechaInicio(UtilFecha.fechaActual())
+                .fechaFin(UtilFecha.FECHA_HORA_POR_DEFECTO)
+                .build());
+        return idUsuario;
+    }
+
     public CategoriaDAOFalso getCategoriaDAOFalso() {
         return categoriaDAO;
     }
@@ -139,6 +179,14 @@ public class DAOFactoryFalsa extends DAOFactory {
 
     public CodigoVerificacionDAOFalso getCodigoVerificacionDAOFalso() {
         return codigoVerificacionDAO;
+    }
+
+    public AsignacionRolDAOFalso getAsignacionRolDAOFalso() {
+        return asignacionRolDAO;
+    }
+
+    public VinculacionProgramaDAOFalso getVinculacionProgramaDAOFalso() {
+        return vinculacionProgramaDAO;
     }
 
     public NotificacionDAOFalso getNotificacionDAOFalso() {
@@ -196,7 +244,7 @@ public class DAOFactoryFalsa extends DAOFactory {
 
     @Override
     public VinculacionProgramaDAO obtenerVinculacionProgramaDAO() {
-        return null;
+        return vinculacionProgramaDAO;
     }
 
     @Override

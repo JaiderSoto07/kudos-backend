@@ -35,4 +35,12 @@ public class RegistroControlador extends AbstractRestController {
         RespuestaOk<String> respuesta = RespuestaOk.crear(CatalogoMensajes.IdentidadControlador.SOLICITUD_REGISTRADA);
         return ResponseEntity.ok(respuesta);
     }
+
+    @PostMapping("/nueva-solicitud")
+    public ResponseEntity<RespuestaOk<String>> registrarNuevaSolicitud(@AuthenticationPrincipal OidcUser datosUsuario,
+            @RequestBody RegistroDto datos) {
+        fachada.registrarNuevaSolicitud(obtenerIdUsuarioRegistrado(datosUsuario), datos);
+        RespuestaOk<String> respuesta = RespuestaOk.crear(CatalogoMensajes.IdentidadControlador.NUEVA_SOLICITUD_REGISTRADA);
+        return ResponseEntity.ok(respuesta);
+    }
 }

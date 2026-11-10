@@ -15,6 +15,7 @@ import co.edu.uco.kudos.transversal.excepciones.KudosFachadaExcepcion;
 import co.edu.uco.kudos.transversal.utilitario.UtilObjeto;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class RegistroFachadaImpl implements RegistroFachada {
 
@@ -28,6 +29,29 @@ public class RegistroFachadaImpl implements RegistroFachada {
             var datosSeguros = UtilObjeto.obtenerValorDefectoSiValorOriginalEsNulo(datos, new RegistroDto());
             var solicitud = RegistroDtoAssembler.getInstance().convertirADominio(datosSeguros);
             registroNegocio.registrarSolicitud(correo, datosSeguros.getRolSolicitado(), solicitud);
+            daoFactory.confirmarTransaccion();
+        } catch (KudosExcepcion excepcion) {
+            daoFactory.cancelarTransaccion();
+            throw excepcion;
+        } catch (Exception excepcion) {
+            daoFactory.cancelarTransaccion();
+            var mensajeUsuario = CatalogoMensajes.IdentidadFachada.USUARIO_ERROR_PROBLEMA_INESPERADO_REGISTRANDO;
+            throw KudosFachadaExcepcion.crear(mensajeUsuario, excepcion.getMessage(), excepcion);
+        } finally {
+            daoFactory.cerrarConexion();
+        }
+    }
+
+    @Override
+    public void registrarNuevaSolicitud(UUID idUsuario, RegistroDto datos) {
+        var daoFactory = DAOFactory.obtenerFactoria();
+        var registroNegocio = new RegistroNegocioImpl(daoFactory);
+
+        daoFactory.iniciarTransaccion();
+        try {
+            var datosSeguros = UtilObjeto.obtenerValorDefectoSiValorOriginalEsNulo(datos, new RegistroDto());
+            var solicitud = RegistroDtoAssembler.getInstance().convertirADominio(datosSeguros);
+            registroNegocio.registrarNuevaSolicitud(idUsuario, datosSeguros.getRolSolicitado(), solicitud);
             daoFactory.confirmarTransaccion();
         } catch (KudosExcepcion excepcion) {
             daoFactory.cancelarTransaccion();

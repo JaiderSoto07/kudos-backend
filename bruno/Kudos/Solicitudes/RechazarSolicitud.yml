@@ -1,0 +1,22 @@
+info:
+  name: RechazarSolicitud
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{baseUrl}}/solicitudes/{{idSolicitud}}/rechazo"
+  body:
+    type: json
+    data: |-
+      {
+        "motivo": "No pertenece al Programa académico indicado."
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

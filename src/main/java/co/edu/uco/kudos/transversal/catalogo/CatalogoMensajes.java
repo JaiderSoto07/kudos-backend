@@ -467,6 +467,51 @@ public final class CatalogoMensajes {
         public static final String DATOS_PERSONALES_ACTUALIZADOS = "Tus nombres y apellidos quedaron actualizados.";
         public static final String CELULAR_CAMBIADO = "Tu celular quedó actualizado. Te enviamos un código para verificarlo.";
         public static final String CORREO_CAMBIADO = "Tu correo quedó actualizado. Para verificarlo, cierra sesión y entra con Google usando el correo nuevo.";
+        public static final String NUEVA_SOLICITUD_REGISTRADA = "Tu nueva solicitud quedó enviada a la autoridad que te corresponde.";
+    }
+
+    public static final class Aprobacion {
+
+        private Aprobacion() {
+        }
+
+        public static final String ACTOR_NO_APRUEBA_SOLICITUDES = "No tienes permiso para revisar solicitudes. Solo el Rector y los coordinadores aprueban o rechazan solicitudes de cuenta.";
+        public static final String SOLICITUD_NO_EXISTE = "La solicitud indicada no existe. Por favor actualiza la lista e intenta de nuevo.";
+        public static final String SOLICITUD_YA_DECIDIDA = "Esta solicitud ya fue aprobada o rechazada. Por favor actualiza la lista.";
+        public static final String AUTORIDAD_NO_COMPETENTE = "No te corresponde decidir esta solicitud: está fuera de tu rol o de tu ámbito.";
+        public static final String SOLICITUD_PROPIA = "Nadie puede decidir sobre su propia solicitud.";
+        public static final String MOTIVO_RECHAZO_OBLIGATORIO = "El motivo del rechazo es obligatorio. Por favor explica por qué se rechaza la solicitud.";
+        public static final String MOTIVO_RECHAZO_LONGITUD_INVALIDA = "El motivo del rechazo debe tener entre 10 y 250 caracteres.";
+        public static final String ROL_NO_ES_AUTORIDAD = "Desde aquí solo se registran el Rector y los Administradores.";
+        public static final String RECTOR_YA_EXISTE = "Ya hay un Rector vigente. Solo puede haber uno a la vez.";
+        public static final String ACTOR_NO_REGISTRA_AUTORIDADES = "Solo un Administrador puede registrar al Rector o a otros Administradores.";
+        public static final String SOLICITUD_NO_RECHAZADA = "Solo puedes enviar una nueva solicitud si la anterior fue rechazada.";
+        public static final String MOTIVO_SUSTITUCION = "Sustituido al aprobarse un nuevo titular del cargo.";
+        public static final String MENSAJE_SOLICITUD_PENDIENTE = "%s solicitó el rol %s y espera tu aprobación.";
+        public static final String MENSAJE_SOLICITUD_APROBADA = "Tu solicitud como %s fue aprobada.";
+        public static final String MENSAJE_SOLICITUD_RECHAZADA = "Tu solicitud como %s fue rechazada. Motivo: %s";
+        public static final String MENSAJE_CARGO_SUSTITUIDO = "Tu cargo como %s terminó porque se aprobó un nuevo titular.";
+    }
+
+    public static final class AprobacionFachada {
+
+        private AprobacionFachada() {
+        }
+
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_CONSULTANDO_SOLICITUDES = "Se presentó un problema inesperado consultando las solicitudes." + INTENTE_DE_NUEVO;
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_APROBANDO = "Se presentó un problema inesperado aprobando la solicitud." + INTENTE_DE_NUEVO;
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_RECHAZANDO = "Se presentó un problema inesperado rechazando la solicitud." + INTENTE_DE_NUEVO;
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_REGISTRANDO_AUTORIDAD = "Se presentó un problema inesperado registrando la cuenta." + INTENTE_DE_NUEVO;
+    }
+
+    public static final class AprobacionControlador {
+
+        private AprobacionControlador() {
+        }
+
+        public static final String SOLICITUD_APROBADA = "La solicitud quedó aprobada.";
+        public static final String SOLICITUD_RECHAZADA = "La solicitud quedó rechazada.";
+        public static final String AUTORIDAD_REGISTRADA = "La cuenta quedó registrada. La persona debe entrar con Google con ese correo y verificar su celular.";
     }
 
     public static final class AbstractRestController {

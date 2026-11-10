@@ -44,6 +44,17 @@ public final class AsignacionRolDominio {
         fechaFin = UtilFecha.fechaActual();
     }
 
+    public boolean puedeDecidir(SolicitudRegistroDominio solicitud) {
+        if (UtilId.esValorDefecto(id) || !estaVigente() || rol != solicitud.getRolSolicitado().rolAprobador()) {
+            return false;
+        }
+        return switch (solicitud.getRolSolicitado()) {
+            case ESTUDIANTE, DOCENTE -> programa.getId().equals(solicitud.getPrograma().getId());
+            case COORDINADOR_PROGRAMA -> facultad.getId().equals(solicitud.getPrograma().getFacultad().getId());
+            default -> true;
+        };
+    }
+
     public UUID getId() {
         return id;
     }

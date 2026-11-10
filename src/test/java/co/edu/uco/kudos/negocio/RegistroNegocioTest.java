@@ -9,6 +9,8 @@ import co.edu.uco.kudos.dominio.UsuarioDominio;
 import co.edu.uco.kudos.negocio.falsos.DAOFactoryFalsa;
 import co.edu.uco.kudos.negocio.negocio.RegistroNegocio;
 import co.edu.uco.kudos.negocio.negocio.impl.RegistroNegocioImpl;
+import co.edu.uco.kudos.negocio.negocio.impl.SolicitudNegocioImpl;
+import co.edu.uco.kudos.dominio.Rol;
 import co.edu.uco.kudos.transversal.catalogo.CatalogoMensajes;
 import co.edu.uco.kudos.transversal.excepciones.KudosExcepcion;
 import co.edu.uco.kudos.transversal.utilitario.UtilId;
@@ -139,5 +141,42 @@ class RegistroNegocioTest {
         assertEquals(idFacultad, facultades.getFirst().getId());
         assertEquals(1, programas.size());
         assertEquals(idPrograma, programas.getFirst().getId());
+    }
+
+    @Test
+    @DisplayName("Al registrarse se avisa al Coordinador del Programa que tiene una solicitud pendiente")
+    void avisaAlCoordinador() {
+        var coordinador = daoFactory.registrarAutoridad(Rol.COORDINADOR_PROGRAMA, null, idPrograma);
+
+        negocio.registrarSolicitud(CORREO, "ESTUDIANTE", datos(null, idPrograma));
+
+        var aviso = daoFactory.getNotificacionDAOFalso().getNotificaciones().stream()
+                .filter(n -> "SOLICITUD_PENDIENTE".equals(n.getTipo()))
+                .findFirst()
+                .orElseThrow();
+        assertEquals(coordinador, aviso.getDestinatario().getId());
+    }
+
+    @Test
+    @DisplayName("Solo quien fue rechazado puede enviar una nueva solicitud, con otro rol si quiere (decisión a de M2)")
+    void nuevaSolicitudTrasRechazo() {
+        var coordinador = daoFactory.registrarAutoridad(Rol.COORDINADOR_PROGRAMA, null, idPrograma);
+        negocio.registrarSolicitud(CORREO, "ESTUDIANTE", datos(null, idPrograma));
+        var idUsuario = daoFactory.getUsuarioDAOFalso().consultarTodos().stream()
+                .filter(u -> CORREO.equals(u.getCorreoInstitucional())).findFirst().orElseThrow().getId();
+        var primera = daoFactory.getSolicitudRegistroDAOFalso().getSolicitudes().getFirst().getId();
+        var comoDocente = datos(null, idPrograma);
+
+        var pendiente = assertThrows(KudosExcepcion.class, () -> negocio.registrarNuevaSolicitud(idUsuario, "DOCENTE", comoDocente));
+        assertEquals(CatalogoMensajes.Aprobacion.SOLICITUD_NO_RECHAZADA, pendiente.getMensajeUsuario());
+
+        new SolicitudNegocioImpl(daoFactory).rechazar(coordinador, primera, "Eres docente, no estudiante del Programa.");
+        negocio.registrarNuevaSolicitud(idUsuario, "DOCENTE", comoDocente);
+
+        var solicitudes = daoFactory.getSolicitudRegistroDAOFalso().getSolicitudes();
+        assertEquals(2, solicitudes.size());
+        assertEquals("DOCENTE", solicitudes.getFirst().getRolSolicitado());
+        assertEquals("PENDIENTE", solicitudes.getFirst().getEstado());
+        assertEquals("RECHAZADA", daoFactory.getSolicitudRegistroDAOFalso().consultarPorId(primera).getEstado());
     }
 }
