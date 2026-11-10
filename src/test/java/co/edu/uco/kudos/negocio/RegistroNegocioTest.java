@@ -16,7 +16,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.time.Duration;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -78,7 +77,7 @@ class RegistroNegocioTest {
         assertEquals("CELULAR", codigo.getCanal());
         assertEquals(CELULAR, codigo.getDestino());
         assertTrue(codigo.getCodigo().matches("\\d{6}"));
-        assertEquals(15, Duration.between(codigo.getFechaGeneracion(), codigo.getFechaExpiracion()).toMinutes());
+        assertEquals(codigo.getFechaGeneracion().plusMinutes(15), codigo.getFechaExpiracion());
 
         var notificacion = daoFactory.getNotificacionDAOFalso().getNotificaciones().getFirst();
         assertEquals("CODIGO_VERIFICACION", notificacion.getTipo());
