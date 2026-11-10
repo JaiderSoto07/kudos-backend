@@ -5,9 +5,10 @@ import co.edu.uco.kudos.transversal.catalogo.CatalogoMensajes;
 import co.edu.uco.kudos.transversal.excepciones.KudosNegocioExcepcion;
 import co.edu.uco.kudos.transversal.utilitario.UtilId;
 
+import java.util.Objects;
 import java.util.UUID;
 
-public final class AsegurarDestinatarioDistintoRule implements Rule<Object> {
+public final class AsegurarDestinatarioDistintoRule implements Rule<UUID> {
 
     private static final AsegurarDestinatarioDistintoRule INSTANCIA = new AsegurarDestinatarioDistintoRule();
 
@@ -19,14 +20,14 @@ public final class AsegurarDestinatarioDistintoRule implements Rule<Object> {
     }
 
     @Override
-    public void ejecutar(Object... datos) {
-        var idAutor = (UUID) datos[0];
-        var idDestinatario = (UUID) datos[1];
+    public void ejecutar(UUID... datos) {
+        var idAutor = datos[0];
+        var idDestinatario = datos[1];
 
         if (UtilId.esValorDefecto(idDestinatario)) {
             throw KudosNegocioExcepcion.crear(CatalogoMensajes.Kudo.DESTINATARIO_OBLIGATORIO);
         }
-        if (idDestinatario.equals(idAutor)) {
+        if (Objects.equals(idDestinatario, idAutor)) {
             throw KudosNegocioExcepcion.crear(CatalogoMensajes.Kudo.DESTINATARIO_ES_EL_AUTOR);
         }
     }

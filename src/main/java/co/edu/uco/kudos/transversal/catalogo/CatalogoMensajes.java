@@ -540,7 +540,7 @@ public final class CatalogoMensajes {
         public static final String DESTINATARIO_NO_ACTIVO = "Solo puedes reconocer a personas con la cuenta activa.";
         public static final String CATEGORIA_OBLIGATORIA = "Elige la categoría del Kudo.";
         public static final String CATEGORIA_NO_DISPONIBLE = "La categoría elegida no existe o está inactiva. Elige otra.";
-        public static final String CONTENIDO_OBLIGATORIO = "Escribe el mensaje del reconocimiento.";
+        public static final String CONTENIDO_OBLIGATORIO = "Escribe el mensaje antes de publicar.";
         public static final String KUDO_NO_EXISTE = "El Kudo indicado no existe.";
         public static final String MENSAJE_KUDO_RECIBIDO = "%s te dio un Kudo en la categoría %s.";
     }
@@ -561,6 +561,62 @@ public final class CatalogoMensajes {
         }
 
         public static final String KUDO_PUBLICADO = "Tu Kudo quedó publicado en el muro.";
+    }
+
+    public static final class Replica {
+
+        private Replica() {
+        }
+
+        public static final String REPLICA_NO_EXISTE = "La réplica indicada no existe.";
+        public static final String KUDO_VETADO = "Este Kudo fue vetado por moderación: la conversación está cerrada y ya no admite réplicas ni calificaciones.";
+        public static final String REPLICA_VETADA = "Esta réplica fue vetada por moderación y ya no admite respuestas ni calificaciones.";
+        public static final String CONTENIDO_VETADO = "Contenido vetado por moderación";
+        public static final String MENSAJE_RESPUESTA_KUDO = "%s respondió el Kudo de %s para %s.";
+        public static final String MENSAJE_RESPUESTA_REPLICA = "%s respondió tu réplica en el Kudo para %s.";
+    }
+
+    public static final class Calificacion {
+
+        private Calificacion() {
+        }
+
+        public static final String ESTRELLAS_FUERA_DE_RANGO = "La calificación debe ser de 1 a 5 estrellas.";
+        public static final String CONTENIDO_PROPIO = "No puedes calificar lo que tú mismo escribiste.";
+    }
+
+    public static final class ReplicaFachada {
+
+        private ReplicaFachada() {
+        }
+
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_RESPONDIENDO = "Se presentó un problema inesperado publicando la réplica." + INTENTE_DE_NUEVO;
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_CONSULTANDO = "Se presentó un problema inesperado consultando la conversación." + INTENTE_DE_NUEVO;
+    }
+
+    public static final class CalificacionFachada {
+
+        private CalificacionFachada() {
+        }
+
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_CALIFICANDO = "Se presentó un problema inesperado guardando la calificación." + INTENTE_DE_NUEVO;
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_CONSULTANDO = "Se presentó un problema inesperado consultando las valoraciones." + INTENTE_DE_NUEVO;
+    }
+
+    public static final class ReplicaControlador {
+
+        private ReplicaControlador() {
+        }
+
+        public static final String REPLICA_PUBLICADA = "Tu réplica quedó publicada en la conversación.";
+    }
+
+    public static final class CalificacionControlador {
+
+        private CalificacionControlador() {
+        }
+
+        public static final String CALIFICACION_GUARDADA = "Tu calificación quedó guardada.";
     }
 
     public static final class OrganizacionFachada {

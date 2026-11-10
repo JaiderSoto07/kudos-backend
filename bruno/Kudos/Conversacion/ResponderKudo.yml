@@ -1,0 +1,22 @@
+info:
+  name: ResponderKudo
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/kudos/{{idKudo}}/replicas"
+  body:
+    type: json
+    data: |-
+      {
+        "contenido": "¡Muy merecido! Su asesoría nos ayudó a todo el grupo."
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

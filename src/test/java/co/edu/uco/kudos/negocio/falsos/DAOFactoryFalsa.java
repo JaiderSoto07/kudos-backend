@@ -47,6 +47,8 @@ public class DAOFactoryFalsa extends DAOFactory {
     private final NotificacionDAOFalso notificacionDAO = new NotificacionDAOFalso();
     private final VinculacionProgramaDAOFalso vinculacionProgramaDAO = new VinculacionProgramaDAOFalso();
     private final KudoDAOFalso kudoDAO = new KudoDAOFalso();
+    private final ReplicaDAOFalso replicaDAO = new ReplicaDAOFalso();
+    private final CalificacionDAOFalso calificacionDAO = new CalificacionDAOFalso();
 
     @Override
     protected void abrirConexion() {
@@ -205,6 +207,14 @@ public class DAOFactoryFalsa extends DAOFactory {
         return kudoDAO;
     }
 
+    public ReplicaDAOFalso getReplicaDAOFalso() {
+        return replicaDAO;
+    }
+
+    public CalificacionDAOFalso getCalificacionDAOFalso() {
+        return calificacionDAO;
+    }
+
     public UUID registrarCategoria(String nombre, boolean activa) {
         var idCategoria = UtilId.generarId();
         categoriaDAO.crear(new CategoriaEntidad.Builder()
@@ -305,7 +315,7 @@ public class DAOFactoryFalsa extends DAOFactory {
 
     @Override
     public ReplicaDAO obtenerReplicaDAO() {
-        return null;
+        return replicaDAO;
     }
 
     @Override
@@ -320,7 +330,7 @@ public class DAOFactoryFalsa extends DAOFactory {
 
     @Override
     public CalificacionDAO obtenerCalificacionDAO() {
-        return null;
+        return calificacionDAO;
     }
 
     @Override

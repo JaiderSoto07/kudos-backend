@@ -1,0 +1,22 @@
+info:
+  name: ResponderReplica
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{baseUrl}}/replicas/{{idReplica}}/respuestas"
+  body:
+    type: json
+    data: |-
+      {
+        "contenido": "Gracias por sumarte a la conversación."
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
