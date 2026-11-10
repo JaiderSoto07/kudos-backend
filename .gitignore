@@ -1,5 +1,5 @@
-### Configuración local con credenciales (nunca se sube; ver basedatos.properties.ejemplo) ###
 src/main/resources/basedatos.properties
+src/main/resources/oauth.properties
 .env
 
 ### Maven ###

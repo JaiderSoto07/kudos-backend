@@ -3,15 +3,17 @@ package co.edu.uco.kudos.negocio.negocio.impl;
 import co.edu.uco.kudos.dao.factoria.DAOFactory;
 import co.edu.uco.kudos.dominio.AuditoriaDominio;
 import co.edu.uco.kudos.dominio.CategoriaDominio;
+import co.edu.uco.kudos.dominio.Rol;
 import co.edu.uco.kudos.dominio.UsuarioDominio;
 import co.edu.uco.kudos.negocio.negocio.AuditoriaNegocio;
 import co.edu.uco.kudos.negocio.negocio.CategoriaNegocio;
 import co.edu.uco.kudos.negocio.negocio.assembler.impl.CategoriaEntidadAssembler;
-import co.edu.uco.kudos.negocio.negocio.reglas.impl.categoria.AsegurarActorPuedeGestionarCategoriasRule;
+import co.edu.uco.kudos.negocio.negocio.reglas.impl.autorizacion.AsegurarActorTieneRolRule;
 import co.edu.uco.kudos.negocio.negocio.reglas.impl.categoria.AsegurarCategoriaExisteRule;
 import co.edu.uco.kudos.negocio.negocio.reglas.impl.categoria.AsegurarIdCategoriaNoExisteRule;
 import co.edu.uco.kudos.negocio.negocio.reglas.impl.categoria.AsegurarNombreCategoriaNoRepetidoRule;
 import co.edu.uco.kudos.negocio.negocio.reglas.impl.categoria.ValidarDatosCategoriaRule;
+import co.edu.uco.kudos.transversal.catalogo.CatalogoMensajes;
 import co.edu.uco.kudos.transversal.utilitario.UtilFecha;
 import co.edu.uco.kudos.transversal.utilitario.UtilId;
 import co.edu.uco.kudos.transversal.utilitario.UtilTexto;
@@ -28,6 +30,7 @@ public class CategoriaNegocioImpl implements CategoriaNegocio {
     private static final String ACCION_DESACTIVADA = "CategoriaDesactivada";
     private static final String ESTADO_ACTIVA = "ACTIVA";
     private static final String ESTADO_INACTIVA = "INACTIVA";
+    private static final List<Rol> ROLES_GESTORES_CATEGORIAS = List.of(Rol.ADMINISTRADOR, Rol.RECTOR, Rol.COORDINADOR_ACADEMICO);
 
     private final DAOFactory daoFactory;
     private final AuditoriaNegocio auditoriaNegocio;
@@ -39,7 +42,7 @@ public class CategoriaNegocioImpl implements CategoriaNegocio {
 
     @Override
     public void registrarNuevaCategoria(UUID idActor, CategoriaDominio datos) {
-        AsegurarActorPuedeGestionarCategoriasRule.obtenerInstancia().ejecutar(idActor, daoFactory);
+        asegurarActorGestionaCategorias(idActor);
         ValidarDatosCategoriaRule.obtenerInstancia().ejecutar(datos);
         AsegurarNombreCategoriaNoRepetidoRule.obtenerInstancia().ejecutar(datos.getNombre(), UtilId.VALOR_DEFECTO, daoFactory);
         var idCategoria = generarIdCategoriaUnico();
@@ -60,7 +63,7 @@ public class CategoriaNegocioImpl implements CategoriaNegocio {
 
     @Override
     public void modificarCategoria(UUID idActor, UUID id, CategoriaDominio datos) {
-        AsegurarActorPuedeGestionarCategoriasRule.obtenerInstancia().ejecutar(idActor, daoFactory);
+        asegurarActorGestionaCategorias(idActor);
         AsegurarCategoriaExisteRule.obtenerInstancia().ejecutar(id, daoFactory);
         ValidarDatosCategoriaRule.obtenerInstancia().ejecutar(datos);
         AsegurarNombreCategoriaNoRepetidoRule.obtenerInstancia().ejecutar(datos.getNombre(), id, daoFactory);
@@ -75,7 +78,7 @@ public class CategoriaNegocioImpl implements CategoriaNegocio {
 
     @Override
     public void activarCategoria(UUID idActor, UUID id) {
-        AsegurarActorPuedeGestionarCategoriasRule.obtenerInstancia().ejecutar(idActor, daoFactory);
+        asegurarActorGestionaCategorias(idActor);
         AsegurarCategoriaExisteRule.obtenerInstancia().ejecutar(id, daoFactory);
 
         var categoria = consultarCategoria(id);
@@ -87,7 +90,7 @@ public class CategoriaNegocioImpl implements CategoriaNegocio {
 
     @Override
     public void desactivarCategoria(UUID idActor, UUID id) {
-        AsegurarActorPuedeGestionarCategoriasRule.obtenerInstancia().ejecutar(idActor, daoFactory);
+        asegurarActorGestionaCategorias(idActor);
         AsegurarCategoriaExisteRule.obtenerInstancia().ejecutar(id, daoFactory);
 
         var categoria = consultarCategoria(id);
@@ -105,9 +108,14 @@ public class CategoriaNegocioImpl implements CategoriaNegocio {
 
     @Override
     public List<CategoriaDominio> consultarTodas(UUID idActor) {
-        AsegurarActorPuedeGestionarCategoriasRule.obtenerInstancia().ejecutar(idActor, daoFactory);
+        asegurarActorGestionaCategorias(idActor);
         var categoriasEncontradas = daoFactory.obtenerCategoriaDAO().consultarTodos();
         return CategoriaEntidadAssembler.getInstance().convertirADominio(categoriasEncontradas);
+    }
+
+    private void asegurarActorGestionaCategorias(UUID idActor) {
+        AsegurarActorTieneRolRule.obtenerInstancia().ejecutar(idActor, daoFactory, ROLES_GESTORES_CATEGORIAS,
+                CatalogoMensajes.CategoriaNegocioImpl.ACTOR_NO_PUEDE_GESTIONAR_CATEGORIAS);
     }
 
     private UUID generarIdCategoriaUnico() {

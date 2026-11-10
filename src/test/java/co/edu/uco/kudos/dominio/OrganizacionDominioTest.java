@@ -115,8 +115,6 @@ class OrganizacionDominioTest {
         assertTrue(Rol.RECTOR.puedeModerar());
         assertTrue(Rol.COORDINADOR_ACADEMICO.puedeModerar());
         assertFalse(Rol.ADMINISTRADOR.puedeModerar());
-        assertTrue(Rol.ADMINISTRADOR.puedeGestionarCategorias());
-        assertFalse(Rol.DOCENTE.puedeGestionarCategorias());
         assertFalse(Rol.RECTOR.esAutorregistrable());
         assertTrue(Rol.ESTUDIANTE.esAutorregistrable());
     }

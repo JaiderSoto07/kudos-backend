@@ -1,5 +1,6 @@
 package co.edu.uco.kudos.transversal;
 
+import co.edu.uco.kudos.transversal.excepciones.KudosAutorizacionExcepcion;
 import co.edu.uco.kudos.transversal.excepciones.KudosControladorExcepcion;
 import co.edu.uco.kudos.transversal.excepciones.KudosDatosExcepcion;
 import co.edu.uco.kudos.transversal.excepciones.KudosDominioExcepcion;
@@ -42,6 +43,7 @@ class ExcepcionesTest {
         verificar(Capa.CONTROLADOR, KudosControladorExcepcion.crear(USUARIO), KudosControladorExcepcion.crear(USUARIO, TECNICO), KudosControladorExcepcion.crear(USUARIO, TECNICO, RAIZ));
         verificar(Capa.FACHADA, KudosFachadaExcepcion.crear(USUARIO), KudosFachadaExcepcion.crear(USUARIO, TECNICO), KudosFachadaExcepcion.crear(USUARIO, TECNICO, RAIZ));
         verificar(Capa.NEGOCIO, KudosNegocioExcepcion.crear(USUARIO), KudosNegocioExcepcion.crear(USUARIO, TECNICO), KudosNegocioExcepcion.crear(USUARIO, TECNICO, RAIZ));
+        verificar(Capa.NEGOCIO, KudosAutorizacionExcepcion.crear(USUARIO), KudosAutorizacionExcepcion.crear(USUARIO, TECNICO), KudosAutorizacionExcepcion.crear(USUARIO, TECNICO, RAIZ));
         verificar(Capa.DOMINIO, KudosDominioExcepcion.crear(USUARIO), KudosDominioExcepcion.crear(USUARIO, TECNICO), KudosDominioExcepcion.crear(USUARIO, TECNICO, RAIZ));
         verificar(Capa.DATOS, KudosDatosExcepcion.crear(USUARIO), KudosDatosExcepcion.crear(USUARIO, TECNICO), KudosDatosExcepcion.crear(USUARIO, TECNICO, RAIZ));
         verificar(Capa.ENTIDAD, KudosEntidadExcepcion.crear(USUARIO), KudosEntidadExcepcion.crear(USUARIO, TECNICO), KudosEntidadExcepcion.crear(USUARIO, TECNICO, RAIZ));

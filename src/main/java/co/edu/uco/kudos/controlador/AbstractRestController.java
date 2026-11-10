@@ -2,6 +2,7 @@ package co.edu.uco.kudos.controlador;
 
 import co.edu.uco.kudos.controlador.respuesta.RespuestaError;
 import co.edu.uco.kudos.transversal.catalogo.CatalogoMensajes;
+import co.edu.uco.kudos.transversal.excepciones.KudosAutorizacionExcepcion;
 import co.edu.uco.kudos.transversal.excepciones.KudosExcepcion;
 import co.edu.uco.kudos.transversal.utilitario.UtilTexto;
 import org.slf4j.Logger;
@@ -22,6 +23,13 @@ public abstract class AbstractRestController {
         LOGGER.warn("Capa: {} - Mensaje técnico: {}", excepcion.getCapa(), excepcion.getMensajeTecnico(), excepcion.getExcepcionRaiz());
         var respuesta = RespuestaError.crear(excepcion.getMensajeUsuario());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(respuesta);
+    }
+
+    @ExceptionHandler(KudosAutorizacionExcepcion.class)
+    public ResponseEntity<RespuestaError<String>> controlarKudosAutorizacionExcepcion(KudosAutorizacionExcepcion excepcion) {
+        LOGGER.warn("Acceso no autorizado - Mensaje técnico: {}", excepcion.getMensajeTecnico());
+        var respuesta = RespuestaError.crear(excepcion.getMensajeUsuario());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(respuesta);
     }
 
     @ExceptionHandler(NoResourceFoundException.class)

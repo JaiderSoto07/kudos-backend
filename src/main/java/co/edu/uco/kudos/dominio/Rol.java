@@ -24,10 +24,6 @@ public enum Rol {
         return this == RECTOR || this == COORDINADOR_ACADEMICO;
     }
 
-    public boolean puedeGestionarCategorias() {
-        return this == ADMINISTRADOR || this == RECTOR || this == COORDINADOR_ACADEMICO;
-    }
-
     public boolean esAutorregistrable() {
         return this != ADMINISTRADOR && this != RECTOR;
     }

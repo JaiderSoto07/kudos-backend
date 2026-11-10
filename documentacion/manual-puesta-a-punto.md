@@ -206,13 +206,14 @@ basedatos.usuario=kudosUser
 basedatos.clave=<su clave>
 ```
 
-Este archivo **no se sube al repositorio**, igual que en Sigma, porque contiene la clave. El repositorio trae la plantilla `basedatos.properties.ejemplo`, que puede copiar y completar:
+Este archivo **no se sube al repositorio**, igual que en Sigma, porque contiene la clave. Para crearlo con el Bloc de notas:
 
 ```powershell
 Set-Location C:\UCOKudos\kudos-backend\src\main\resources
-Copy-Item basedatos.properties.ejemplo basedatos.properties
 notepad basedatos.properties
 ```
+
+El Bloc de notas pregunta si desea crear el archivo: responda **Sí**, pegue las tres líneas de arriba con su clave y guarde.
 
 | Propiedad | Qué es |
 |---|---|
@@ -220,7 +221,36 @@ notepad basedatos.properties
 | `basedatos.usuario` | Usuario creado por `crear-usuario-kudos.sql` |
 | `basedatos.clave` | La clave del paso 1 de la §2.2 |
 
-### 3.2 Front-end
+### 3.2 Inicio de sesión con Google
+
+La plataforma usa Google para saber quién es la persona, igual que Sigma. La cuenta, su aprobación y su rol los decide la base de datos de UCO Kudos.
+
+1. En [Google Cloud Console](https://console.cloud.google.com/) cree un proyecto (o use uno existente).
+2. En **APIs y servicios → Pantalla de consentimiento de OAuth**, configure la aplicación como **Externa**. Mientras esté en modo **Prueba**, agregue como **usuarios de prueba** las cuentas de Google con las que se va a ingresar.
+3. En **APIs y servicios → Credenciales → Crear credenciales → ID de cliente de OAuth**, elija **Aplicación web** y en **URI de redireccionamiento autorizados** agregue exactamente:
+
+   ```
+   http://localhost:8080/login/oauth2/code/google
+   ```
+
+4. Copie el **ID de cliente** y el **Secreto del cliente** y cree el archivo `C:\UCOKudos\kudos-backend\src\main\resources\oauth.properties`:
+
+   ```powershell
+   Set-Location C:\UCOKudos\kudos-backend\src\main\resources
+   notepad oauth.properties
+   ```
+
+   ```properties
+   spring.security.oauth2.client.registration.google.client-id=<su id de cliente>
+   spring.security.oauth2.client.registration.google.client-secret=<su secreto>
+   spring.security.oauth2.client.registration.google.scope=openid,profile,email
+   ```
+
+Este archivo tampoco se sube al repositorio. Si el back-end corre en otro puerto (§4), la URI de redireccionamiento del paso 3 debe usar ese mismo puerto.
+
+**Verificación:** con el back-end en ejecución (§5), abra `http://localhost:8080/oauth2/authorization/google` en el navegador: debe aparecer la pantalla de Google para elegir la cuenta.
+
+### 3.3 Front-end
 
 No requiere configuración. En desarrollo, Vite redirige todas las peticiones `/api` hacia el back-end (*proxy*), así que no hace falta configurar CORS. Si el back-end corre en otra dirección, use la variable `VITE_API_PROXY` (§4).
 

@@ -10,8 +10,6 @@ Este documento reúne **todas** las reglas de negocio del enunciado (DOC-003) y 
 
 La columna **Dónde se garantiza** enlaza la política del modelo enriquecido (`P-XXX-nnn`) que protege la regla, en la página del objeto responsable. Cuando ninguna política cita la regla de forma directa, se indica *en cursiva* el objeto y el mecanismo que la cubren. La columna **Decisión / requisito** muestra la decisión de diseño (D-xx) y los requisitos (RF) relacionados.
 
-> Generado con `herramientas/generar_reglas.py` a partir del enunciado y de las páginas de objetos. Si cambia el modelo, se vuelve a generar.
-
 ## Resumen
 
 | Tipo | Cantidad | Fuente |

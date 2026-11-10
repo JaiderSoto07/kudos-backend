@@ -6,6 +6,7 @@ import co.edu.uco.kudos.negocio.falsos.DAOFactoryFalsa;
 import co.edu.uco.kudos.negocio.negocio.CategoriaNegocio;
 import co.edu.uco.kudos.negocio.negocio.impl.CategoriaNegocioImpl;
 import co.edu.uco.kudos.transversal.catalogo.CatalogoMensajes;
+import co.edu.uco.kudos.transversal.excepciones.KudosAutorizacionExcepcion;
 import co.edu.uco.kudos.transversal.excepciones.KudosExcepcion;
 import co.edu.uco.kudos.transversal.excepciones.enums.Capa;
 import co.edu.uco.kudos.transversal.utilitario.UtilId;
@@ -82,6 +83,7 @@ class CategoriaNegocioTest {
         var idActor = daoFactory.registrarUsuarioConRol(rol);
         var nuevaCategoria = datos(NOMBRE, DESCRIPCION);
 
+        assertThrows(KudosAutorizacionExcepcion.class, () -> negocio.registrarNuevaCategoria(idActor, nuevaCategoria));
         assertRechazo(CatalogoMensajes.CategoriaNegocioImpl.ACTOR_NO_PUEDE_GESTIONAR_CATEGORIAS,
                 () -> negocio.registrarNuevaCategoria(idActor, nuevaCategoria));
         assertTrue(daoFactory.getCategoriaDAOFalso().getCategorias().isEmpty());
