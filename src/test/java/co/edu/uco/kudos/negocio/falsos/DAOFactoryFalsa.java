@@ -18,8 +18,12 @@ import co.edu.uco.kudos.dao.datos.entidad.UsuarioDAO;
 import co.edu.uco.kudos.dao.datos.entidad.VinculacionProgramaDAO;
 import co.edu.uco.kudos.dao.factoria.DAOFactory;
 import co.edu.uco.kudos.dominio.EstadoCuenta;
+import co.edu.uco.kudos.dominio.EstadoFacultad;
 import co.edu.uco.kudos.dominio.Rol;
 import co.edu.uco.kudos.entidad.AsignacionRolEntidad;
+import co.edu.uco.kudos.entidad.FacultadEntidad;
+import co.edu.uco.kudos.entidad.ParametroGlobalEntidad;
+import co.edu.uco.kudos.entidad.ProgramaAcademicoEntidad;
 import co.edu.uco.kudos.entidad.UsuarioEntidad;
 import co.edu.uco.kudos.transversal.utilitario.UtilFecha;
 import co.edu.uco.kudos.transversal.utilitario.UtilId;
@@ -33,6 +37,12 @@ public class DAOFactoryFalsa extends DAOFactory {
     private final AsignacionRolDAOFalso asignacionRolDAO = new AsignacionRolDAOFalso();
     private final AuditoriaDAOFalso auditoriaDAO = new AuditoriaDAOFalso();
     private final UsuarioDAOFalso usuarioDAO = new UsuarioDAOFalso();
+    private final ParametroGlobalDAOFalso parametroGlobalDAO = new ParametroGlobalDAOFalso();
+    private final FacultadDAOFalso facultadDAO = new FacultadDAOFalso();
+    private final ProgramaAcademicoDAOFalso programaAcademicoDAO = new ProgramaAcademicoDAOFalso();
+    private final SolicitudRegistroDAOFalso solicitudRegistroDAO = new SolicitudRegistroDAOFalso();
+    private final CodigoVerificacionDAOFalso codigoVerificacionDAO = new CodigoVerificacionDAOFalso();
+    private final NotificacionDAOFalso notificacionDAO = new NotificacionDAOFalso();
 
     @Override
     protected void abrirConexion() {
@@ -73,8 +83,66 @@ public class DAOFactoryFalsa extends DAOFactory {
         return idUsuario;
     }
 
+    public UUID registrarUsuarioConContacto(String correo, String celular) {
+        var idUsuario = UtilId.generarId();
+        usuarioDAO.crear(new UsuarioEntidad.Builder()
+                .id(idUsuario)
+                .nombres("Ana")
+                .apellidos("Pérez")
+                .correoInstitucional(correo)
+                .numeroCelular(celular)
+                .estadoCuenta(EstadoCuenta.ACTIVA.name())
+                .build());
+        return idUsuario;
+    }
+
+    public void registrarParametro(String clave, String valor) {
+        parametroGlobalDAO.crear(new ParametroGlobalEntidad.Builder()
+                .id(UtilId.generarId())
+                .clave(clave)
+                .valor(valor)
+                .tipoDato(valor.matches("[0-9]+") ? "ENTERO" : "TEXTO")
+                .build());
+    }
+
+    public UUID registrarFacultad(EstadoFacultad estado) {
+        var idFacultad = UtilId.generarId();
+        facultadDAO.crear(new FacultadEntidad.Builder()
+                .id(idFacultad)
+                .nombre("Facultad de Ingeniería")
+                .estado(estado.name())
+                .build());
+        return idFacultad;
+    }
+
+    public UUID registrarPrograma(boolean activo) {
+        var idPrograma = UtilId.generarId();
+        programaAcademicoDAO.crear(new ProgramaAcademicoEntidad.Builder()
+                .id(idPrograma)
+                .nombre("Ingeniería de Sistemas")
+                .activo(activo)
+                .build());
+        return idPrograma;
+    }
+
     public CategoriaDAOFalso getCategoriaDAOFalso() {
         return categoriaDAO;
+    }
+
+    public UsuarioDAOFalso getUsuarioDAOFalso() {
+        return usuarioDAO;
+    }
+
+    public SolicitudRegistroDAOFalso getSolicitudRegistroDAOFalso() {
+        return solicitudRegistroDAO;
+    }
+
+    public CodigoVerificacionDAOFalso getCodigoVerificacionDAOFalso() {
+        return codigoVerificacionDAO;
+    }
+
+    public NotificacionDAOFalso getNotificacionDAOFalso() {
+        return notificacionDAO;
     }
 
     public AuditoriaDAOFalso getAuditoriaDAOFalso() {
@@ -103,27 +171,27 @@ public class DAOFactoryFalsa extends DAOFactory {
 
     @Override
     public ParametroGlobalDAO obtenerParametroGlobalDAO() {
-        return null;
+        return parametroGlobalDAO;
     }
 
     @Override
     public FacultadDAO obtenerFacultadDAO() {
-        return null;
+        return facultadDAO;
     }
 
     @Override
     public ProgramaAcademicoDAO obtenerProgramaAcademicoDAO() {
-        return null;
+        return programaAcademicoDAO;
     }
 
     @Override
     public CodigoVerificacionDAO obtenerCodigoVerificacionDAO() {
-        return null;
+        return codigoVerificacionDAO;
     }
 
     @Override
     public SolicitudRegistroDAO obtenerSolicitudRegistroDAO() {
-        return null;
+        return solicitudRegistroDAO;
     }
 
     @Override
@@ -158,6 +226,6 @@ public class DAOFactoryFalsa extends DAOFactory {
 
     @Override
     public NotificacionDAO obtenerNotificacionDAO() {
-        return null;
+        return notificacionDAO;
     }
 }

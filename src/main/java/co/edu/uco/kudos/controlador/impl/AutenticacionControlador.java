@@ -21,6 +21,10 @@ public class AutenticacionControlador extends AbstractRestController {
     @GetMapping
     public ResponseEntity<RespuestaOk<UsuarioDto>> consultarUsuarioActual(@AuthenticationPrincipal OidcUser datosUsuario) {
         var usuario = fachada.consultarUsuarioActual(datosUsuario.getEmail());
+        if (!usuario.isRegistrado()) {
+            usuario.setNombres(datosUsuario.getGivenName());
+            usuario.setApellidos(datosUsuario.getFamilyName());
+        }
         return ResponseEntity.ok(RespuestaOk.crear(usuario));
     }
 }

@@ -23,9 +23,31 @@ public class AutenticacionFachadaImpl implements AutenticacionFachada {
         var daoFactory = DAOFactory.obtenerFactoria();
         var autenticacionNegocio = new AutenticacionNegocioImpl(daoFactory);
 
+        daoFactory.iniciarTransaccion();
         try {
             var usuario = autenticacionNegocio.consultarUsuarioPorCorreo(correo);
+            autenticacionNegocio.confirmarCorreoVerificadoPorGoogle(usuario);
+            daoFactory.confirmarTransaccion();
             return armarUsuarioActual(usuario, correo, autenticacionNegocio);
+        } catch (KudosExcepcion excepcion) {
+            daoFactory.cancelarTransaccion();
+            throw excepcion;
+        } catch (Exception excepcion) {
+            daoFactory.cancelarTransaccion();
+            var mensajeUsuario = CatalogoMensajes.AutenticacionFachadaImpl.USUARIO_ERROR_PROBLEMA_INESPERADO_CONSULTANDO_USUARIO_ACTUAL;
+            throw KudosFachadaExcepcion.crear(mensajeUsuario, excepcion.getMessage(), excepcion);
+        } finally {
+            daoFactory.cerrarConexion();
+        }
+    }
+
+    @Override
+    public UUID obtenerIdUsuarioRegistrado(String correo) {
+        var daoFactory = DAOFactory.obtenerFactoria();
+        var autenticacionNegocio = new AutenticacionNegocioImpl(daoFactory);
+
+        try {
+            return autenticacionNegocio.obtenerIdUsuarioRegistrado(correo);
         } catch (KudosExcepcion excepcion) {
             throw excepcion;
         } catch (Exception excepcion) {

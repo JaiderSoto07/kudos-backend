@@ -4,7 +4,6 @@ import co.edu.uco.kudos.transversal.utilitario.UtilFecha;
 import co.edu.uco.kudos.transversal.utilitario.UtilId;
 import co.edu.uco.kudos.transversal.utilitario.UtilNumero;
 import co.edu.uco.kudos.transversal.utilitario.UtilObjeto;
-import co.edu.uco.kudos.transversal.utilitario.UtilTexto;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

@@ -9,4 +9,6 @@ public interface AutenticacionFachada {
     UsuarioDto consultarUsuarioActual(String correo);
 
     UUID obtenerIdActorActivo(String correo);
+
+    UUID obtenerIdUsuarioRegistrado(String correo);
 }

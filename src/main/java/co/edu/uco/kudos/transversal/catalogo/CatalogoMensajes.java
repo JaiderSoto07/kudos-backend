@@ -407,6 +407,68 @@ public final class CatalogoMensajes {
         public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_CONSULTANDO_USUARIO_ACTUAL = "Se presentó un problema inesperado consultando la información de tu cuenta." + INTENTE_DE_NUEVO;
     }
 
+    public static final class Identidad {
+
+        private Identidad() {
+        }
+
+        public static final String CORREO_OBLIGATORIO = "El correo institucional es obligatorio. Por favor ingresa tu correo e intenta de nuevo.";
+        public static final String CORREO_FORMATO_INVALIDO = "El correo institucional no tiene un formato válido. Por favor revísalo e intenta de nuevo.";
+        public static final String CORREO_DOMINIO_NO_PERMITIDO = "El correo debe pertenecer a un dominio institucional permitido (%s). Por favor usa tu correo institucional.";
+        public static final String CORREO_YA_REGISTRADO = "Ya existe una cuenta registrada con ese correo. Si es tuyo, ingresa con él en lugar de registrarte de nuevo.";
+        public static final String CELULAR_OBLIGATORIO = "El número celular es obligatorio. Por favor ingresa tu celular e intenta de nuevo.";
+        public static final String CELULAR_FORMATO_INVALIDO = "El número celular debe ser colombiano: 10 dígitos que empiezan por 3, sin espacios ni signos. Por favor corrígelo e intenta de nuevo.";
+        public static final String CELULAR_YA_REGISTRADO = "Ya existe una cuenta registrada con ese número celular. Por favor usa otro número.";
+        public static final String NOMBRES_OBLIGATORIOS = "Los nombres son obligatorios. Por favor ingrésalos e intenta de nuevo.";
+        public static final String NOMBRES_LONGITUD_INVALIDA = "Los nombres pueden tener máximo 60 caracteres. Por favor corrígelos e intenta de nuevo.";
+        public static final String APELLIDOS_OBLIGATORIOS = "Los apellidos son obligatorios. Por favor ingrésalos e intenta de nuevo.";
+        public static final String APELLIDOS_LONGITUD_INVALIDA = "Los apellidos pueden tener máximo 60 caracteres. Por favor corrígelos e intenta de nuevo.";
+        public static final String ROL_OBLIGATORIO = "Debes elegir el rol que solicitas. Por favor elige uno e intenta de nuevo.";
+        public static final String ROL_NO_VALIDO = "El rol solicitado no existe. Por favor elige uno de los roles de la lista.";
+        public static final String ROL_NO_AUTORREGISTRABLE = "El Rector y el Administrador no se pueden autorregistrar: los registra un Administrador. Por favor elige otro rol.";
+        public static final String PROGRAMA_OBLIGATORIO = "Para el rol que solicitas debes elegir un Programa académico. Por favor elige uno e intenta de nuevo.";
+        public static final String PROGRAMA_NO_EXISTE = "El Programa académico elegido no existe. Por favor elige otro e intenta de nuevo.";
+        public static final String PROGRAMA_INACTIVO = "El Programa académico elegido está inactivo y no recibe solicitudes. Por favor elige otro.";
+        public static final String FACULTAD_OBLIGATORIA = "Para el rol de Coordinador de Facultad debes elegir una Facultad. Por favor elige una e intenta de nuevo.";
+        public static final String FACULTAD_NO_EXISTE = "La Facultad elegida no existe. Por favor elige otra e intenta de nuevo.";
+        public static final String FACULTAD_NO_ADMITE_COORDINADOR = "La Facultad elegida no está activa, así que todavía no puede tener Coordinador. Por favor elige otra.";
+        public static final String CODIGO_NO_SOLICITADO = "No tienes un código de verificación pendiente. Por favor solicita un código nuevo.";
+        public static final String CODIGO_YA_USADO = "Este código ya fue usado. Por favor solicita un código nuevo.";
+        public static final String CODIGO_VENCIDO = "El código de verificación ya venció. Por favor solicita un código nuevo.";
+        public static final String CODIGO_INTENTOS_AGOTADOS = "Superaste el número de intentos permitidos para este código. Por favor solicita un código nuevo.";
+        public static final String CODIGO_INCORRECTO = "El código no es correcto. Revisa el último código que te enviamos e intenta de nuevo.";
+        public static final String CELULAR_YA_VERIFICADO = "Tu celular ya está verificado, así que no necesitas un código nuevo.";
+        public static final String CELULAR_IGUAL_AL_ACTUAL = "El número celular nuevo es igual al que ya tienes registrado. Por favor escribe un número diferente.";
+        public static final String CORREO_IGUAL_AL_ACTUAL = "El correo nuevo es igual al que ya tienes registrado. Por favor escribe un correo diferente.";
+        public static final String MENSAJE_CODIGO_VERIFICACION = "Tu código de verificación de UCO Kudos es %s. Vence en %d minutos.";
+    }
+
+    public static final class IdentidadFachada {
+
+        private IdentidadFachada() {
+        }
+
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_REGISTRANDO = "Se presentó un problema inesperado registrando tu solicitud de cuenta." + INTENTE_DE_NUEVO;
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_CONSULTANDO_OPCIONES = "Se presentó un problema inesperado consultando las Facultades y los Programas disponibles." + INTENTE_DE_NUEVO;
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_VERIFICANDO = "Se presentó un problema inesperado verificando tu código." + INTENTE_DE_NUEVO;
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_ENVIANDO_CODIGO = "Se presentó un problema inesperado enviando tu código de verificación." + INTENTE_DE_NUEVO;
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_CONSULTANDO_CUENTA = "Se presentó un problema inesperado consultando la información de tu cuenta." + INTENTE_DE_NUEVO;
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_ACTUALIZANDO_CUENTA = "Se presentó un problema inesperado actualizando la información de tu cuenta." + INTENTE_DE_NUEVO;
+    }
+
+    public static final class IdentidadControlador {
+
+        private IdentidadControlador() {
+        }
+
+        public static final String SOLICITUD_REGISTRADA = "Tu solicitud de cuenta quedó enviada. Te enviamos un código para verificar tu celular.";
+        public static final String CELULAR_VERIFICADO = "Tu celular quedó verificado.";
+        public static final String CODIGO_REENVIADO = "Te enviamos un código nuevo. Los códigos anteriores ya no sirven.";
+        public static final String DATOS_PERSONALES_ACTUALIZADOS = "Tus nombres y apellidos quedaron actualizados.";
+        public static final String CELULAR_CAMBIADO = "Tu celular quedó actualizado. Te enviamos un código para verificarlo.";
+        public static final String CORREO_CAMBIADO = "Tu correo quedó actualizado. Para verificarlo, cierra sesión y entra con Google usando el correo nuevo.";
+    }
+
     public static final class AbstractRestController {
 
         private AbstractRestController() {

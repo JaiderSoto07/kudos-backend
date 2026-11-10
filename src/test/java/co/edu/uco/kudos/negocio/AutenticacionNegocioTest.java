@@ -2,6 +2,7 @@ package co.edu.uco.kudos.negocio;
 
 import co.edu.uco.kudos.dominio.EstadoCuenta;
 import co.edu.uco.kudos.dominio.Rol;
+import co.edu.uco.kudos.entidad.UsuarioEntidad;
 import co.edu.uco.kudos.negocio.falsos.DAOFactoryFalsa;
 import co.edu.uco.kudos.negocio.negocio.AutenticacionNegocio;
 import co.edu.uco.kudos.negocio.negocio.impl.AutenticacionNegocioImpl;
@@ -83,5 +84,38 @@ class AutenticacionNegocioTest {
 
         assertNull(negocio.consultarRolVigente(idRolCerrado));
         assertNull(negocio.consultarRolVigente(UtilId.generarId()));
+    }
+
+    @Test
+    @DisplayName("Una cuenta registrada pero no activa sí obtiene su id para registro, verificación y mi cuenta")
+    void usuarioRegistradoNoActivo() {
+        var idUsuario = daoFactory.registrarCuenta(CORREO, EstadoCuenta.PENDIENTE_APROBACION, Rol.ESTUDIANTE);
+
+        assertEquals(idUsuario, negocio.obtenerIdUsuarioRegistrado(CORREO));
+        assertThrows(KudosAutorizacionExcepcion.class, () -> negocio.obtenerIdUsuarioRegistrado("otra@gmail.com"));
+    }
+
+    @Test
+    @DisplayName("Entrar con Google con un correo sin verificar lo verifica y puede activar la cuenta (opción a de RF-010)")
+    void correoVerificadoPorGoogle() {
+        var idUsuario = UtilId.generarId();
+        daoFactory.getUsuarioDAOFalso().crear(new UsuarioEntidad.Builder()
+                .id(idUsuario)
+                .correoInstitucional(CORREO)
+                .correoVerificado(false)
+                .celularVerificado(true)
+                .aprobada(true)
+                .estadoCuenta(EstadoCuenta.PENDIENTE_VERIFICACION.name())
+                .build());
+
+        negocio.confirmarCorreoVerificadoPorGoogle(negocio.consultarUsuarioPorCorreo(CORREO));
+        negocio.confirmarCorreoVerificadoPorGoogle(negocio.consultarUsuarioPorCorreo(CORREO));
+        negocio.confirmarCorreoVerificadoPorGoogle(negocio.consultarUsuarioPorCorreo("otra@gmail.com"));
+
+        var usuario = daoFactory.getUsuarioDAOFalso().consultarPorId(idUsuario);
+        assertTrue(usuario.isCorreoVerificado());
+        assertEquals("ACTIVA", usuario.getEstadoCuenta());
+        assertEquals(1, daoFactory.getAuditoriaDAOFalso().getRegistros().size());
+        assertEquals("CorreoVerificado", daoFactory.getAuditoriaDAOFalso().getRegistros().getFirst().getAccion());
     }
 }

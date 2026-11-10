@@ -26,6 +26,10 @@ public abstract class AbstractRestController {
         return new AutenticacionFachadaImpl().obtenerIdActorActivo(datosUsuario.getEmail());
     }
 
+    protected UUID obtenerIdUsuarioRegistrado(OidcUser datosUsuario) {
+        return new AutenticacionFachadaImpl().obtenerIdUsuarioRegistrado(datosUsuario.getEmail());
+    }
+
     @ExceptionHandler(KudosExcepcion.class)
     public ResponseEntity<RespuestaError<String>> controlarKudosExcepcion(KudosExcepcion excepcion) {
         LOGGER.warn("Capa: {} - Mensaje técnico: {}", excepcion.getCapa(), excepcion.getMensajeTecnico(), excepcion.getExcepcionRaiz());

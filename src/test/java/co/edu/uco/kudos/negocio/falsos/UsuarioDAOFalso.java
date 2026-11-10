@@ -31,12 +31,16 @@ public class UsuarioDAOFalso implements UsuarioDAO {
     public List<UsuarioEntidad> consultarPorFiltro(UsuarioEntidad filtro) {
         var encontrados = new ArrayList<UsuarioEntidad>();
         for (var usuario : usuarios) {
-            if (UtilTexto.getUtilTexto().esVacia(filtro.getCorreoInstitucional())
-                    || usuario.getCorreoInstitucional().equals(filtro.getCorreoInstitucional())) {
+            if (coincide(filtro.getCorreoInstitucional(), usuario.getCorreoInstitucional())
+                    && coincide(filtro.getNumeroCelular(), usuario.getNumeroCelular())) {
                 encontrados.add(usuario);
             }
         }
         return encontrados;
+    }
+
+    private boolean coincide(String valorFiltro, String valorUsuario) {
+        return UtilTexto.getUtilTexto().esVacia(valorFiltro) || valorFiltro.equals(valorUsuario);
     }
 
     @Override

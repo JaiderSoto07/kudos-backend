@@ -12,4 +12,8 @@ public interface AutenticacionNegocio {
     Rol consultarRolVigente(UUID idUsuario);
 
     UUID obtenerIdActorActivo(String correo);
+
+    UUID obtenerIdUsuarioRegistrado(String correo);
+
+    void confirmarCorreoVerificadoPorGoogle(UsuarioDominio usuario);
 }
