@@ -17,6 +17,7 @@ import co.edu.uco.kudos.dao.datos.entidad.SolicitudRegistroDAO;
 import co.edu.uco.kudos.dao.datos.entidad.UsuarioDAO;
 import co.edu.uco.kudos.dao.datos.entidad.VinculacionProgramaDAO;
 import co.edu.uco.kudos.dao.factoria.DAOFactory;
+import co.edu.uco.kudos.dominio.EstadoCuenta;
 import co.edu.uco.kudos.dominio.Rol;
 import co.edu.uco.kudos.entidad.AsignacionRolEntidad;
 import co.edu.uco.kudos.entidad.UsuarioEntidad;
@@ -31,9 +32,25 @@ public class DAOFactoryFalsa extends DAOFactory {
     private final CategoriaDAOFalso categoriaDAO = new CategoriaDAOFalso();
     private final AsignacionRolDAOFalso asignacionRolDAO = new AsignacionRolDAOFalso();
     private final AuditoriaDAOFalso auditoriaDAO = new AuditoriaDAOFalso();
+    private final UsuarioDAOFalso usuarioDAO = new UsuarioDAOFalso();
 
     @Override
     protected void abrirConexion() {
+    }
+
+    public UUID registrarCuenta(String correo, EstadoCuenta estadoCuenta, Rol rol) {
+        var idUsuario = registrarUsuarioConRol(rol);
+        usuarioDAO.crear(new UsuarioEntidad.Builder()
+                .id(idUsuario)
+                .nombres("Ana")
+                .apellidos("Pérez")
+                .correoInstitucional(correo)
+                .correoVerificado(true)
+                .celularVerificado(estadoCuenta != EstadoCuenta.PENDIENTE_VERIFICACION)
+                .aprobada(estadoCuenta != EstadoCuenta.PENDIENTE_APROBACION)
+                .estadoCuenta(estadoCuenta.name())
+                .build());
+        return idUsuario;
     }
 
     public UUID registrarUsuarioConRol(Rol rol) {
@@ -81,7 +98,7 @@ public class DAOFactoryFalsa extends DAOFactory {
 
     @Override
     public UsuarioDAO obtenerUsuarioDAO() {
-        return null;
+        return usuarioDAO;
     }
 
     @Override

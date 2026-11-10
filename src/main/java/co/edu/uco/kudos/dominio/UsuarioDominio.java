@@ -66,6 +66,23 @@ public final class UsuarioDominio {
         return estadoCuenta == EstadoCuenta.ACTIVA;
     }
 
+    public String motivoParaNoIngresar() {
+        return switch (estadoCuenta) {
+            case ACTIVA -> UtilTexto.VACIO;
+            case PENDIENTE_APROBACION -> CatalogoMensajes.Dominio.CUENTA_PENDIENTE_APROBACION;
+            case PENDIENTE_VERIFICACION -> verificacionesPendientes();
+            case SUSPENDIDA -> CatalogoMensajes.Dominio.CUENTA_SUSPENDIDA;
+            case DESACTIVADA -> CatalogoMensajes.Dominio.CUENTA_DESACTIVADA;
+        };
+    }
+
+    private String verificacionesPendientes() {
+        if (!correoVerificado && !celularVerificado) {
+            return CatalogoMensajes.Dominio.CUENTA_FALTA_VERIFICAR_CORREO_Y_CELULAR;
+        }
+        return correoVerificado ? CatalogoMensajes.Dominio.CUENTA_FALTA_VERIFICAR_CELULAR : CatalogoMensajes.Dominio.CUENTA_FALTA_VERIFICAR_CORREO;
+    }
+
     public void actualizarDatosPersonales(String nuevosNombres, String nuevosApellidos) {
         nombres = UtilTexto.getUtilTexto().quitarEspaciosEnBlanco(nuevosNombres);
         apellidos = UtilTexto.getUtilTexto().quitarEspaciosEnBlanco(nuevosApellidos);

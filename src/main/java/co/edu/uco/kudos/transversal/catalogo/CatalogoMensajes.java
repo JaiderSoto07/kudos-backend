@@ -59,6 +59,12 @@ public final class CatalogoMensajes {
         public static final String USUARIO_YA_SUSPENDIDO_O_DESACTIVADO = "La cuenta ya está suspendida o desactivada.";
         public static final String USUARIO_NO_ESTA_SUSPENDIDO = "Solo se puede reactivar una cuenta suspendida.";
         public static final String USUARIO_YA_DESACTIVADO = "La cuenta ya está desactivada.";
+        public static final String CUENTA_PENDIENTE_APROBACION = "Tu cuenta está esperando la aprobación de la autoridad que te corresponde. Podrás ingresar cuando sea aprobada.";
+        public static final String CUENTA_FALTA_VERIFICAR_CORREO_Y_CELULAR = "Tu cuenta ya fue aprobada, pero aún debes verificar tu correo y tu celular con los códigos que te enviamos.";
+        public static final String CUENTA_FALTA_VERIFICAR_CORREO = "Tu cuenta ya fue aprobada, pero aún debes verificar tu correo con el código que te enviamos.";
+        public static final String CUENTA_FALTA_VERIFICAR_CELULAR = "Tu cuenta ya fue aprobada, pero aún debes verificar tu celular con el código que te enviamos.";
+        public static final String CUENTA_SUSPENDIDA = "Tu cuenta está suspendida. Comunícate con la autoridad que gestiona tu cuenta para reactivarla.";
+        public static final String CUENTA_DESACTIVADA = "Tu cuenta está desactivada y no puede ingresar a la plataforma.";
         public static final String PARAMETRO_NO_ES_ENTERO = "El parámetro es de tipo entero: su valor debe ser un número entero sin signos.";
         public static final String FACULTAD_YA_INACTIVA = "La Facultad ya está inactiva.";
         public static final String PROGRAMA_YA_INACTIVO = "El programa ya está inactivo.";
@@ -372,6 +378,33 @@ public final class CatalogoMensajes {
         public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_ACTIVANDO_CATEGORIA = "Se presentó un problema inesperado activando la categoría." + INTENTE_DE_NUEVO;
         public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_DESACTIVANDO_CATEGORIA = "Se presentó un problema inesperado desactivando la categoría." + INTENTE_DE_NUEVO;
         public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_CONSULTANDO_CATEGORIAS = "Se presentó un problema inesperado consultando las categorías." + INTENTE_DE_NUEVO;
+    }
+
+    public static final class CategoriaControlador {
+
+        private CategoriaControlador() {
+        }
+
+        public static final String CATEGORIA_REGISTRADA = "La categoría se registró exitosamente.";
+        public static final String CATEGORIA_MODIFICADA = "La categoría se modificó exitosamente.";
+        public static final String CATEGORIA_ACTIVADA = "La categoría se activó exitosamente.";
+        public static final String CATEGORIA_DESACTIVADA = "La categoría se desactivó exitosamente.";
+    }
+
+    public static final class AutenticacionNegocioImpl {
+
+        private AutenticacionNegocioImpl() {
+        }
+
+        public static final String USUARIO_NO_REGISTRADO = "Aún no tienes una cuenta en UCO Kudos con este correo. Regístrate para solicitar tu cuenta.";
+    }
+
+    public static final class AutenticacionFachadaImpl {
+
+        private AutenticacionFachadaImpl() {
+        }
+
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_CONSULTANDO_USUARIO_ACTUAL = "Se presentó un problema inesperado consultando la información de tu cuenta." + INTENTE_DE_NUEVO;
     }
 
     public static final class AbstractRestController {

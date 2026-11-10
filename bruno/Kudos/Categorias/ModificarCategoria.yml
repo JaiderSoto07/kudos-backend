@@ -1,0 +1,23 @@
+info:
+  name: ModificarCategoria
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: "{{baseUrl}}/categorias/{{idCategoria}}"
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Liderazgo",
+        "descripcion": "Reconoce a quien inspira y guía a otros con el ejemplo."
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

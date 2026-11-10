@@ -1,5 +1,6 @@
 package co.edu.uco.kudos.dominio;
 
+import co.edu.uco.kudos.transversal.catalogo.CatalogoMensajes;
 import co.edu.uco.kudos.transversal.excepciones.KudosExcepcion;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -145,5 +146,32 @@ class UsuarioDominioTest {
         var usuario = new UsuarioDominio.Builder().nombres(null).build();
         assertEquals("", usuario.getNombres());
         assertEquals(EstadoCuenta.PENDIENTE_APROBACION, usuario.getEstadoCuenta());
+    }
+
+    @Test
+    @DisplayName("La cuenta dice qué le falta para ingresar según su estado (RN-089, P-USU-017)")
+    void motivoParaNoIngresar() {
+        var pendiente = usuarioNuevo();
+        assertEquals(CatalogoMensajes.Dominio.CUENTA_PENDIENTE_APROBACION, pendiente.motivoParaNoIngresar());
+
+        pendiente.aprobar();
+        assertEquals(CatalogoMensajes.Dominio.CUENTA_FALTA_VERIFICAR_CORREO_Y_CELULAR, pendiente.motivoParaNoIngresar());
+
+        pendiente.verificarCelular();
+        assertEquals(CatalogoMensajes.Dominio.CUENTA_FALTA_VERIFICAR_CORREO, pendiente.motivoParaNoIngresar());
+
+        var faltaCelular = usuarioNuevo();
+        faltaCelular.aprobar();
+        faltaCelular.verificarCorreo();
+        assertEquals(CatalogoMensajes.Dominio.CUENTA_FALTA_VERIFICAR_CELULAR, faltaCelular.motivoParaNoIngresar());
+
+        var activo = usuarioActivo();
+        assertEquals("", activo.motivoParaNoIngresar());
+
+        activo.suspender();
+        assertEquals(CatalogoMensajes.Dominio.CUENTA_SUSPENDIDA, activo.motivoParaNoIngresar());
+
+        activo.desactivar();
+        assertEquals(CatalogoMensajes.Dominio.CUENTA_DESACTIVADA, activo.motivoParaNoIngresar());
     }
 }

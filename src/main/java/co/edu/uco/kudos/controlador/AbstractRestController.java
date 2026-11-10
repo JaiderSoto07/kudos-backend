@@ -1,6 +1,7 @@
 package co.edu.uco.kudos.controlador;
 
 import co.edu.uco.kudos.controlador.respuesta.RespuestaError;
+import co.edu.uco.kudos.negocio.fachada.impl.AutenticacionFachadaImpl;
 import co.edu.uco.kudos.transversal.catalogo.CatalogoMensajes;
 import co.edu.uco.kudos.transversal.excepciones.KudosAutorizacionExcepcion;
 import co.edu.uco.kudos.transversal.excepciones.KudosExcepcion;
@@ -9,14 +10,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+
+import java.util.UUID;
 
 @RestControllerAdvice
 public abstract class AbstractRestController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRestController.class);
+
+    protected UUID obtenerIdActor(OidcUser datosUsuario) {
+        return new AutenticacionFachadaImpl().obtenerIdActorActivo(datosUsuario.getEmail());
+    }
 
     @ExceptionHandler(KudosExcepcion.class)
     public ResponseEntity<RespuestaError<String>> controlarKudosExcepcion(KudosExcepcion excepcion) {

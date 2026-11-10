@@ -1,0 +1,23 @@
+info:
+  name: RegistrarNuevaCategoria
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{baseUrl}}/categorias"
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Innovación",
+        "descripcion": "Reconoce ideas nuevas que mejoran la vida universitaria."
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

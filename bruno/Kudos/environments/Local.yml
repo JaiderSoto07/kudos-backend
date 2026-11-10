@@ -2,6 +2,8 @@ name: Local
 variables:
   - name: baseUrl
     value: http://localhost:8080/api/v1
+  - name: idCategoria
+    value: 18FA1B97-BAC3-423C-AA01-D610D3150DD2
   - secret: true
     name: sesion
     description: ""
