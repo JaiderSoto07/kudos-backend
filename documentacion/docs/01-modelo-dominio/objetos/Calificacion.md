@@ -18,7 +18,7 @@
 | autor | Usuario que califica (RN-183) | [Usuario](Usuario.md) | Sí |
 | kudo | Kudo calificado | [Kudo](Kudo.md) | Condicional |
 | replica | Réplica calificada | [Replica](Replica.md) | Condicional |
-| estrellas | Valoración asignada (RN-177) | [Estrellas](../README.md#objetos-de-valor) | Sí |
+| estrellas | Valoración asignada (RN-177) | Entero | Sí |
 | fechaCalificacion | Fecha y hora en que se registró (RN-182) | FechaHora | Sí |
 | fechaModificacion | Fecha y hora del último cambio de estrellas (RN-237) | FechaHora | No |
 | activa | Indica si es la calificación activa del usuario para ese contenido | Lógico | Sí |
@@ -54,8 +54,8 @@ _4 registros de ejemplo. Los identificadores se abrevian (u-01, k-01…) para fa
 | **¿Qué conoce? (información que administra)** | Su autor, el contenido calificado, las estrellas, cuándo se registró, cuándo se modificó y si está activa. |
 | **¿Qué hace? (responsabilidades)** | • Calificar contenido<br>• Modificar calificación<br>• Consultar valoraciones |
 | **¿Qué decisiones toma?** | • Que apunta exactamente a un contenido.<br>• Que modificarla conserva el valor anterior para auditoría. |
-| **¿Qué decisiones delega?** | • La validación de la escala a Estrellas.<br>• La unicidad por persona y contenido a una regla de negocio.<br>• El recálculo del promedio a Kudo o Replica (a través del evento de calificación). |
-| **¿Con quién colabora?** | Usuario, Kudo, Replica, Estrellas |
+| **¿Qué decisiones delega?** | • La validación de la escala a la regla ValidarEstrellasRule.<br>• La unicidad por persona y contenido a una regla de negocio.<br>• El recálculo del promedio a Kudo o Replica (el negocio lo recalcula al calificar). |
+| **¿Con quién colabora?** | Usuario, Kudo, Replica |
 | **¿Qué eventos genera?** | • Calificación registrada<br>• Calificación actualizada<br>• Valoraciones consultadas |
 | **¿Qué invariantes protege?** | • INV-030: escala de 1 a 5.<br>• INV-031/INV-032: una calificación activa por persona y contenido. |
 
@@ -65,7 +65,7 @@ _4 registros de ejemplo. Los identificadores se abrevian (u-01, k-01…) para fa
 |---|---|---|---|---|---|---|---|---|
 | Descripción atributo | Identificador único de la calificación | Usuario que califica (RN-183) | Kudo calificado | Réplica calificada | Valoración asignada (RN-177) | Fecha y hora en que se registró (RN-182) | Fecha y hora del último cambio de estrellas (RN-237) | Indica si es la calificación activa del usuario para ese contenido |
 | Identificador del objeto de dominio | Sí | No | No | No | No | No | No | No |
-| Tipo de dato | UUID | Usuario | Kudo | Replica | Estrellas | FechaHora | FechaHora | Lógico |
+| Tipo de dato | UUID | Usuario | Kudo | Replica | Entero | FechaHora | FechaHora | Lógico |
 | Obligatorio | Sí | Sí | Condicional | Condicional | Sí | Sí | No | Sí |
 | Longitud mínima (si aplica) |  |  |  |  |  |  |  |  |
 | Longitud máxima (si aplica) |  |  |  |  |  |  |  |  |
@@ -96,12 +96,12 @@ _4 registros de ejemplo. Los identificadores se abrevian (u-01, k-01…) para fa
 |---|---|---|---|---|---|---|---|---|---|---|
 | **Calificar contenido** (`calificar()`) | Registra la valoración de un usuario sobre un Kudo o una réplica. | autor | Usuario | Quien califica. | Calificacion | Calificación activa. | P-CAL-001 | Asegurar que quien califica tenga cuenta ACTIVA. | El usuario no está activo. | Rechazar la calificación. |
 |  |  | contenido | Kudo o Replica | Contenido calificado. |  |  | P-CAL-002 | Asegurar que la calificación apunte exactamente a un Kudo o a una réplica. | No indica contenido o indica ambos. | Rechazar la calificación. |
-|  |  | estrellas | Estrellas | De 1 a 5. |  |  | P-CAL-003 | Asegurar que el contenido admita interacción (no esté vetado). | El contenido está vetado. | Rechazar la calificación. |
+|  |  | estrellas | int | De 1 a 5. |  |  | P-CAL-003 | Asegurar que el contenido admita interacción (no esté vetado). | El contenido está vetado. | Rechazar la calificación. |
 |  |  |  |  |  |  |  | P-CAL-004 | Asegurar que nadie califique su propio contenido. | El usuario es el autor del contenido. | Rechazar la calificación. |
 |  |  |  |  |  |  |  | P-CAL-005 | Asegurar que las estrellas sean un entero de 1 a 5. | El valor está fuera de la escala. | Rechazar la calificación. |
 |  |  |  |  |  |  |  | P-CAL-006 | Si el usuario ya tiene una calificación activa sobre el contenido, modificarla en lugar de crear otra. |  |  |
 |  |  |  |  |  |  |  | P-CAL-007 | Al registrar o modificar una calificación, recalcular el promedio y la cantidad del contenido. |  |  |
-| **Modificar calificación** (`modificarEstrellas()`) | Cambia las estrellas de la calificación activa del usuario. | estrellas | Estrellas | Nuevo valor. | Calificacion | Calificación modificada. | P-CAL-005 | Asegurar que las estrellas sean un entero de 1 a 5. | El valor está fuera de la escala. | Rechazar la calificación. |
+| **Modificar calificación** (`modificarEstrellas()`) | Cambia las estrellas de la calificación activa del usuario. | estrellas | int | Nuevo valor. | Calificacion | Calificación modificada. | P-CAL-005 | Asegurar que las estrellas sean un entero de 1 a 5. | El valor está fuera de la escala. | Rechazar la calificación. |
 |  |  |  |  |  |  |  | P-CAL-008 | Asegurar que solo el autor modifique su calificación activa y registrar el valor anterior y el nuevo. | La calificación no es del usuario o no está activa. | Rechazar la modificación. |
 |  |  |  |  |  |  |  | P-CAL-007 | Al registrar o modificar una calificación, recalcular el promedio y la cantidad del contenido. |  |  |
 | **Consultar valoraciones** (`consultarValoraciones()`) | Muestra el resumen de calificaciones de un contenido. | contenido | UUID | Kudo o réplica. | ResumenValoraciones | Promedio, cantidad, distribución y calificación propia. | P-CAL-009 | Las valoraciones muestran promedio, cantidad, distribución por estrellas y la calificación del propio usuario. |  |  |
@@ -130,8 +130,18 @@ _4 registros de ejemplo. Los identificadores se abrevian (u-01, k-01…) para fa
 | P-CAL-002 | Asegurar que la calificación apunte exactamente a un Kudo o a una réplica. | Calificacion | RN-184 |
 | P-CAL-003 | Asegurar que el contenido admita interacción (no esté vetado). | Kudo / Replica | P-KUD-018, P-RPL-014 |
 | P-CAL-004 | Asegurar que nadie califique su propio contenido. | Calificacion | D-23 |
-| P-CAL-005 | Asegurar que las estrellas sean un entero de 1 a 5. | Estrellas | RN-177, INV-030 |
+| P-CAL-005 | Asegurar que las estrellas sean un entero de 1 a 5. | ValidarEstrellasRule | RN-177, INV-030 |
 | P-CAL-006 | Si el usuario ya tiene una calificación activa sobre el contenido, modificarla en lugar de crear otra. | Calificacion | RN-178 a RN-181, INV-031, INV-032, P-CAL-008 |
 | P-CAL-007 | Al registrar o modificar una calificación, recalcular el promedio y la cantidad del contenido. | Kudo / Replica | RN-185, RN-238, P-KUD-017, P-RPL-013 |
 | P-CAL-008 | Asegurar que solo el autor modifique su calificación activa y registrar el valor anterior y el nuevo. | Calificacion | RN-237, D-23 |
 | P-CAL-009 | Las valoraciones muestran promedio, cantidad, distribución por estrellas y la calificación del propio usuario. | Calificacion | CU-009 |
+
+## En el código
+
+| Capa | Clase |
+|---|---|
+| Dominio (atributos y comportamiento) | `CalificacionDominio` (`co.edu.uco.kudos.dominio`) |
+| Entidad (tabla) | `CalificacionEntidad` |
+| DAO | `CalificacionDAO` + implementación SQL Server |
+| DTO (API) | CalificacionDto, ValoracionesDto |
+| Negocio | CalificacionNegocioImpl |

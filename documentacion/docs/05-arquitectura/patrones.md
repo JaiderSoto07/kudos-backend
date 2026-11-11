@@ -1,233 +1,165 @@
 # Patrones utilizados
 
-[Inicio](../../README.md) · [Arquitectura](README.md) · [Diagrama de clases](../02-diagrama-clases/README.md) · [Diagramas de comportamiento](../06-diagramas-comportamiento/README.md)
+[Inicio](../../README.md) · [Arquitectura](README.md) · [API REST](api-rest.md) · [Diagrama de clases](../02-diagrama-clases/README.md)
 
-El enunciado no evalúa la cantidad de patrones, sino que cada uno **resuelva un problema identificado** y esté justificado (ARQ-058 a ARQ-061). Por eso cada patrón se presenta con el problema concreto de UCO Kudos que lo motivó y con la alternativa que se descartó. Al final están los patrones evaluados que **no** se usaron, y por qué.
+Sección 13 del contenido mínimo. Aquí están **solo los patrones que existen en el código**, cada uno con el problema concreto que resuelve, dónde está y por qué se eligió (ARQ-017 a ARQ-021: "los patrones deben justificarse; no se aceptan por moda"). Al final están los patrones que se **evaluaron y descartaron**, con la razón.
 
-| # | Patrón | Problema que resuelve | Dónde |
+| # | Patrón | Problema que resuelve | Dónde está |
 |---|---|---|---|
-| 1 | State | El ciclo de vida del contenido tiene reglas distintas en cada estado | `EstadoContenido` en `Kudo` y `Replica` |
-| 2 | Composite | La conversación es un árbol de profundidad ilimitada | `Conversacion`, `NodoConversacion`, `ContenidoConversable` |
-| 3 | Observer | Cada operación debe auditarse y notificarse sin acoplar el negocio | `PublicadorEventos` y sus suscriptores |
-| 4 | Specification | Las reglas de autorización por rol y ámbito se repiten en muchos casos de uso | `PoliticaAmbito`, `PoliticaModeracion`, `PoliticaGestionCategorias` |
-| 5 | Builder | Construir objetos con muchos atributos, valores por defecto y saneamiento | Clases de dominio, entidad y DTO |
-| 6 | Abstract Factory | Obtener una familia de DAO que comparten conexión y transacción | `DAOFactory` → `SqlServerDAOFactory` |
-| 7 | Facade | Ofrecer un punto de entrada simple por caso de uso y controlar la transacción | `XxxFachada` |
-| 8 | DAO + Assembler | Separar el dominio de las tablas y de la API | `XxxDAO`, `DTOAssembler`, `EntidadAssembler` |
-| 9 | Objeto de valor | Reglas de formato que se repetirían en muchos lugares | `CorreoInstitucional`, `NumeroCelular`, `ContenidoTexto`, `Estrellas` |
-| 10 | Servicio de dominio | Operaciones que coordinan varios agregados | `ServicioAprobacion`, `ServicioModeracion` |
-| 11 | Puerto y adaptador (Strategy) | Enviar códigos sin depender de un proveedor de correo o SMS | `EnviadorNotificacion` → `EnviadorNotificacionSimulado` |
-| 12 | Singleton (reglas y ensambladores) | Las reglas no tienen estado y se usan en todas partes | `XxxRule.obtenerInstancia()`, `XxxAssembler.getInstance()` |
+| 1 | State | Lo que se puede hacer con un Kudo o una réplica depende de su estado | `EstadoContenido` |
+| 2 | Builder | Objetos con muchos atributos, valores por defecto y limpieza de datos | `XxxDominio.Builder`, `XxxEntidad.Builder` |
+| 3 | Singleton | Reglas y ensambladores sin estado: basta una instancia | `XxxRule.obtenerInstancia()`, `XxxAssembler.getInstance()`, `UtilTexto.getUtilTexto()` |
+| 4 | Abstract Factory | Varios DAO deben compartir la misma conexión y transacción | `DAOFactory` → `SqlServerDAOFactory` |
+| 5 | Facade | Un punto de entrada simple por caso de uso que maneja la transacción | `XxxFachada` + `XxxFachadaImpl` |
+| 6 | DAO | Aislar el SQL del negocio | `XxxDAO` + `XxxSqlServerDAO` |
+| 7 | DTO + Assembler | Separar los datos de la API, el dominio y la tabla | `XxxDto`, `XxxEntidad`, `DTOAssembler`, `EntidadAssembler` |
+| 8 | Interfaz con implementación intercambiable | Enviar códigos sin depender de un proveedor real | `EnviadorNotificacion` → `EnviadorNotificacionSimulado` |
+| 9 | Respuesta uniforme | Que toda respuesta de la API tenga la misma forma | `Respuesta`, `RespuestaOk`, `RespuestaError` |
+| 10 | Experto en información (GRASP) | Que el objeto que tiene los datos responda la pregunta | `asignacion.puedeDecidir(...)`, `usuario.intentarActivar()`, `codigo.estaVencido(...)` |
 
 ---
 
 ## 1. State
 
-**Problema.** Un Kudo o una réplica pasa por CREADO → VISIBLE → REPORTADO → EN_REVISION → VETADO (RN-201 a RN-209, D-20). En cada estado cambia lo que se puede hacer: solo un contenido REPORTADO entra en revisión, solo uno EN_REVISION se libera, uno VETADO no admite réplicas, calificaciones ni reportes. Escrito con `if` y `switch`, esas reglas quedarían repartidas por el negocio y se repetirían para el Kudo y para la réplica.
+**Problema.** Un Kudo o una réplica puede estar CREADO, VISIBLE, REPORTADO, EN_REVISION o VETADO, y cada estado permite operaciones distintas: un contenido VETADO no se puede reportar ni volver a vetar, uno VISIBLE no se puede liberar. Con `if` y `switch` repartidos por el negocio, cada regla nueva obligaría a tocar muchos lugares.
 
-**Solución.** Cada estado es un objeto que sabe qué transiciones permite. En Java se implementa con un `enum` cuyas constantes sobrescriben el comportamiento:
+**Solución.** Cada constante de la enumeración `EstadoContenido` sabe qué transiciones permite. Por defecto toda transición lanza una excepción; cada estado sobrescribe solo las que permite. `KudoDominio` y `ReplicaDominio` delegan sin preguntar el estado (Tell, Don't Ask).
 
 ```java
 public enum EstadoContenido {
-    CREADO      { public EstadoContenido publicar() { return VISIBLE; } },
-    VISIBLE     { public EstadoContenido reportar() { return REPORTADO; }
-                  public EstadoContenido vetar()    { return VETADO; } },
-    REPORTADO   { public EstadoContenido reportar() { return REPORTADO; }
-                  public EstadoContenido iniciarRevision() { return EN_REVISION; }
-                  public EstadoContenido vetar()    { return VETADO; } },
-    EN_REVISION { public EstadoContenido liberar()  { return VISIBLE; }
-                  public EstadoContenido vetar()    { return VETADO; } },
-    VETADO      { public boolean admiteInteraccion() { return false; } };
-
-    // Por defecto la transición no está permitida
-    public EstadoContenido publicar()        { throw transicionInvalida("publicar"); }
-    public EstadoContenido reportar()        { throw transicionInvalida("reportar"); }
-    public EstadoContenido iniciarRevision() { throw transicionInvalida("iniciar revisión"); }
-    public EstadoContenido liberar()         { throw transicionInvalida("liberar"); }
-    public EstadoContenido vetar()           { throw transicionInvalida("vetar"); }
-    public boolean admiteInteraccion()       { return true; }
+    VISIBLE {
+        @Override public EstadoContenido reportar() { return REPORTADO; }
+        @Override public EstadoContenido vetar() { return VETADO; }
+    },
+    VETADO {
+        @Override public boolean admiteInteraccion() { return false; }
+    };
+    public EstadoContenido vetar() { throw cambioNoPermitido("vetar"); }
 }
 
-// En Kudo (y en Replica), Tell, Don't Ask:
-public void vetar() { this.estado = estado.vetar(); }
+public void vetar() {
+    estado = estado.vetar();
+}
 ```
 
-**Participantes.** `EstadoContenido` (los estados), `Kudo` y `Replica` (el contexto que delega).
+**Dónde.** `dominio/EstadoContenido.java`, `KudoDominio`, `ReplicaDominio`. Diagrama: [estado de Kudo y Réplica](../06-diagramas-comportamiento/README.md#estado-de-kudo-y-réplica). Pruebas: `KudoDominioTest`.
 
-**Beneficio.** Agregar un estado o cambiar una transición se hace en un solo lugar (OCP). `Kudo` y `Replica` comparten las mismas reglas sin duplicarlas (DRY). El [diagrama de estado](../06-diagramas-comportamiento/README.md#estado-de-kudo-y-réplica) es exactamente este `enum`.
+**Por qué.** Agregar un estado o cambiar una transición se hace en un solo lugar (OCP), y una transición inválida es imposible porque el estado la rechaza.
 
-**Alternativa descartada.** Una interfaz `EstadoContenido` con cinco clases. Es equivalente, pero tiene más archivos sin ganar nada, porque los estados no guardan datos propios (KISS).
+## 2. Builder
 
----
+**Problema.** Los objetos de dominio y las entidades tienen muchos atributos, varios opcionales, y necesitan valores por defecto seguros (nunca `null`) y textos limpios.
 
-## 2. Composite
-
-**Problema.** Una réplica responde a un Kudo o a otra réplica, sin límite de profundidad (RN-162 a RN-164, INV-026 a INV-029). Mostrar la conversación (CU-006) exige recorrer un árbol en el que cada nodo se trata igual sin importar su nivel.
-
-**Solución.** Un `NodoConversacion` contiene un contenido y una lista de nodos hijos. La `Conversacion` arma el árbol a partir de las réplicas de un Kudo, ya leídas con una sola consulta, y lo recorre recursivamente. `Kudo` y `Replica` implementan la interfaz común `ContenidoConversable`: `admiteInteraccion()`, `getAutor()` y `actualizarResumenCalificaciones()`.
+**Solución.** Cada `XxxDominio` y `XxxEntidad` tiene una clase interna `Builder`, igual que en Sigma: el constructor del Builder asigna valores por defecto (`UtilId.VALOR_DEFECTO`, `UtilTexto.VACIO`, `UtilFecha.FECHA_HORA_POR_DEFECTO`), cada método limpia el valor recibido y `build()` usa el constructor privado.
 
 ```java
-public final class NodoConversacion {
-    private final Replica replica;
-    private final List<NodoConversacion> respuestas = new ArrayList<>();
-
-    public void agregarRespuesta(NodoConversacion hijo) { respuestas.add(hijo); }
-    public int contarRespuestas() {               // recursivo: el mismo trato en todos los niveles
-        return respuestas.stream().mapToInt(h -> 1 + h.contarRespuestas()).sum();
-    }
-}
+var kudo = new KudoDominio.Builder()
+        .id(UtilId.generarId())
+        .autor(autor)
+        .contenido(contenido)
+        .estado(EstadoContenido.CREADO)
+        .build();
 ```
 
-**Participantes.** `Conversacion` (raíz: el Kudo), `NodoConversacion` (compuesto y hoja), `ContenidoConversable` (interfaz común de Kudo y Réplica).
+**Por qué.** No existen objetos a medio construir y los nulos no llegan al negocio. Es el estilo del curso.
 
-**Beneficio.** La profundidad ilimitada no complica el código. Calificar, reportar o moderar funciona igual para un Kudo o una réplica (LSP). En el front-end, `ConversacionArbol` es el mismo patrón como componente Vue recursivo.
+## 3. Singleton
 
-**Alternativa descartada.** Guardar el árbol dentro del agregado Kudo. La conversación crece sin límite (RN-163) y habría que cargarla completa para cualquier operación.
+**Problema.** Las reglas (`XxxRule`), los ensambladores (`XxxAssembler`) y `UtilTexto` no guardan estado: crear una instancia nueva en cada uso no aporta nada.
 
----
-
-## 3. Observer
-
-**Problema.** Casi todas las operaciones deben quedar auditadas (RN-096 a RN-100, RN-249, RN-250), muchas deben notificar a alguien (D-27) y las calificaciones deben recalcular indicadores (RN-238). Si cada caso de uso llamara directamente a la auditoría, a las notificaciones y a los indicadores, el negocio quedaría acoplado a todo y cada efecto nuevo obligaría a modificar muchos casos de uso.
-
-**Solución.** El negocio publica un **evento de dominio** y los suscriptores interesados reaccionan.
+**Solución.** Constructor privado, una constante `INSTANCIA` y un método de acceso, como en Sigma.
 
 ```java
-public interface SuscriptorEvento {
-    boolean leInteresa(EventoDominio evento);
-    void manejar(EventoDominio evento, DAOFactory daoFactory);
+public final class ValidarEstrellasRule implements Rule<Integer> {
+    private static final ValidarEstrellasRule INSTANCIA = new ValidarEstrellasRule();
+    private ValidarEstrellasRule() { }
+    public static ValidarEstrellasRule obtenerInstancia() { return INSTANCIA; }
+    @Override public void ejecutar(Integer... datos) { ... }
 }
-
-public final class PublicadorEventos {
-    private final List<SuscriptorEvento> suscriptores;   // auditoría, notificaciones, indicadores
-    public void publicar(EventoDominio evento, DAOFactory daoFactory) {
-        suscriptores.stream().filter(s -> s.leInteresa(evento)).forEach(s -> s.manejar(evento, daoFactory));
-    }
-}
-
-// En KudoNegocioImpl:
-publicador.publicar(new KudoPublicado(kudo, actor), daoFactory);
 ```
 
-**Participantes.** `EventoDominio` y sus subclases (`KudoPublicado`, `UsuarioAprobado`, `ContenidoVetado`…), `PublicadorEventos` (sujeto), `AuditoriaSuscriptor`, `NotificacionSuscriptor` e `IndicadorSuscriptor` (observadores).
+**Dónde.** 64 reglas en `negocio/negocio/reglas/impl/<módulo>/`, los ensambladores en `negocio/fachada/assembler/impl` y `negocio/negocio/assembler/impl`, y `UtilTexto`.
 
-**Beneficio.** El negocio no conoce la auditoría (SRP, bajo acoplamiento). Un nuevo efecto, como un correo real o una métrica, es un suscriptor nuevo (OCP). Los suscriptores corren en la misma transacción, así que una operación nunca queda sin auditar.
+**Por qué.** `obtenerInstancia()` devuelve el **tipo concreto** de la regla (no `Rule<Object>`): así queda claro qué regla se ejecuta y con qué datos. Esto se corrigió por un hallazgo de Sonar ([calidad](../07-calidad-y-pruebas/README.md)).
 
-**Alternativa descartada.** *Triggers* de base de datos para la auditoría. Esconden lógica de negocio en la base, no conocen al actor ni el motivo y son difíciles de probar.
+## 4. Abstract Factory (`DAOFactory`)
 
----
+**Problema.** Un caso de uso usa varios DAO (por ejemplo, vetar cambia el Kudo, la moderación, los reportes, la notificación y la auditoría) y todos deben trabajar sobre **la misma conexión** para que la transacción sea una sola.
 
-## 4. Specification (políticas)
-
-**Problema.** "¿Puede este actor actuar sobre este usuario, programa o facultad?" se pregunta en aprobar, rechazar, suspender, vincular, consultar personas y consultar auditoría (RN-112 a RN-131, POL-004). "¿Es moderador?" y "¿puede gestionar categorías?" se repiten igual. Copiar esas condiciones en cada caso de uso es duplicación y una fuente segura de errores.
-
-**Solución.** Cada regla de autorización es un objeto con un método que responde sí o no, y se reutiliza donde haga falta.
+**Solución.** `DAOFactory` es una clase abstracta que abre la conexión, maneja la transacción y entrega cada DAO. `SqlServerDAOFactory` es la implementación real; en las pruebas, `DAOFactoryFalsa` entrega DAO en memoria.
 
 ```java
-public final class PoliticaModeracion {
-    public boolean esSatisfechaPor(Usuario actor) {
-        return actor.tieneRolVigente(Rol.RECTOR) || actor.tieneRolVigente(Rol.COORDINADOR_ACADEMICO);
-    }
-}
+var daoFactory = DAOFactory.obtenerFactoria();
+daoFactory.iniciarTransaccion();
+daoFactory.obtenerKudoDAO().actualizar(id, entidad);
+daoFactory.obtenerReporteDAO().actualizar(idReporte, reporte);
+daoFactory.confirmarTransaccion();
 ```
 
-`PoliticaAmbito` concentra la matriz de gestión: el Coordinador de Programa sobre los vinculados a su programa, el Coordinador de Facultad sobre los Coordinadores de Programa de su Facultad, y así hasta el Administrador sobre Administradores y Rectores.
+**Por qué.** Cambiar de motor de base de datos es otra fábrica (ARQ-077), y el negocio se prueba sin base de datos.
 
-**Beneficio.** Las reglas de autorización están en un solo lugar, tienen nombre del dominio y se prueban por separado. Si cambia la matriz de gestión, cambia una clase.
+## 5. Facade
 
----
+**Problema.** El controlador no debería conocer transacciones, ensambladores ni la creación del negocio.
 
-## 5. Builder
+**Solución.** Cada módulo tiene `XxxFachada` (interfaz) y `XxxFachadaImpl`: obtiene la `DAOFactory`, abre la transacción, convierte el DTO, llama al negocio y confirma o cancela. En `ModeracionFachadaImpl` y `NotificacionFachadaImpl` ese bloque está una sola vez en `ejecutarEnTransaccion(Consumer<XxxNegocio>)`.
 
-**Problema.** Las clases tienen muchos atributos (Usuario tiene 11, Kudo 10). Hacen falta valores por defecto seguros (UUID vacío, cadena vacía, instancia por defecto) y saneamiento (quitar espacios, evitar nulos). Un constructor con 11 parámetros es ilegible y propenso a errores.
+**Por qué.** El controlador queda en una línea por operación y la transacción tiene un solo lugar (un caso de uso = una unidad de trabajo).
 
-**Solución.** Igual que en Sigma, cada clase de dominio, entidad y DTO tiene un `Builder` interno estático. El constructor es privado y solo lo invoca `build()`. Cada página del [diagrama de clases](../02-diagrama-clases/README.md) documenta su Builder.
+## 6. DAO
 
-**Beneficio.** No existen objetos a medio construir ni con `null`. La construcción es legible: `new Kudo.Builder().autor(a).destinatario(d)...build()`.
+**Problema.** El SQL no debe mezclarse con las reglas.
 
-**Nota de diseño.** En el dominio, el Builder se usa para **reconstruir** objetos leídos de la base. Los objetos nuevos se crean con métodos de fábrica que validan las reglas (`Kudo.crear(...)`), para que no se salten las invariantes.
+**Solución.** Interfaces pequeñas (`CrearDAO`, `ConsultarDAO`, `ActualizarDAO`, `ConsultarActivosDAO`) que cada `XxxDAO` combina según lo que necesita, e implementaciones `XxxSqlServerDAO` con `PreparedStatement`. `AuditoriaDAO` no tiene `actualizar` y ningún DAO tiene borrar (D-28).
 
----
+**Por qué.** El negocio habla en objetos; el SQL vive en un solo lugar y no hay inyección SQL.
 
-## 6. Abstract Factory (DAOFactory)
+## 7. DTO + Assembler
 
-**Problema.** Un caso de uso necesita varios DAO (aprobar una solicitud usa los DAO de solicitud, usuario, asignación y vínculo) y todos deben compartir **la misma conexión**, para que la transacción los cubra a todos. Además, la persistencia debe poder cambiar de motor sin tocar el negocio.
+**Problema.** La API, el dominio y la tabla necesitan formas distintas de los mismos datos: la API no debe exponer el dominio ni la tabla, y la tabla guarda ids donde el dominio tiene objetos.
 
-**Solución.** Igual que en Sigma: `DAOFactory` es abstracta, abre la conexión, controla la transacción y fabrica cada DAO (`obtenerKudoDAO()`, `obtenerUsuarioDAO()`…). `SqlServerDAOFactory` es la implementación concreta, y `FactoriaEnum` elige la fábrica.
+**Solución.** `XxxDto` (API), `XxxDominio` (comportamiento) y `XxxEntidad` (tabla), con dos familias de ensambladores: `DTOAssembler` (fachada) y `EntidadAssembler` (negocio). Ejemplos con lógica propia: `KudoDtoAssembler` oculta el texto de un Kudo vetado; `ConversacionDtoAssembler.armarArbol` arma el árbol de réplicas; `ContenidoReportadoDtoAssembler.agrupar` agrupa los reportes por contenido.
 
-**Beneficio.** Una sola transacción por caso de uso. Cambiar de motor de base de datos es otra fábrica. En las pruebas, una fábrica falsa devuelve DAO en memoria (DIP, testabilidad).
+**Por qué.** Cada capa cambia sin romper a las otras, y lo que sale por la API se decide en un solo lugar (por ejemplo, que el texto vetado no salga del servidor).
 
----
+## 8. Interfaz con implementación intercambiable (inversión de dependencias)
 
-## 7. Facade
+**Problema.** No hay un proveedor real de SMS, pero el diseño no debe depender de eso (D-10).
 
-**Problema.** El controlador no debería conocer los detalles de un caso de uso: transacción, conversión DTO ↔ dominio, reglas, varios DAO y eventos.
+**Solución.** `VerificacionNegocioImpl` depende de la interfaz `EnviadorNotificacion`; la implementación `EnviadorNotificacionSimulado` deja el código como notificación y en el log, y la pantalla lo muestra en un aviso de demostración.
 
-**Solución.** Una `XxxFachada` por módulo ofrece una operación por caso de uso (`KudoFachada.crear`, `ModeracionFachada.vetar`), abre y cierra la transacción y traduce los errores inesperados. Es el mismo papel que tiene en Sigma.
+**Por qué.** Pasar a un proveedor real es escribir otra implementación, sin tocar el negocio ni el dominio (DIP).
 
-**Beneficio.** El controlador queda delgado, el límite transaccional queda claro y la capa web se podría reemplazar sin tocar el negocio.
+## 9. Respuesta uniforme
 
----
+**Problema.** El front-end necesita leer igual cualquier respuesta, buena o mala.
 
-## 8. DAO + Assembler
+**Solución.** `Respuesta` con `correlationId`, `timestamp`, `datos`, `mensajes` y `estado`; `RespuestaOk` y `RespuestaError` la especializan. `AbstractRestController` convierte toda excepción en una `RespuestaError` con el código HTTP correcto, y `src/api/http.js` en el front la interpreta en un solo lugar.
 
-**Problema.** El dominio no debe depender de cómo se guardan los datos (tablas y columnas) ni de cómo viajan por la API (JSON). Cada lado tiene su propia forma.
+## 10. Experto en información (GRASP)
 
-**Solución.** Hay tres representaciones con su ensamblador, igual que en Sigma. `XxxDto` ↔ `XxxDominio` con `DTOAssembler` en la fachada, y `XxxDominio` ↔ `XxxEntidad` con `EntidadAssembler` en el negocio. Los `XxxDAO` traducen la entidad a SQL.
+**Problema.** Decidir si una autoridad puede aprobar una solicitud requiere su rol y su ámbito (Facultad o Programa). Si lo decide el negocio con `if`, la lógica se repite en cada módulo.
 
-**Beneficio.** Cambiar una columna o un campo de la API no toca el dominio (SoC, ARQ-041, ARQ-042).
-
-**Alternativa descartada.** *Repository* al estilo DDD. Es equivalente al DAO del curso; se mantiene el DAO para seguir el estilo enseñado.
+**Solución.** El objeto que tiene los datos responde: `AsignacionRolDominio.puedeDecidir(solicitud)`, `puedeVerFacultad(...)`, `puedeVerPrograma(...)`, `coordinaPrograma(...)`; `UsuarioDominio.intentarActivar()` decide si la cuenta pasa a ACTIVA; `CodigoVerificacionDominio.estaVencido(ahora)` e `intentosAgotados(...)`.
 
 ---
 
-## 9. Objeto de valor (Value Object)
+## Técnica en el front-end: componente recursivo
 
-**Problema.** El formato del correo institucional, del celular, del contenido no vacío y de las estrellas de 1 a 5 se validaría en el registro, en el cambio de datos, en las calificaciones y en las réplicas.
-
-**Solución.** `CorreoInstitucional`, `NumeroCelular`, `ContenidoTexto` y `Estrellas` son inmutables y se validan en su método de fábrica `crear(...)`. Si existen, son válidos.
-
-**Beneficio.** La regla vive en un solo lugar (DRY) y es imposible tener un correo o unas estrellas inválidas dentro del dominio.
-
----
-
-## 10. Servicio de dominio
-
-**Problema.** Aprobar una solicitud toca SolicitudRegistro, Usuario, AsignacionRol (incluida la sustitución del coordinador anterior) y VinculacionPrograma. Vetar toca Moderacion, el Kudo o la réplica y todos sus reportes. Ninguna de esas entidades debería conocer a las demás.
-
-**Solución.** `ServicioAprobacion` y `ServicioModeracion` coordinan las entidades dentro de la transacción de la fachada. Cada entidad sigue protegiendo su propio estado. Ver los diagramas de secuencia de [aprobar solicitud](../06-diagramas-comportamiento/README.md#aprobar-solicitud-de-registro) y [vetar contenido](../06-diagramas-comportamiento/README.md#vetar-contenido).
-
-**Beneficio.** Cada entidad conserva alta cohesión y la coordinación queda explícita y con nombre del dominio (doc. 06 §29).
-
----
-
-## 11. Puerto y adaptador (Strategy) para el envío de códigos
-
-**Problema.** Hay que enviar códigos por correo y SMS (RN-077, RN-078), pero no hay un proveedor real, y el dominio no debe depender de uno.
-
-**Solución.** La interfaz `EnviadorNotificacion` es el puerto, con el método `enviar(canal, destino, mensaje)`. La implementación de este proyecto, `EnviadorNotificacionSimulado`, deja el código en la bandeja de notificaciones y en el log (D-10). Un proveedor real sería otra implementación intercambiable: es el patrón Strategy.
-
-**Beneficio.** DIP y OCP: integrar SMTP o un servicio de SMS no cambia el dominio ni el negocio.
-
----
-
-## 12. Singleton (reglas y ensambladores)
-
-**Problema.** Las reglas (`Rule`) y los ensambladores no guardan estado y se usan en muchos casos de uso; crear una instancia por llamada no aporta nada.
-
-**Solución.** Igual que en Sigma, cada regla expone `obtenerInstancia()` y cada ensamblador `getInstance()`, con un constructor privado.
-
-**Justificación y límite.** Es seguro porque son objetos **sin estado**: los datos y la `DAOFactory` llegan como parámetros, así que no hay problemas de concurrencia. No se usa Singleton para nada que guarde estado.
+La conversación es un árbol de profundidad ilimitada. `ReplicaNodo.vue` se dibuja a sí mismo para cada respuesta (`<ReplicaNodo v-for="hija in replica.respuestas" …/>`) y la sangría crece hasta el nivel 5. No es un patrón de diseño de clases, sino la forma natural de recorrer un árbol en Vue.
 
 ---
 
 ## Patrones evaluados y descartados
 
-| Patrón | Por qué no se usó |
-|---|---|
-| Command | No hay operaciones para deshacer, encolar ni programar. Los casos de uso ya son métodos de la fachada. |
-| Chain of Responsibility | Las reglas de un caso de uso se ejecutan en orden fijo y todas deben cumplirse; una lista de llamadas en el negocio es más simple (KISS). |
-| Template Method | Las fachadas comparten el esqueleto de la transacción, pero se mantiene explícito como en Sigma para que se lea y se modifique fácilmente en la sustentación. Es un candidato de refactorización si la duplicación crece. |
-| Strategy para los roles | Las diferencias entre roles son de **autorización**, no de algoritmo; se resuelven con la enumeración `Rol` y las políticas (Specification). |
-| Herencia para los roles | Un objeto no puede cambiar de clase y los roles cambian con el tiempo. Se usa composición (`AsignacionRol`, D-13). |
-| Repository (DDD) | Equivale al DAO del curso; se conserva el DAO por coherencia con lo enseñado. |
+| Patrón | Para qué se pensó | Por qué no se usó |
+|---|---|---|
+| **Observer** | Que la auditoría y las notificaciones reaccionaran a eventos publicados por el negocio | Registrar desde el negocio (`auditoriaNegocio.registrar`) es más simple, explícito y queda en la misma transacción. Observer agregaba publicador, suscriptores y clases de eventos sin aportar en este alcance (D-26). |
+| **Composite** | Una interfaz común `ContenidoConversable` para Kudo y Réplica | El árbol se arma con `idReplicaPadre` en `ConversacionDtoAssembler` y se dibuja con un componente recursivo; no hacía falta una jerarquía de clases (D-22). |
+| **Objeto de valor** (`CorreoInstitucional`, `NumeroCelular`, `Estrellas`) | Que el correo, el celular y las estrellas se validaran al construirse | Las validaciones de formato quedaron en clases `Rule`, como en Sigma, para mantener un solo estilo de validación (D-12, D-23). |
+| **Specification** (`PoliticaAmbito`…) | Expresar los permisos por ámbito como objetos combinables | Bastó con `AsegurarActorTieneRolRule` y los métodos de `AsignacionRol` (experto en información). |
+| **Servicio de dominio** como capa aparte | Coordinar operaciones que tocan varios objetos | Ese papel lo cumplen los `XxxNegocioImpl` (por ejemplo `SolicitudNegocioImpl` y `ModeracionNegocioImpl`), que ya existen en la arquitectura del curso. |
+| **Repository** | Colecciones de objetos de dominio persistentes | El curso usa DAO; agregar otra capa duplicaría responsabilidades. |
+| **Command** | Encolar o deshacer operaciones | No hay operaciones que deshacer ni encolar. |
+| **Chain of Responsibility** | Encadenar las reglas | Las reglas se ejecutan en un orden fijo y todas deben cumplirse; el negocio las llama una tras otra. |
+| **Herencia para los roles** (`Rector extends Usuario`…) | Modelar cada rol como subclase | Los roles cambian en el tiempo y un objeto no puede cambiar de clase: se usa composición con `AsignacionRol` (ver el [modelo de dominio](../01-modelo-dominio/README.md#por-qué-rector-docente-estudiante-no-son-clases)). |

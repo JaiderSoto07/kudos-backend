@@ -5,6 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Clase | Facultad |
+| Clase en el código | `FacultadDominio` |
 | Estereotipo | class (entidad de dominio) |
 | Descripción | Unidad académica de la Universidad que agrupa Programas Académicos y es acompañada por un Coordinador de Facultad. |
 | Modificador acceso | public |
@@ -46,19 +47,26 @@ Solo hay métodos de lectura (getters). No hay setters públicos: el estado camb
 | public | getEstado | getter | Obtiene el valor del atributo estado. | Otro | EstadoFacultad |
 | public | getFechaCreacion | getter | Obtiene el valor del atributo fechaCreacion. | Otro | LocalDateTime |
 
-## Métodos
+## Métodos de negocio
 
-Métodos de negocio: salen de las responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/Facultad.md#responsabilidades). Las consultas se marcan `static`, como en Sigma: en la implementación las resuelve la capa de negocio con su DAO.
+Métodos **reales** de `FacultadDominio` (comportamiento del dominio rico, D-29).
 
-| Modificador de acceso | Nombre | Tipo acceso método | Tipo modificación método | Descripción | Parámetros · Nombre | Parámetros · Tipo de dato | Parámetros · Descripción | Tipo dato de retorno | Excepciones (políticas que puede incumplir) |
-|---|---|---|---|---|---|---|---|---|---|
-| public | crear | no static | final | Crea una Facultad nueva en conformación. | nombre | String | Nombre oficial. | Facultad | P-FAC-001: El nombre no es válido.<br>P-FAC-002: Ya existe una Facultad con ese nombre.<br>P-FAC-003: El actor no es Coordinador Académico. |
-|  |  |  |  |  | actor | Usuario | Coordinador Académico. |  |  |
-| public | renombrar | no static | final | Cambia el nombre de la Facultad. | nombre | String | Nuevo nombre. | Facultad | P-FAC-001: El nombre no es válido.<br>P-FAC-002: Ya existe una Facultad con ese nombre.<br>P-FAC-003: El actor no es Coordinador Académico.<br>P-FAC-005: La Facultad está inactiva. |
-|  |  |  |  |  | actor | Usuario | Coordinador Académico. |  |  |
-| public | activar | no static | final | Pasa la Facultad a ACTIVA cuando recibe su primer programa. |  |  |  | Facultad |  |
-| public | inactivar | no static | final | Saca de operación una Facultad que no tiene programas activos. | actor | Usuario | Coordinador Académico. | Facultad | P-FAC-003: El actor no es Coordinador Académico.<br>P-FAC-007: La Facultad tiene programas activos. |
-| public | consultar | static | final | Lista las Facultades con su estado y su coordinador vigente. | actor | Usuario | Usuario que consulta. | Lista de Facultad |  |
+| Modificador de acceso | Nombre | Parámetros | Tipo dato de retorno | Descripción |
+|---|---|---|---|---|
+| public | renombrar | String nuevoNombre | void | Cambia el nombre de la Facultad. |
+| public | activar | — | void | Pasa la Facultad a ACTIVA cuando recibe su primer programa. |
+| public | inactivar | — | void | Saca de operación una Facultad que no tiene programas activos. |
+| public | admiteProgramas | — | boolean | Indica si la Facultad puede recibir Programas (no está INACTIVA). |
+| public | admiteCoordinador | — | boolean | Indica si la Facultad puede tener coordinador (está ACTIVA). |
+
+## Operaciones del caso de uso (capa de negocio)
+
+Responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/Facultad.md#responsabilidades) que coordinan varios objetos o consultan la base de datos. Las implementa: FacultadNegocioImpl.
+
+| Operación | Descripción | Políticas que protege |
+|---|---|---|
+| crear | Crea una Facultad nueva en conformación. | P-FAC-001, P-FAC-002, P-FAC-003, P-FAC-004 |
+| consultar | Lista las Facultades con su estado y su coordinador vigente. | P-FAC-008 |
 
 ## Builder (clase interna public static)
 

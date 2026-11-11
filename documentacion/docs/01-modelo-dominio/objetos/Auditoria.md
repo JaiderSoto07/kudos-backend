@@ -54,8 +54,8 @@ _4 registros de ejemplo. Los identificadores se abrevian (u-01, k-01…) para fa
 | **¿Qué conoce? (información que administra)** | La fecha, el actor, la acción, el objeto afectado, el estado anterior y nuevo, el motivo y el detalle. |
 | **¿Qué hace? (responsabilidades)** | • Registrar operación<br>• Consultar auditoría<br>• Consultar actividad propia |
 | **¿Qué decisiones toma?** | • Nada cambia una vez registrado (inmutable). |
-| **¿Qué decisiones delega?** | • Recibe los eventos del publicador (patrón Observer). |
-| **¿Con quién colabora?** | EventoDominio, PublicadorEventos, Usuario |
+| **¿Qué decisiones delega?** | • Lo registra la capa de negocio (auditoriaNegocio.registrar) dentro de la misma transacción de la operación (D-26). |
+| **¿Con quién colabora?** | Usuario |
 | **¿Qué eventos genera?** | • Operación auditada<br>• Auditoría consultada<br>• Actividad propia consultada |
 | **¿Qué invariantes protege?** | • POL-006/POL-007: las operaciones críticas son rastreables y reconstruibles.<br>• RN-096 a RN-100. |
 
@@ -91,7 +91,7 @@ No tiene combinaciones únicas además de su identificador.
 
 | Responsabilidad | Descripción | Entradas · Parámetro | Entradas · Tipo de dato | Entradas · Descripción | Salida · Tipo de dato | Salida · Descripción | Políticas · Política | Políticas · Descripción | Excepción · Detalle | Excepción · ¿Qué hago? |
 |---|---|---|---|---|---|---|---|---|---|---|
-| **Registrar operación** (`registrarDesdeEvento()`) | Crea el registro histórico de un evento de dominio. | evento | EventoDominio | Evento ocurrido. | Auditoria | Registro de auditoría. | P-AUD-001 | Todo evento de dominio relevante genera un registro de auditoría. |  |  |
+| **Registrar operación** (`registrar()`) | Crea el registro histórico de un evento de dominio (lo llama cada negocio). | datos | AuditoriaDominio | Actor, acción, objeto, estados, motivo y detalle. | Auditoria | Registro de auditoría. | P-AUD-001 | Todo evento de dominio relevante genera un registro de auditoría. |  |  |
 |  |  |  |  |  |  |  | P-AUD-002 | Un registro de auditoría no se modifica ni se elimina. | Se intenta modificar un registro. | Rechazar la operación (no existe). |
 |  |  |  |  |  |  |  | P-AUD-003 | Guardar actor, acción, objeto, estado anterior, estado nuevo y motivo, para reconstruir la decisión. |  |  |
 | **Consultar auditoría** (`consultar()`) | Lista los registros de auditoría del ámbito del actor. | actor | Usuario | Autoridad que consulta. | Página de Auditoria | Registros. | P-AUD-004 | Cada autoridad consulta la auditoría de su ámbito; Rector y Coordinador Académico consultan toda. | El actor no tiene permiso. | Rechazar la consulta. |
@@ -102,7 +102,7 @@ No tiene combinaciones únicas además de su identificador.
 
 | Actor | Acción | Descripción | Objeto de dominio | Información externa · Información | Información externa · Descripción | Políticas · Número | Sistema externo | Evento | Referencia en el enunciado |
 |---|---|---|---|---|---|---|---|---|---|
-| Sistema (suscriptor de auditoría) | Registrar operación | Crea el registro histórico de un evento de dominio. | Auditoria |  |  | P-AUD-001 |  | Operación auditada | RN-096 a RN-100 |
+| Sistema (capa de negocio) | Registrar operación | Crea el registro histórico de un evento de dominio (lo llama cada negocio). | Auditoria |  |  | P-AUD-001 |  | Operación auditada | RN-096 a RN-100 |
 |  |  |  |  |  |  | P-AUD-002 |  |  |  |
 |  |  |  |  |  |  | P-AUD-003 |  |  |  |
 | Autoridad | Consultar auditoría | Lista los registros de auditoría del ámbito del actor. | Auditoria |  |  | P-AUD-004 |  | Auditoría consultada | RF-070 |
@@ -113,9 +113,19 @@ No tiene combinaciones únicas además de su identificador.
 
 | Número política | Descripción política | Objeto responsable | Regla referenciada |
 |---|---|---|---|
-| P-AUD-001 | Todo evento de dominio relevante genera un registro de auditoría. | AuditoriaSuscriptor | RN-096 a RN-100, RN-160, POL-006, D-26 |
+| P-AUD-001 | Todo evento de dominio relevante genera un registro de auditoría. | Capa de negocio (auditoriaNegocio.registrar) | RN-096 a RN-100, RN-160, POL-006, D-26 |
 | P-AUD-002 | Un registro de auditoría no se modifica ni se elimina. | Auditoria | POL-007, D-28 |
 | P-AUD-003 | Guardar actor, acción, objeto, estado anterior, estado nuevo y motivo, para reconstruir la decisión. | Auditoria | RN-250, POL-007 |
-| P-AUD-004 | Cada autoridad consulta la auditoría de su ámbito; Rector y Coordinador Académico consultan toda. | PoliticaAmbito | RN-116, RN-128 |
+| P-AUD-004 | Cada autoridad consulta la auditoría de su ámbito; Rector y Coordinador Académico consultan toda. | AsignacionRol (ámbito) | RN-116, RN-128 |
 | P-AUD-005 | La consulta de auditoría es paginada y filtrable por fecha, actor, acción y objeto. | Auditoria | RF-070, RNF-010 |
 | P-AUD-006 | La actividad propia incluye los registros donde el usuario es el actor o el objeto afectado. | Auditoria | RN-106 |
+
+## En el código
+
+| Capa | Clase |
+|---|---|
+| Dominio (atributos y comportamiento) | `AuditoriaDominio` (`co.edu.uco.kudos.dominio`) |
+| Entidad (tabla) | `AuditoriaEntidad` |
+| DAO | `AuditoriaDAO` + implementación SQL Server |
+| DTO (API) | AuditoriaDto, PaginaAuditoriaDto |
+| Negocio | AuditoriaNegocioImpl (lo llaman todos los negocios) |

@@ -5,6 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Clase | AsignacionRol |
+| Clase en el código | `AsignacionRolDominio` |
 | Estereotipo | class (entidad de dominio) |
 | Descripción | Registro histórico de cada rol institucional que ha tenido un usuario. Para los coordinadores también indica qué Facultad o Programa acompaña. Solo una asignación por usuario puede estar vigente. |
 | Modificador acceso | public |
@@ -56,20 +57,28 @@ Solo hay métodos de lectura (getters). No hay setters públicos: el estado camb
 | public | getFechaFin | getter | Obtiene el valor del atributo fechaFin. | Otro | LocalDateTime |
 | public | getMotivoFin | getter | Obtiene el valor del atributo motivoFin. | String |  |
 
-## Métodos
+## Métodos de negocio
 
-Métodos de negocio: salen de las responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/AsignacionRol.md#responsabilidades). Las consultas se marcan `static`, como en Sigma: en la implementación las resuelve la capa de negocio con su DAO.
+Métodos **reales** de `AsignacionRolDominio` (comportamiento del dominio rico, D-29).
 
-| Modificador de acceso | Nombre | Tipo acceso método | Tipo modificación método | Descripción | Parámetros · Nombre | Parámetros · Tipo de dato | Parámetros · Descripción | Tipo dato de retorno | Excepciones (políticas que puede incumplir) |
-|---|---|---|---|---|---|---|---|---|---|
-| public | asignar | no static | final | Abre la asignación vigente de un rol para un usuario; para coordinadores indica la Facultad o el Programa. | usuario | Usuario | Usuario que recibe el rol. | AsignacionRol | P-ASR-001: El usuario ya tiene un rol vigente.<br>P-ASR-002: Ya existe un titular vigente del cargo.<br>P-ASR-003: Falta la Facultad o el Programa, o no está activo. |
-|  |  |  |  |  | rol | Rol | Rol asignado. |  |  |
-|  |  |  |  |  | facultad | Facultad | Solo Coordinador de Facultad. |  |  |
-|  |  |  |  |  | programa | ProgramaAcademico | Solo Coordinador de Programa. |  |  |
-| public | cerrar | no static | final | Termina la vigencia de una asignación de rol sin borrarla. | motivo | String | Razón del cierre. | AsignacionRol | P-ASR-006: La asignación ya está cerrada o falta el motivo. |
-| public | consultarTitularVigente | static | final | Indica quién ocupa hoy un cargo: Rector, Coordinador Académico o coordinador de una Facultad o Programa. | rol | Rol | Cargo consultado. | AsignacionRol | P-ASR-007: No hay titular vigente. |
-|  |  |  |  |  | ambito | UUID | Facultad o Programa, si aplica. |  |  |
-| public | consultarHistorialCoordinadores | static | final | Lista las asignaciones vigentes y cerradas de la coordinación de una Facultad o Programa. | ambito | UUID | Facultad o Programa. | Lista de AsignacionRol |  |
+| Modificador de acceso | Nombre | Parámetros | Tipo dato de retorno | Descripción |
+|---|---|---|---|---|
+| public | estaVigente | — | boolean | Indica si no tiene fecha de fin. |
+| public | cerrar | String motivo | void | Termina la vigencia de una asignación de rol sin borrarla. |
+| public | puedeVerFacultad | UUID idFacultad | boolean | Indica si la autoridad puede consultar esa Facultad según su ámbito. |
+| public | puedeVerPrograma | ProgramaAcademicoDominio programaConsultado | boolean | Indica si la autoridad puede consultar ese Programa según su ámbito. |
+| public | coordinaPrograma | UUID idPrograma | boolean | Indica si es el Coordinador de Programa de ese Programa. |
+| public | puedeDecidir | SolicitudRegistroDominio solicitud | boolean | Indica si la autoridad puede aprobar o rechazar esa solicitud (rol aprobador y ámbito). |
+
+## Operaciones del caso de uso (capa de negocio)
+
+Responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/AsignacionRol.md#responsabilidades) que coordinan varios objetos o consultan la base de datos. Las implementa: CargoNegocioImpl, SolicitudNegocioImpl, AutoridadNegocioImpl.
+
+| Operación | Descripción | Políticas que protege |
+|---|---|---|
+| asignar | Abre la asignación vigente de un rol para un usuario; para coordinadores indica la Facultad o el Programa. | P-ASR-001, P-ASR-002, P-ASR-003, P-ASR-004, P-ASR-005 |
+| consultarTitularVigente | Indica quién ocupa hoy un cargo: Rector, Coordinador Académico o coordinador de una Facultad o Programa. | P-ASR-007 |
+| consultarHistorialCoordinadores | Lista las asignaciones vigentes y cerradas de la coordinación de una Facultad o Programa. | P-ASR-008 |
 
 ## Builder (clase interna public static)
 

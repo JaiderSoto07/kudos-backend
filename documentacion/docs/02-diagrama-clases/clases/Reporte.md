@@ -5,6 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Clase | Reporte |
+| Clase en el código | `ReporteDominio` |
 | Estereotipo | class (entidad de dominio) |
 | Descripción | Solicitud de revisión que un usuario hace sobre un Kudo o una réplica que considera inapropiado. |
 | Modificador acceso | public |
@@ -58,21 +59,26 @@ Solo hay métodos de lectura (getters). No hay setters públicos: el estado camb
 | public | getEstado | getter | Obtiene el valor del atributo estado. | Otro | EstadoReporte |
 | public | getModeracion | getter | Obtiene el valor del atributo moderacion. | Otro | Moderacion |
 
-## Métodos
+## Métodos de negocio
 
-Métodos de negocio: salen de las responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/Reporte.md#responsabilidades). Las consultas se marcan `static`, como en Sigma: en la implementación las resuelve la capa de negocio con su DAO.
+Métodos **reales** de `ReporteDominio` (comportamiento del dominio rico, D-29).
 
-| Modificador de acceso | Nombre | Tipo acceso método | Tipo modificación método | Descripción | Parámetros · Nombre | Parámetros · Tipo de dato | Parámetros · Descripción | Tipo dato de retorno | Excepciones (políticas que puede incumplir) |
-|---|---|---|---|---|---|---|---|---|---|
-| public | crear | no static | final | Registra el reporte de un usuario sobre un Kudo o una réplica. | reportante | Usuario | Quien reporta. | Reporte | P-RPT-001: El usuario no está activo.<br>P-RPT-002: No indica contenido o indica ambos.<br>P-RPT-003: El contenido está vetado o es propio.<br>P-RPT-004: Falta el motivo o la descripción.<br>P-RPT-005: Ya existe un reporte abierto. |
-|  |  |  |  |  | contenido | Kudo o Replica | Contenido reportado. |  |  |
-|  |  |  |  |  | motivo | MotivoReporte | Motivo. |  |  |
-|  |  |  |  |  | descripcion | String | Obligatoria si el motivo es OTRO. |  |  |
-| public | pasarARevision | no static | final | El reporte entra en la moderación en curso. | moderacion | Moderacion | Moderación en curso. | Reporte |  |
-| public | aceptar | no static | final | El reporte queda aceptado porque el contenido fue vetado. |  |  |  | Reporte | P-RPT-008: El reporte ya fue resuelto. |
-| public | rechazar | no static | final | El reporte queda rechazado porque el contenido fue liberado. |  |  |  | Reporte | P-RPT-009: El reporte ya fue resuelto. |
-| public | consultar | static | final | Lista los reportes según el permiso del actor. | actor | Usuario | Usuario que consulta. | Página de Reporte |  |
-|  |  |  |  |  | filtro | FiltroReporte | Estado, motivo, fecha. |  |  |
+| Modificador de acceso | Nombre | Parámetros | Tipo dato de retorno | Descripción |
+|---|---|---|---|---|
+| public | estaAbierto | — | boolean | Indica si el reporte está PENDIENTE o EN_REVISION. |
+| public | pasarARevision | UUID idModeracionEnCurso | void | El reporte entra en la moderación en curso. |
+| public | aceptar | UUID idModeracionQueResuelve | void | El reporte queda aceptado porque el contenido fue vetado. |
+| public | rechazar | UUID idModeracionQueResuelve | void | El reporte queda rechazado porque el contenido fue liberado. |
+| public | esSobreKudo | — | boolean | Indica si el objeto se refiere a un Kudo (si no, a una réplica). |
+
+## Operaciones del caso de uso (capa de negocio)
+
+Responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/Reporte.md#responsabilidades) que coordinan varios objetos o consultan la base de datos. Las implementa: ReporteNegocioImpl.
+
+| Operación | Descripción | Políticas que protege |
+|---|---|---|
+| crear | Registra el reporte de un usuario sobre un Kudo o una réplica. | P-RPT-001, P-RPT-002, P-RPT-003, P-RPT-004, P-RPT-005, P-RPT-006 |
+| consultar | Lista los reportes según el permiso del actor. | P-RPT-010 |
 
 ## Builder (clase interna public static)
 

@@ -5,6 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Clase | Auditoria |
+| Clase en el código | `AuditoriaDominio` |
 | Estereotipo | class (entidad de dominio) |
 | Descripción | Registro histórico e inmutable de una operación relevante realizada en la plataforma. Permite reconstruir quién hizo qué, cuándo, sobre qué objeto y por qué. |
 | Modificador acceso | public |
@@ -55,16 +56,23 @@ Solo hay métodos de lectura (getters). No hay setters públicos: el estado camb
 | public | getMotivo | getter | Obtiene el valor del atributo motivo. | String |  |
 | public | getDetalle | getter | Obtiene el valor del atributo detalle. | String |  |
 
-## Métodos
+## Métodos de negocio
 
-Métodos de negocio: salen de las responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/Auditoria.md#responsabilidades). Las consultas se marcan `static`, como en Sigma: en la implementación las resuelve la capa de negocio con su DAO.
+Métodos **reales** de `AuditoriaDominio` (comportamiento del dominio rico, D-29).
 
-| Modificador de acceso | Nombre | Tipo acceso método | Tipo modificación método | Descripción | Parámetros · Nombre | Parámetros · Tipo de dato | Parámetros · Descripción | Tipo dato de retorno | Excepciones (políticas que puede incumplir) |
-|---|---|---|---|---|---|---|---|---|---|
-| public | registrarDesdeEvento | no static | final | Crea el registro histórico de un evento de dominio. | evento | EventoDominio | Evento ocurrido. | Auditoria | P-AUD-002: Se intenta modificar un registro. |
-| public | consultar | static | final | Lista los registros de auditoría del ámbito del actor. | actor | Usuario | Autoridad que consulta. | Página de Auditoria | P-AUD-004: El actor no tiene permiso. |
-|  |  |  |  |  | filtro | FiltroAuditoria | Fecha, actor, acción, objeto. |  |  |
-| public | consultarActividadPropia | static | final | Lista la actividad del propio usuario. | usuario | Usuario | Usuario que consulta. | Página de Auditoria |  |
+| Modificador de acceso | Nombre | Parámetros | Tipo dato de retorno | Descripción |
+|---|---|---|---|---|
+| — | — | — | — | Solo tiene Builder y getters: es inmutable una vez registrado. |
+
+## Operaciones del caso de uso (capa de negocio)
+
+Responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/Auditoria.md#responsabilidades) que coordinan varios objetos o consultan la base de datos. Las implementa: AuditoriaNegocioImpl (lo llaman todos los negocios).
+
+| Operación | Descripción | Políticas que protege |
+|---|---|---|
+| registrar | Crea el registro histórico de un evento de dominio (lo llama cada negocio). | P-AUD-001, P-AUD-002, P-AUD-003 |
+| consultar | Lista los registros de auditoría del ámbito del actor. | P-AUD-004, P-AUD-005 |
+| consultarActividadPropia | Lista la actividad del propio usuario. | P-AUD-006 |
 
 ## Builder (clase interna public static)
 

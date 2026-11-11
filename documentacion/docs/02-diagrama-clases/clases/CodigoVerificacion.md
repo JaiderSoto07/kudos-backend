@@ -5,6 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Clase | CodigoVerificacion |
+| Clase en el código | `CodigoVerificacionDominio` |
 | Estereotipo | class (entidad de dominio) |
 | Descripción | Código temporal que se envía al correo o al celular de un usuario para validar que le pertenece. |
 | Modificador acceso | public |
@@ -26,7 +27,7 @@
 | private | usuario | Otro | Usuario | final | no static | Instancia por defecto de Usuario | Usuario que debe verificar el dato |
 | private | canal | Otro | CanalVerificacion | final | no static | CORREO | Dato que se verifica |
 | private | destino | String |  | final | no static | "" (cadena vacía) | Valor exacto al que se envió el código |
-| private | codigo | String |  | final | no static | "" (cadena vacía) | Hash del código de 6 dígitos |
+| private | codigo | String |  | final | no static | "" (cadena vacía) | Código de 6 dígitos generado con SecureRandom |
 | private | fechaGeneracion | Otro | LocalDateTime | final | no static | Fecha actual | Fecha y hora de generación |
 | private | fechaExpiracion | Otro | LocalDateTime | final | no static | Fecha por defecto (UtilFecha) | Fecha y hora en que vence |
 | private | intentosFallidos | int |  | no final | no static | 0 | Número de intentos con código incorrecto |
@@ -54,17 +55,26 @@ Solo hay métodos de lectura (getters). No hay setters públicos: el estado camb
 | public | getIntentosFallidos | getter | Obtiene el valor del atributo intentosFallidos. | int |  |
 | public | isUsado | getter | Obtiene el valor del atributo usado. | boolean/Boolean |  |
 
-## Métodos
+## Métodos de negocio
 
-Métodos de negocio: salen de las responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/CodigoVerificacion.md#responsabilidades). Las consultas se marcan `static`, como en Sigma: en la implementación las resuelve la capa de negocio con su DAO.
+Métodos **reales** de `CodigoVerificacionDominio` (comportamiento del dominio rico, D-29).
 
-| Modificador de acceso | Nombre | Tipo acceso método | Tipo modificación método | Descripción | Parámetros · Nombre | Parámetros · Tipo de dato | Parámetros · Descripción | Tipo dato de retorno | Excepciones (políticas que puede incumplir) |
-|---|---|---|---|---|---|---|---|---|---|
-| public | generar | no static | final | Crea un código temporal para verificar el correo o el celular y lo envía. | usuario | Usuario | Usuario a verificar. | CodigoVerificacion | P-CVE-004: No fue posible enviar el código. |
-|  |  |  |  |  | canal | CanalVerificacion | CORREO o CELULAR. |  |  |
-| public | verificar | no static | final | Compara el código digitado con el código vigente. | codigo | String | Código digitado. | boolean | P-CVE-005: El código ya no es válido.<br>P-CVE-006: El usuario cambió el dato después de recibir el código.<br>P-CVE-007: El código digitado es incorrecto. |
-|  |  |  |  |  | destinoActual | String | Dato actual del usuario. |  |  |
-| public | invalidar | no static | final | Deja el código sin posibilidad de uso. |  |  |  | CodigoVerificacion |  |
+| Modificador de acceso | Nombre | Parámetros | Tipo dato de retorno | Descripción |
+|---|---|---|---|---|
+| public | estaVencido | LocalDateTime ahora | boolean | Indica si el código pasó su fecha de expiración. |
+| public | intentosAgotados | int maximoIntentos | boolean | Indica si se alcanzó el máximo de intentos fallidos. |
+| public | registrarIntentoFallido | — | void | Suma un intento fallido. |
+| public | marcarUsado | — | void | Marca el código como usado. |
+
+## Operaciones del caso de uso (capa de negocio)
+
+Responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/CodigoVerificacion.md#responsabilidades) que coordinan varios objetos o consultan la base de datos. Las implementa: VerificacionNegocioImpl.
+
+| Operación | Descripción | Políticas que protege |
+|---|---|---|
+| generar | Crea un código temporal para verificar el correo o el celular y lo envía. | P-CVE-001, P-CVE-002, P-CVE-003, P-CVE-004 |
+| verificar | Compara el código digitado con el código vigente. | P-CVE-005, P-CVE-006, P-CVE-007 |
+| invalidar | Deja el código sin posibilidad de uso. | P-CVE-008 |
 
 ## Builder (clase interna public static)
 

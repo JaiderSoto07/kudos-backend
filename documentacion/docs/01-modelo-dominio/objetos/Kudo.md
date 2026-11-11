@@ -18,7 +18,7 @@
 | autor | Usuario que otorga el reconocimiento (RN-147) | [Usuario](Usuario.md) | Sí |
 | destinatario | Usuario que recibe el reconocimiento (RN-148) | [Usuario](Usuario.md) | Sí |
 | categoria | Categoría del reconocimiento (RN-149) | [Categoria](Categoria.md) | Sí |
-| contenido | Texto del reconocimiento | [ContenidoTexto](../README.md#objetos-de-valor) | Sí |
+| contenido | Texto del reconocimiento | Texto | Sí |
 | fechaCreacion | Fecha y hora de publicación (RN-150) | FechaHora | Sí |
 | estado | Estado del ciclo de vida del contenido | [EstadoContenido](../README.md#enumeraciones) | Sí |
 | cantidadVisualizaciones | Número de veces que ha sido consultado (RN-229, D-25) | Entero | Sí |
@@ -58,10 +58,10 @@ _4 registros de ejemplo. Los identificadores se abrevian (u-01, k-01…) para fa
 | **Tipo de objeto** | Entidad raíz de agregado |
 | **Agregado** | Kudo (raíz). Las réplicas son un agregado aparte que referencia al Kudo: la conversación crece sin límite (RN-163) y cargarla completa para cada operación no escalaría. |
 | **¿Qué conoce? (información que administra)** | Su autor, su destinatario, su categoría, su contenido completo, su fecha, su estado, sus visualizaciones y el resumen de sus calificaciones. |
-| **¿Qué hace? (responsabilidades)** | • Crear Kudo<br>• Consultar Kudo<br>• Consultar muro<br>• Consultar historial de Kudos<br>• Marcar reportado<br>• Iniciar revisión<br>• Liberar Kudo<br>• Vetar Kudo<br>• Decidir si admite interacción<br>• Actualizar resumen de calificaciones |
+| **¿Qué hace? (responsabilidades)** | • Crear Kudo<br>• Consultar Kudo<br>• Consultar muro<br>• Consultar historial de Kudos<br>• Reportar<br>• Iniciar revisión<br>• Liberar Kudo<br>• Vetar Kudo<br>• Decidir si admite interacción<br>• Actualizar resumen de calificaciones |
 | **¿Qué decisiones toma?** | • Si admite interacción (réplicas, calificaciones y reportes): solo si no está VETADO.<br>• Qué transición de estado es válida (State: publicar, reportar, revisar, liberar, vetar).<br>• Su promedio de calificaciones. |
-| **¿Qué decisiones delega?** | • La validación del contenido a ContenidoTexto.<br>• Las reglas de cada estado a los objetos de estado (patrón State).<br>• La verificación de que la categoría está activa a Categoria. |
-| **¿Con quién colabora?** | Usuario, Categoria, ContenidoTexto, EstadoContenido, Replica, Calificacion, Reporte, Moderacion |
+| **¿Qué decisiones delega?** | • La validación del contenido a la regla ValidarContenidoRule.<br>• Las reglas de cada estado a los objetos de estado (patrón State).<br>• La verificación de que la categoría está activa a Categoria. |
+| **¿Con quién colabora?** | Usuario, Categoria, EstadoContenido, Replica, Calificacion, Reporte, Moderacion |
 | **¿Qué eventos genera?** | • Kudo creado (publicado)<br>• Kudo consultado<br>• Muro consultado<br>• Historial de Kudos consultado<br>• Kudo reportado<br>• Revisión iniciada<br>• Contenido liberado<br>• Kudo vetado<br>• Indicador recalculado |
 | **¿Qué invariantes protege?** | • INV-020 a INV-024: un autor, un destinatario, fecha, categoría válida y contenido completo.<br>• RN-201 a RN-205: ciclo de vida del contenido.<br>• D-19: el destinatario es distinto del autor. |
 
@@ -71,7 +71,7 @@ _4 registros de ejemplo. Los identificadores se abrevian (u-01, k-01…) para fa
 |---|---|---|---|---|---|---|---|---|---|---|
 | Descripción atributo | Identificador único del Kudo | Usuario que otorga el reconocimiento (RN-147) | Usuario que recibe el reconocimiento (RN-148) | Categoría del reconocimiento (RN-149) | Texto del reconocimiento | Fecha y hora de publicación (RN-150) | Estado del ciclo de vida del contenido | Número de veces que ha sido consultado (RN-229, D-25) | Promedio de estrellas de sus calificaciones activas | Número de calificaciones activas |
 | Identificador del objeto de dominio | Sí | No | No | No | No | No | No | No | No | No |
-| Tipo de dato | UUID | Usuario | Usuario | Categoria | ContenidoTexto | FechaHora | EstadoContenido | Entero | Decimal | Entero |
+| Tipo de dato | UUID | Usuario | Usuario | Categoria | Texto | FechaHora | EstadoContenido | Entero | Decimal | Entero |
 | Obligatorio | Sí | Sí | Sí | Sí | Sí | Sí | Sí | Sí | Sí | Sí |
 | Longitud mínima (si aplica) |  |  |  |  | 1 |  |  |  |  |  |
 | Longitud máxima (si aplica) |  |  |  |  | Sin límite |  |  |  |  |  |
@@ -89,7 +89,7 @@ _4 registros de ejemplo. Los identificadores se abrevian (u-01, k-01…) para fa
 | Consultar Kudo | Mostrar | Mostrar | Mostrar | Mostrar | Mostrar | Mostrar | Mostrar | Mostrar | Mostrar | Mostrar |
 | Consultar muro | Mostrar | Mostrar | Mostrar | Mostrar | Mostrar | Mostrar | Mostrar | Mostrar | Mostrar | Mostrar |
 | Consultar historial de Kudos | Mostrar | Mostrar | Mostrar | Mostrar | Mostrar | Mostrar | Mostrar | Mostrar | Mostrar | Mostrar |
-| Marcar reportado | Requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido |
+| Reportar | Requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido |
 | Iniciar revisión | Requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido |
 | Liberar Kudo | Requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido |
 | Vetar Kudo | Requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido |
@@ -107,7 +107,7 @@ No tiene combinaciones únicas además de su identificador.
 | **Crear Kudo** (`crear()`) | Crea y publica un reconocimiento de un usuario activo a otro. | autor | Usuario | Quien reconoce. | Kudo | Kudo VISIBLE. | P-KUD-001 | Asegurar que el autor tenga cuenta ACTIVA. | El autor no está activo. | Rechazar la creación. |
 |  |  | destinatario | Usuario | Quien es reconocido. |  |  | P-KUD-002 | Asegurar que el destinatario tenga cuenta ACTIVA y sea distinto del autor. | El destinatario no está activo o es el mismo autor. | Rechazar la creación e informar el motivo. |
 |  |  | categoria | Categoria | Categoría activa. |  |  | P-KUD-003 | Asegurar que la categoría exista y esté activa al crear el Kudo. | La categoría no existe o está inactiva. | Rechazar la creación y pedir otra categoría. |
-|  |  | contenido | ContenidoTexto | Texto del reconocimiento. |  |  | P-KUD-004 | Asegurar que el contenido no esté vacío; se guarda completo, sin límite y sin truncarlo. | El contenido está vacío. | Rechazar la creación. |
+|  |  | contenido | String | Texto del reconocimiento. |  |  | P-KUD-004 | Asegurar que el contenido no esté vacío; se guarda completo, sin límite y sin truncarlo. | El contenido está vacío. | Rechazar la creación. |
 |  |  |  |  |  |  |  | P-KUD-005 | La fecha de creación la asigna el sistema. |  |  |
 |  |  |  |  |  |  |  | P-KUD-006 | Todo Kudo inicia en CREADO y al publicarse pasa a VISIBLE. |  |  |
 |  |  |  |  |  |  |  | P-KUD-007 | Notificar al destinatario que recibió un Kudo. |  |  |
@@ -117,12 +117,12 @@ No tiene combinaciones únicas además de su identificador.
 | **Consultar muro** (`consultarMuro()`) | Lista los Kudos no vetados, del más reciente al más antiguo. | pagina | int | Página. | Página de Kudo | Kudos del muro. | P-KUD-011 | El muro muestra los Kudos no vetados, del más reciente al más antiguo, paginados. | No hay Kudos para mostrar. | Informar que aún no hay reconocimientos. |
 |  |  | filtro | FiltroKudo | Categoría o persona (opcional). |  |  |  |  |  |  |
 | **Consultar historial de Kudos** (`consultarHistorial()`) | Lista los Kudos recibidos y emitidos por una persona. | persona | UUID | Persona consultada. | Lista de Kudo | Kudos recibidos y emitidos. | P-KUD-012 | El historial de una persona muestra sus Kudos recibidos y emitidos. |  |  |
-| **Marcar reportado** (`marcarReportado()`) | Registra que el Kudo recibió un reporte. | Ninguno | - | No requiere datos de entrada. | Kudo | Kudo REPORTADO (o sin cambio). | P-KUD-013 | Un Kudo VISIBLE pasa a REPORTADO con su primer reporte; si ya está REPORTADO o EN_REVISION, conserva su estado. | El Kudo está vetado. | Rechazar el reporte. |
+| **Reportar** (`reportar()`) | Registra que el Kudo recibió un reporte. | Ninguno | - | No requiere datos de entrada. | Kudo | Kudo REPORTADO (o sin cambio). | P-KUD-013 | Un Kudo VISIBLE pasa a REPORTADO con su primer reporte; si ya está REPORTADO o EN_REVISION, conserva su estado. | El Kudo está vetado. | Rechazar el reporte. |
 | **Iniciar revisión** (`iniciarRevision()`) | El Kudo entra en revisión de un moderador. | Ninguno | - | No requiere datos de entrada. | Kudo | Kudo EN_REVISION. | P-KUD-014 | Solo un Kudo REPORTADO puede pasar a EN_REVISION. | El Kudo no está reportado. | Rechazar el inicio de la revisión. |
 | **Liberar Kudo** (`liberar()`) | El Kudo vuelve a estar visible tras la revisión. | Ninguno | - | No requiere datos de entrada. | Kudo | Kudo VISIBLE. | P-KUD-015 | Solo un Kudo EN_REVISION puede liberarse; vuelve a VISIBLE. | El Kudo no está en revisión. | Rechazar la liberación. |
 | **Vetar Kudo** (`vetar()`) | Inhabilita el Kudo de forma definitiva. | Ninguno | - | No requiere datos de entrada. | Kudo | Kudo VETADO. | P-KUD-016 | Un Kudo no vetado puede vetarse; VETADO es final y cierra su conversación. | El Kudo ya está vetado. | Rechazar el veto. |
 | **Decidir si admite interacción** (`admiteInteraccion()`) | Indica si el Kudo acepta réplicas, calificaciones y reportes. | Ninguno | - | No requiere datos de entrada. | boolean | Verdadero si no está vetado. | P-KUD-018 | Un Kudo admite réplicas, calificaciones y reportes solo si no está VETADO. | El Kudo está vetado. | Rechazar la interacción e informar que el contenido fue vetado. |
-| **Actualizar resumen de calificaciones** (`actualizarResumenCalificaciones()`) | Recalcula el promedio y la cantidad de calificaciones activas. | calificaciones | Lista de Estrellas | Calificaciones activas. | Kudo | Kudo con resumen actualizado. | P-KUD-017 | El promedio de calificaciones es el promedio de las calificaciones activas, con dos decimales. |  |  |
+| **Actualizar resumen de calificaciones** (`actualizarResumenCalificaciones()`) | Recalcula el promedio y la cantidad de calificaciones activas. | calificaciones | Lista de enteros (estrellas) | Calificaciones activas. | Kudo | Kudo con resumen actualizado. | P-KUD-017 | El promedio de calificaciones es el promedio de las calificaciones activas, con dos decimales. |  |  |
 
 ## Eventos
 
@@ -140,12 +140,12 @@ No tiene combinaciones únicas además de su identificador.
 |  |  |  |  |  |  | P-KUD-010 |  |  |  |
 | Usuario activo | Consultar muro | Lista los Kudos no vetados, del más reciente al más antiguo. | Kudo |  |  | P-KUD-011 |  | Muro consultado | RF-090 |
 | Usuario activo | Consultar historial de Kudos | Lista los Kudos recibidos y emitidos por una persona. | Kudo |  |  | P-KUD-012 |  | Historial de Kudos consultado | RF-048 a RF-050 |
-| Sistema (al crear un reporte) | Marcar reportado | Registra que el Kudo recibió un reporte. | Kudo |  |  | P-KUD-013 |  | Kudo reportado | EVT-026 / RN-230 |
+| Sistema (al crear un reporte) | Reportar | Registra que el Kudo recibió un reporte. | Kudo |  |  | P-KUD-013 |  | Kudo reportado | EVT-026 / RN-230 |
 | Sistema (desde ServicioModeracion) | Iniciar revisión | El Kudo entra en revisión de un moderador. | Kudo |  |  | P-KUD-014 |  | Revisión iniciada | EVT-035 / RN-239 |
 | Sistema (desde ServicioModeracion) | Liberar Kudo | El Kudo vuelve a estar visible tras la revisión. | Kudo |  |  | P-KUD-015 |  | Contenido liberado | EVT-037 / RN-242 |
 | Sistema (desde ServicioModeracion) | Vetar Kudo | Inhabilita el Kudo de forma definitiva. | Kudo |  |  | P-KUD-016 |  | Kudo vetado | EVT-027 / RN-231 |
 | Sistema | Decidir si admite interacción | Indica si el Kudo acepta réplicas, calificaciones y reportes. | Kudo |  |  | P-KUD-018 |  | (decisión, sin evento) |  |
-| Sistema (suscriptor de calificaciones) | Actualizar resumen de calificaciones | Recalcula el promedio y la cantidad de calificaciones activas. | Kudo |  |  | P-KUD-017 |  | Indicador recalculado | EVT-034 / RN-238 |
+| Sistema (al calificar) | Actualizar resumen de calificaciones | Recalcula el promedio y la cantidad de calificaciones activas. | Kudo |  |  | P-KUD-017 |  | Indicador recalculado | EVT-034 / RN-238 |
 
 ## Políticas
 
@@ -154,7 +154,7 @@ No tiene combinaciones únicas además de su identificador.
 | P-KUD-001 | Asegurar que el autor tenga cuenta ACTIVA. | Usuario | RN-147, RN-058, RN-066 |
 | P-KUD-002 | Asegurar que el destinatario tenga cuenta ACTIVA y sea distinto del autor. | Kudo | RN-148, D-19 |
 | P-KUD-003 | Asegurar que la categoría exista y esté activa al crear el Kudo. | Categoria | RN-144, RN-149, INV-019, P-CAT-007 |
-| P-KUD-004 | Asegurar que el contenido no esté vacío; se guarda completo, sin límite y sin truncarlo. | ContenidoTexto | RN-152, RN-153, INV-024 |
+| P-KUD-004 | Asegurar que el contenido no esté vacío; se guarda completo, sin límite y sin truncarlo. | ValidarContenidoRule | RN-152, RN-153, INV-024 |
 | P-KUD-005 | La fecha de creación la asigna el sistema. | Kudo | RN-150, INV-022 |
 | P-KUD-006 | Todo Kudo inicia en CREADO y al publicarse pasa a VISIBLE. | EstadoContenido | RN-201, D-20 |
 | P-KUD-007 | Notificar al destinatario que recibió un Kudo. | Notificacion | D-27 |
@@ -169,3 +169,13 @@ No tiene combinaciones únicas además de su identificador.
 | P-KUD-016 | Un Kudo no vetado puede vetarse; VETADO es final y cierra su conversación. | EstadoContenido | RN-204, RN-205, D-21 |
 | P-KUD-017 | El promedio de calificaciones es el promedio de las calificaciones activas, con dos decimales. | Kudo | RN-185, RN-238 |
 | P-KUD-018 | Un Kudo admite réplicas, calificaciones y reportes solo si no está VETADO. | EstadoContenido | RN-205, D-21 |
+
+## En el código
+
+| Capa | Clase |
+|---|---|
+| Dominio (atributos y comportamiento) | `KudoDominio` (`co.edu.uco.kudos.dominio`) |
+| Entidad (tabla) | `KudoEntidad` |
+| DAO | `KudoDAO` + implementación SQL Server |
+| DTO (API) | KudoDto, PaginaKudosDto |
+| Negocio | KudoNegocioImpl |

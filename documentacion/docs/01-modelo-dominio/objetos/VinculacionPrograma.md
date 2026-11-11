@@ -126,10 +126,20 @@ _4 registros de ejemplo. Los identificadores se abrevian (u-01, k-01…) para fa
 |---|---|---|---|
 | P-VPR-001 | Asegurar que la persona tenga rol vigente DOCENTE o ESTUDIANTE y que su cuenta no esté desactivada. | VinculacionPrograma | RN-053, RN-061 |
 | P-VPR-002 | Asegurar que el Programa exista y esté activo. | ProgramaAcademico | P-PAC-006 |
-| P-VPR-003 | Asegurar que el actor sea el Coordinador de Programa vigente del programa. | PoliticaAmbito | RN-112 a RN-115, POL-004 |
+| P-VPR-003 | Asegurar que el actor sea el Coordinador de Programa vigente del programa. | AsignacionRol (ámbito) | RN-112 a RN-115, POL-004 |
 | P-VPR-004 | Asegurar que la persona no tenga ya un vínculo vigente con el mismo programa. | VinculacionPrograma | UQ-VIN-1 |
 | P-VPR-005 | Si la cuenta estaba suspendida por no tener vínculos, reactivarla al vincular. | Usuario | D-16, P-USU-025 |
 | P-VPR-006 | Asegurar que solo se desvincule un vínculo vigente, con motivo, cerrándolo sin borrarlo. | VinculacionPrograma | RN-056, RN-057, RN-064, RN-065, INV-013, INV-016 |
 | P-VPR-007 | Si la persona queda sin vínculos vigentes, suspender su cuenta. | Usuario | D-16, P-USU-023 |
 | P-VPR-008 | Los programas de una persona incluyen los vigentes y los históricos con sus fechas. | VinculacionPrograma | RN-054, RN-062, RF-072, RF-073 |
-| P-VPR-009 | Las personas de un programa las consultan su coordinador, el coordinador de su Facultad y el Coordinador Académico. | PoliticaAmbito | RN-055, RN-063, RN-118 |
+| P-VPR-009 | Las personas de un programa las consultan su coordinador, el coordinador de su Facultad y el Coordinador Académico. | AsignacionRol (ámbito) | RN-055, RN-063, RN-118 |
+
+## En el código
+
+| Capa | Clase |
+|---|---|
+| Dominio (atributos y comportamiento) | `VinculacionProgramaDominio` (`co.edu.uco.kudos.dominio`) |
+| Entidad (tabla) | `VinculacionProgramaEntidad` |
+| DAO | `VinculacionProgramaDAO` + implementación SQL Server |
+| DTO (API) | VinculoDto, DesvinculacionDto |
+| Negocio | VinculacionNegocioImpl |

@@ -53,8 +53,8 @@ _4 registros de ejemplo. Los identificadores se abrevian (u-01, k-01…) para fa
 | **¿Qué conoce? (información que administra)** | El destinatario, el tipo, el mensaje, el objeto relacionado, la fecha y si fue leída. |
 | **¿Qué hace? (responsabilidades)** | • Crear notificación<br>• Marcar como leída<br>• Consultar notificaciones |
 | **¿Qué decisiones toma?** | • Que solo su destinatario puede marcarla como leída. |
-| **¿Qué decisiones delega?** | • Se crea desde los eventos de dominio (suscriptor de notificaciones). |
-| **¿Con quién colabora?** | Usuario, EventoDominio |
+| **¿Qué decisiones delega?** | • La crea la capa de negocio (notificacionNegocio.notificar) cuando una operación afecta a su destinatario. |
+| **¿Con quién colabora?** | Usuario |
 | **¿Qué eventos genera?** | • Notificación creada<br>• Notificación leída<br>• Notificaciones consultadas |
 | **¿Qué invariantes protege?** | • Una notificación pertenece a un único destinatario. |
 
@@ -101,7 +101,7 @@ No tiene combinaciones únicas además de su identificador.
 
 | Actor | Acción | Descripción | Objeto de dominio | Información externa · Información | Información externa · Descripción | Políticas · Número | Sistema externo | Evento | Referencia en el enunciado |
 |---|---|---|---|---|---|---|---|---|---|
-| Sistema (suscriptor de notificaciones) | Crear notificación | Crea un aviso para el usuario afectado por un evento. | Notificacion |  |  | P-NOT-001 |  | Notificación creada |  |
+| Sistema (capa de negocio) | Crear notificación | Crea un aviso para el usuario afectado por un evento. | Notificacion |  |  | P-NOT-001 |  | Notificación creada |  |
 | Usuario activo | Marcar como leída | Registra que el destinatario leyó la notificación. | Notificacion |  |  | P-NOT-002 |  | Notificación leída |  |
 | Usuario activo | Consultar notificaciones | Lista las notificaciones del usuario. | Notificacion |  |  | P-NOT-003 |  | Notificaciones consultadas |  |
 
@@ -112,3 +112,13 @@ No tiene combinaciones únicas además de su identificador.
 | P-NOT-001 | Toda notificación tiene un destinatario existente y un mensaje de 1 a 500 caracteres, y referencia al objeto relacionado. | Notificacion | D-27 |
 | P-NOT-002 | Solo el destinatario marca su notificación como leída. | Notificacion | D-27 |
 | P-NOT-003 | Cada usuario consulta solo sus notificaciones, las no leídas primero. | Notificacion | D-27 |
+
+## En el código
+
+| Capa | Clase |
+|---|---|
+| Dominio (atributos y comportamiento) | `NotificacionDominio` (`co.edu.uco.kudos.dominio`) |
+| Entidad (tabla) | `NotificacionEntidad` |
+| DAO | `NotificacionDAO` + implementación SQL Server |
+| DTO (API) | NotificacionDto |
+| Negocio | NotificacionNegocioImpl (lo llaman todos los negocios) |

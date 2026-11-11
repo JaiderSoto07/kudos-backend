@@ -5,6 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Clase | Replica |
+| Clase en el código | `ReplicaDominio` |
 | Estereotipo | class (entidad de dominio) |
 | Descripción | Intervención en la conversación de un Kudo. Su padre es el Kudo (réplica de primer nivel) u otra réplica (respuesta). |
 | Modificador acceso | public |
@@ -21,7 +22,6 @@
 | Es usada por | Asociación | Calificacion |
 | Es usada por | Asociación | Reporte |
 | Es usada por | Asociación | Moderacion |
-| Necesita de | Composición (objeto de valor) | ContenidoTexto |
 | Necesita de | Dependencia (enumeración) | EstadoContenido |
 
 ## Atributos
@@ -32,7 +32,7 @@
 | private | autor | Otro | Usuario | final | no static | Instancia por defecto de Usuario | Usuario que escribe la réplica (RN-168) |
 | private | kudo | Otro | Kudo | final | no static | Instancia por defecto de Kudo | Kudo raíz de la conversación |
 | private | replicaPadre | Otro | Replica | final | no static | Instancia por defecto de Replica | Réplica a la que responde (RN-162) |
-| private | contenido | Otro | ContenidoTexto | final | no static | Instancia vacía de ContenidoTexto | Texto de la réplica |
+| private | contenido | String |  | final | no static | "" (cadena vacía) | Texto de la réplica |
 | private | fechaCreacion | Otro | LocalDateTime | final | no static | Fecha actual | Fecha y hora de publicación (RN-169) |
 | private | estado | Otro | EstadoContenido | no final | no static | CREADO | Estado del ciclo de vida del contenido |
 | private | promedioCalificacion | Otro | BigDecimal | no final | no static | 0 | Promedio de estrellas de sus calificaciones activas |
@@ -54,31 +54,37 @@ Solo hay métodos de lectura (getters). No hay setters públicos: el estado camb
 | public | getAutor | getter | Obtiene el valor del atributo autor. | Otro | Usuario |
 | public | getKudo | getter | Obtiene el valor del atributo kudo. | Otro | Kudo |
 | public | getReplicaPadre | getter | Obtiene el valor del atributo replicaPadre. | Otro | Replica |
-| public | getContenido | getter | Obtiene el valor del atributo contenido. | Otro | ContenidoTexto |
+| public | getContenido | getter | Obtiene el valor del atributo contenido. | String |  |
 | public | getFechaCreacion | getter | Obtiene el valor del atributo fechaCreacion. | Otro | LocalDateTime |
 | public | getEstado | getter | Obtiene el valor del atributo estado. | Otro | EstadoContenido |
 | public | getPromedioCalificacion | getter | Obtiene el valor del atributo promedioCalificacion. | Otro | BigDecimal |
 | public | getCantidadCalificaciones | getter | Obtiene el valor del atributo cantidadCalificaciones. | int |  |
 
-## Métodos
+## Métodos de negocio
 
-Métodos de negocio: salen de las responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/Replica.md#responsabilidades). Las consultas se marcan `static`, como en Sigma: en la implementación las resuelve la capa de negocio con su DAO.
+Métodos **reales** de `ReplicaDominio` (comportamiento del dominio rico, D-29).
 
-| Modificador de acceso | Nombre | Tipo acceso método | Tipo modificación método | Descripción | Parámetros · Nombre | Parámetros · Tipo de dato | Parámetros · Descripción | Tipo dato de retorno | Excepciones (políticas que puede incumplir) |
-|---|---|---|---|---|---|---|---|---|---|
-| public | responderKudo | no static | final | Agrega una réplica de primer nivel a la conversación de un Kudo. | autor | Usuario | Quien responde. | Replica | P-RPL-001: El autor no está activo.<br>P-RPL-002: La conversación está cerrada.<br>P-RPL-003: El contenido está vacío. |
-|  |  |  |  |  | kudo | Kudo | Kudo raíz. |  |  |
-|  |  |  |  |  | contenido | ContenidoTexto | Texto. |  |  |
-| public | responderReplica | no static | final | Agrega una respuesta a una réplica existente. | autor | Usuario | Quien responde. | Replica | P-RPL-001: El autor no está activo.<br>P-RPL-002: La conversación está cerrada.<br>P-RPL-003: El contenido está vacío.<br>P-RPL-006: La réplica padre no existe, está vetada o es de otro Kudo. |
-|  |  |  |  |  | padre | Replica | Réplica respondida. |  |  |
-|  |  |  |  |  | contenido | ContenidoTexto | Texto. |  |  |
-| public | consultarConversacion | static | final | Arma el árbol completo de réplicas de un Kudo. | kudo | UUID | Kudo raíz. | Conversacion |  |
-| public | marcarReportada | no static | final | Registra que la réplica recibió un reporte. |  |  |  | Replica | P-RPL-009: La réplica está vetada. |
-| public | iniciarRevision | no static | final | La réplica entra en revisión. |  |  |  | Replica | P-RPL-010: La réplica no está reportada. |
-| public | liberar | no static | final | La réplica vuelve a estar visible. |  |  |  | Replica | P-RPL-011: La réplica no está en revisión. |
-| public | vetar | no static | final | Inhabilita la réplica de forma definitiva. |  |  |  | Replica | P-RPL-012: La réplica ya está vetada. |
-| public | admiteInteraccion | no static | final | Indica si la réplica acepta respuestas, calificaciones y reportes. |  |  |  | boolean | P-RPL-014: La réplica está vetada. |
-| public | actualizarResumenCalificaciones | no static | final | Recalcula el promedio y la cantidad de calificaciones activas. | calificaciones | Lista de Estrellas | Calificaciones activas. | Replica |  |
+| Modificador de acceso | Nombre | Parámetros | Tipo dato de retorno | Descripción |
+|---|---|---|---|---|
+| public | publicar | — | void | Transición del patrón State: CREADO → VISIBLE. |
+| public | reportar | — | void | Registra que la réplica recibió un reporte. |
+| public | iniciarRevision | — | void | La réplica entra en revisión. |
+| public | liberar | — | void | La réplica vuelve a estar visible. |
+| public | vetar | — | void | Inhabilita la réplica de forma definitiva. |
+| public | admiteInteraccion | — | boolean | Indica si la réplica acepta respuestas, calificaciones y reportes. |
+| public | esAutor | UUID idUsuario | boolean | Indica si el usuario dado es el autor. |
+| public | actualizarResumenCalificaciones | List<Integer> estrellasActivas | void | Recalcula el promedio y la cantidad de calificaciones activas. |
+| public | respondeAlKudo | — | boolean | Indica si la réplica responde directamente al Kudo (no tiene réplica padre). |
+
+## Operaciones del caso de uso (capa de negocio)
+
+Responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/Replica.md#responsabilidades) que coordinan varios objetos o consultan la base de datos. Las implementa: ReplicaNegocioImpl.
+
+| Operación | Descripción | Políticas que protege |
+|---|---|---|
+| responderKudo | Agrega una réplica de primer nivel a la conversación de un Kudo. | P-RPL-001, P-RPL-002, P-RPL-003, P-RPL-004, P-RPL-005 |
+| responderReplica | Agrega una respuesta a una réplica existente. | P-RPL-001, P-RPL-002, P-RPL-003, P-RPL-004, P-RPL-006, P-RPL-007 |
+| consultarConversacion | Arma el árbol completo de réplicas de un Kudo. | P-RPL-008 |
 
 ## Builder (clase interna public static)
 
@@ -91,7 +97,7 @@ Patrón **Builder**, igual que en Sigma: reúne los valores, los sanea (nulos a 
 | public | autor | no static | Asigna el valor recibido; si es nulo, asigna: Instancia por defecto de Usuario. | autor | Usuario | Builder |
 | public | kudo | no static | Asigna el valor recibido; si es nulo, asigna: Instancia por defecto de Kudo. | kudo | Kudo | Builder |
 | public | replicaPadre | no static | Asigna el valor recibido; si es nulo, asigna: Instancia por defecto de Replica. | replicaPadre | Replica | Builder |
-| public | contenido | no static | Asigna el valor recibido; si es nulo, asigna: Instancia vacía de ContenidoTexto. | contenido | ContenidoTexto | Builder |
+| public | contenido | no static | Asigna el texto recibido sin espacios en blanco al inicio y al final; si es nulo, asigna una cadena vacía. | contenido | String | Builder |
 | public | fechaCreacion | no static | Asigna la fecha recibida; si es nula, asigna la fecha por defecto. | fechaCreacion | LocalDateTime | Builder |
 | public | estado | no static | Asigna el valor recibido; si es nulo, asigna: CREADO. | estado | EstadoContenido | Builder |
 | public | promedioCalificacion | no static | Asigna el valor recibido; si es nulo o negativo, asigna 0. | promedioCalificacion | BigDecimal | Builder |

@@ -18,6 +18,8 @@ variables:
     value: 42D5EFB6-48AF-4E8A-975A-872CA1182C4E
   - name: idPersona
     value: 1FAD8C0E-5C87-4CEE-BFC6-CF7AACA8AC64
+  - name: idNotificacion
+    value: 01A1C61E-CEC9-78BC-8800-90E6FFFE37A2
   - name: idReplica
     value: DA05C092-603B-4DE2-8103-F775CF165708
   - name: codigo

@@ -5,6 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Clase | Usuario |
+| Clase en el código | `UsuarioDominio` |
 | Estereotipo | class (entidad de dominio) |
 | Descripción | Persona de la comunidad universitaria que tiene una cuenta en la plataforma. Su rol institucional vigente se conoce por su AsignacionRol vigente. |
 | Modificador acceso | public |
@@ -26,8 +27,6 @@
 | Es usada por | Asociación | Moderacion |
 | Es usada por | Asociación | Auditoria |
 | Es usada por | Asociación | Notificacion |
-| Necesita de | Composición (objeto de valor) | CorreoInstitucional |
-| Necesita de | Composición (objeto de valor) | NumeroCelular |
 | Necesita de | Dependencia (enumeración) | EstadoCuenta |
 
 ## Atributos
@@ -37,11 +36,10 @@
 | private | id | Otro | UUID | final | no static | 00000000-0000-0000-0000-000000000000 | Identificador único del usuario |
 | private | nombres | String |  | no final | no static | "" (cadena vacía) | Nombres de la persona |
 | private | apellidos | String |  | no final | no static | "" (cadena vacía) | Apellidos de la persona |
-| private | correoInstitucional | Otro | CorreoInstitucional | no final | no static | Instancia vacía de CorreoInstitucional | Correo institucional con el que se registra e ingresa |
-| private | correoVerificado | boolean/Boolean |  | no final | no static | false | Indica si el correo institucional fue validado con un código |
-| private | numeroCelular | Otro | NumeroCelular | no final | no static | Instancia vacía de NumeroCelular | Número celular de contacto |
+| private | correoInstitucional | String |  | no final | no static | "" (cadena vacía) | Correo de la cuenta de Google con la que se registra e ingresa |
+| private | correoVerificado | boolean/Boolean |  | no final | no static | false | Indica si el correo fue validado al ingresar con Google |
+| private | numeroCelular | String |  | no final | no static | "" (cadena vacía) | Número celular de contacto |
 | private | celularVerificado | boolean/Boolean |  | no final | no static | false | Indica si el celular fue validado con un código |
-| private | contrasena | String |  | no final | no static | "" (cadena vacía) | Hash de la contraseña de acceso |
 | private | aprobada | boolean/Boolean |  | no final | no static | false | Indica si la autoridad correspondiente aprobó la cuenta |
 | private | estadoCuenta | Otro | EstadoCuenta | no final | no static | PENDIENTE_APROBACION | Estado del ciclo de vida de la cuenta |
 | private | fechaRegistro | Otro | LocalDateTime | final | no static | Fecha actual | Fecha y hora en que se creó la cuenta |
@@ -61,42 +59,45 @@ Solo hay métodos de lectura (getters). No hay setters públicos: el estado camb
 | public | getId | getter | Obtiene el valor del atributo id. | Otro | UUID |
 | public | getNombres | getter | Obtiene el valor del atributo nombres. | String |  |
 | public | getApellidos | getter | Obtiene el valor del atributo apellidos. | String |  |
-| public | getCorreoInstitucional | getter | Obtiene el valor del atributo correoInstitucional. | Otro | CorreoInstitucional |
+| public | getCorreoInstitucional | getter | Obtiene el valor del atributo correoInstitucional. | String |  |
 | public | isCorreoVerificado | getter | Obtiene el valor del atributo correoVerificado. | boolean/Boolean |  |
-| public | getNumeroCelular | getter | Obtiene el valor del atributo numeroCelular. | Otro | NumeroCelular |
+| public | getNumeroCelular | getter | Obtiene el valor del atributo numeroCelular. | String |  |
 | public | isCelularVerificado | getter | Obtiene el valor del atributo celularVerificado. | boolean/Boolean |  |
-| public | getContrasena | getter | Obtiene el valor del atributo contrasena. | String |  |
 | public | isAprobada | getter | Obtiene el valor del atributo aprobada. | boolean/Boolean |  |
 | public | getEstadoCuenta | getter | Obtiene el valor del atributo estadoCuenta. | Otro | EstadoCuenta |
 | public | getFechaRegistro | getter | Obtiene el valor del atributo fechaRegistro. | Otro | LocalDateTime |
 
-## Métodos
+## Métodos de negocio
 
-Métodos de negocio: salen de las responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/Usuario.md#responsabilidades). Las consultas se marcan `static`, como en Sigma: en la implementación las resuelve la capa de negocio con su DAO.
+Métodos **reales** de `UsuarioDominio` (comportamiento del dominio rico, D-29).
 
-| Modificador de acceso | Nombre | Tipo acceso método | Tipo modificación método | Descripción | Parámetros · Nombre | Parámetros · Tipo de dato | Parámetros · Descripción | Tipo dato de retorno | Excepciones (políticas que puede incumplir) |
-|---|---|---|---|---|---|---|---|---|---|
-| public | registrar | no static | final | Crea la cuenta de una persona que se autorregistra con su identidad institucional. | datos | Usuario | Nombres, apellidos, correo, celular y contraseña. | Usuario | P-USU-001: Los nombres o apellidos están vacíos o superan 60 caracteres.<br>P-USU-002: El correo no tiene formato válido o no es institucional.<br>P-USU-003: Ya existe un usuario con ese correo.<br>P-USU-004: El celular no tiene el formato esperado.<br>P-USU-005: Ya existe un usuario con ese celular.<br>P-USU-006: La contraseña es débil.<br>P-USU-007: No fue posible generar o enviar los códigos.<br>P-USU-008: El identificador generado ya existe. |
-| public | registrarPorAdministrador | no static | final | Un Administrador registra directamente a un Rector o a otro Administrador, que queda aprobado. | datos | Usuario | Datos personales del nuevo usuario. | Usuario | P-USU-001: Los nombres o apellidos están vacíos o superan 60 caracteres.<br>P-USU-002: El correo no tiene formato válido o no es institucional.<br>P-USU-003: Ya existe un usuario con ese correo.<br>P-USU-004: El celular no tiene el formato esperado.<br>P-USU-005: Ya existe un usuario con ese celular.<br>P-USU-006: La contraseña es débil.<br>P-USU-009: El actor no es Administrador.<br>P-USU-010: Ya existe un Rector vigente. |
-|  |  |  |  |  | rol | Rol | RECTOR o ADMINISTRADOR. |  |  |
-|  |  |  |  |  | actor | Usuario | Administrador que registra. |  |  |
-| public | verificarCorreo | no static | final | Marca el correo como verificado con el código recibido. | codigo | String | Código de 6 dígitos recibido en el correo. | Usuario | P-USU-012: El código es incorrecto, está vencido o fue invalidado. |
-| public | verificarCelular | no static | final | Marca el celular como verificado con el código recibido. | codigo | String | Código de 6 dígitos recibido por SMS. | Usuario | P-USU-012: El código es incorrecto, está vencido o fue invalidado. |
-| public | aprobar | no static | final | Registra que la autoridad competente aprobó la cuenta. |  |  |  | Usuario | P-USU-014: La cuenta ya fue aprobada o está desactivada. |
-| public | intentarActivar | no static | final | Pasa la cuenta a ACTIVA si está aprobada y tiene correo y celular verificados. |  |  |  | boolean | P-USU-015: Falta alguna de las tres condiciones. |
-| public | puedeIniciarSesion | no static | final | Decide si la persona puede ingresar con su correo y contraseña. | correo | CorreoInstitucional | Correo institucional. | ResultadoIngreso | P-USU-016: Correo o contraseña incorrectos.<br>P-USU-017: La cuenta no está activa. |
-|  |  |  |  |  | contrasena | String | Contraseña digitada. |  |  |
-| public | actualizarDatosPersonales | no static | final | Modifica los nombres y apellidos del propio usuario. | datos | Usuario | Nuevos nombres y apellidos. | Usuario | P-USU-001: Los nombres o apellidos están vacíos o superan 60 caracteres.<br>P-USU-018: Se intenta cambiar el rol desde la información personal. |
-| public | cambiarCorreo | no static | final | Cambia el correo institucional y exige verificarlo de nuevo. | correo | CorreoInstitucional | Nuevo correo institucional. | Usuario | P-USU-002: El correo no tiene formato válido o no es institucional.<br>P-USU-003: Ya existe un usuario con ese correo. |
-| public | cambiarCelular | no static | final | Cambia el número celular y exige verificarlo de nuevo. | celular | NumeroCelular | Nuevo número celular. | Usuario | P-USU-004: El celular no tiene el formato esperado.<br>P-USU-005: Ya existe un usuario con ese celular. |
-| public | suspender | no static | final | Bloquea temporalmente la cuenta de un usuario del ámbito del actor. | actor | Usuario | Autoridad que suspende. | Usuario | P-USU-022: El usuario no pertenece al ámbito del actor.<br>P-USU-023: La cuenta ya está suspendida o desactivada, o falta el motivo.<br>P-USU-024: El actor es el mismo usuario. |
-|  |  |  |  |  | motivo | String | Razón de la suspensión. |  |  |
-| public | reactivar | no static | final | Levanta la suspensión de una cuenta. | actor | Usuario | Autoridad que reactiva. | Usuario | P-USU-022: El usuario no pertenece al ámbito del actor.<br>P-USU-025: La cuenta no está suspendida. |
-|  |  |  |  |  | motivo | String | Razón de la reactivación. |  |  |
-| public | desactivar | no static | final | Cierra definitivamente la cuenta para su rol, conservando su historial. | actor | Usuario | Autoridad que desactiva. | Usuario | P-USU-022: El usuario no pertenece al ámbito del actor.<br>P-USU-024: El actor es el mismo usuario.<br>P-USU-026: La cuenta ya está desactivada o falta el motivo. |
-|  |  |  |  |  | motivo | String | Razón de la desactivación. |  |  |
-| public | tieneRolVigente | no static | final | Indica si el usuario ejerce hoy un rol dado; lo usan las políticas de autorización. | rol | Rol | Rol que se verifica. | boolean |  |
-| public | consultar | static | final | Muestra los datos del usuario, su rol, sus vínculos y el estado de sus validaciones. | id | UUID | Identificador del usuario. | Usuario | P-USU-027: El actor no tiene permiso sobre ese usuario. |
+| Modificador de acceso | Nombre | Parámetros | Tipo dato de retorno | Descripción |
+|---|---|---|---|---|
+| public | aprobar | — | void | Registra que la autoridad competente aprobó la cuenta. |
+| public | verificarCorreo | — | void | Marca el correo como verificado con el código recibido. |
+| public | verificarCelular | — | void | Marca el celular como verificado con el código recibido. |
+| public | intentarActivar | — | boolean | Pasa la cuenta a ACTIVA si está aprobada y tiene correo y celular verificados. |
+| public | estaActiva | — | boolean | Indica si la cuenta está ACTIVA. |
+| public | motivoParaNoIngresar | — | String | Explica qué le falta a la cuenta para usar la aplicación. |
+| public | actualizarDatosPersonales | String nuevosNombres, String nuevosApellidos | void | Modifica los nombres y apellidos del propio usuario. |
+| public | cambiarCorreo | String nuevoCorreo | void | Cambia el correo institucional y exige verificarlo de nuevo. |
+| public | cambiarCelular | String nuevoCelular | void | Cambia el número celular y exige verificarlo de nuevo. |
+| public | suspender | — | void | Bloquea temporalmente la cuenta de un usuario del ámbito del actor. |
+| public | reactivar | — | void | Levanta la suspensión de una cuenta. |
+| public | desactivar | — | void | Cierra definitivamente la cuenta para su rol, conservando su historial. |
+| public | nombreCompleto | — | String | Nombres y apellidos unidos. |
+
+## Operaciones del caso de uso (capa de negocio)
+
+Responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/Usuario.md#responsabilidades) que coordinan varios objetos o consultan la base de datos. Las implementa: RegistroNegocioImpl, VerificacionNegocioImpl, CuentaNegocioImpl, AutenticacionNegocioImpl, AutoridadNegocioImpl, PersonaNegocioImpl.
+
+| Operación | Descripción | Políticas que protege |
+|---|---|---|
+| registrar | Crea la cuenta de una persona que se autorregistra con su identidad institucional. | P-USU-001, P-USU-002, P-USU-003, P-USU-004, P-USU-005, P-USU-006, P-USU-007, P-USU-008 |
+| registrarPorAdministrador | Un Administrador registra directamente a un Rector o a otro Administrador, que queda aprobado. | P-USU-001, P-USU-002, P-USU-003, P-USU-004, P-USU-005, P-USU-006, P-USU-009, P-USU-010, P-USU-011 |
+| puedeIniciarSesion | Decide si la persona autenticada con Google puede usar la plataforma. | P-USU-016, P-USU-017 |
+| tieneRolVigente | Indica si el usuario ejerce hoy un rol dado; lo usan las políticas de autorización. | P-USU-029 |
+| consultar | Muestra los datos del usuario, su rol, sus vínculos y el estado de sus validaciones. | P-USU-027, P-USU-028 |
 
 ## Builder (clase interna public static)
 
@@ -108,11 +109,10 @@ Patrón **Builder**, igual que en Sigma: reúne los valores, los sanea (nulos a 
 | public | id | no static | Asigna el identificador recibido; si es nulo, asigna el identificador por defecto. | id | UUID | Builder |
 | public | nombres | no static | Asigna el texto recibido sin espacios en blanco al inicio y al final; si es nulo, asigna una cadena vacía. | nombres | String | Builder |
 | public | apellidos | no static | Asigna el texto recibido sin espacios en blanco al inicio y al final; si es nulo, asigna una cadena vacía. | apellidos | String | Builder |
-| public | correoInstitucional | no static | Asigna el valor recibido; si es nulo, asigna: Instancia vacía de CorreoInstitucional. | correoInstitucional | CorreoInstitucional | Builder |
+| public | correoInstitucional | no static | Asigna el texto recibido sin espacios en blanco al inicio y al final; si es nulo, asigna una cadena vacía. | correoInstitucional | String | Builder |
 | public | correoVerificado | no static | Asigna el valor recibido. | correoVerificado | boolean | Builder |
-| public | numeroCelular | no static | Asigna el valor recibido; si es nulo, asigna: Instancia vacía de NumeroCelular. | numeroCelular | NumeroCelular | Builder |
+| public | numeroCelular | no static | Asigna el texto recibido sin espacios en blanco al inicio y al final; si es nulo, asigna una cadena vacía. | numeroCelular | String | Builder |
 | public | celularVerificado | no static | Asigna el valor recibido. | celularVerificado | boolean | Builder |
-| public | contrasena | no static | Asigna el texto recibido sin espacios en blanco al inicio y al final; si es nulo, asigna una cadena vacía. | contrasena | String | Builder |
 | public | aprobada | no static | Asigna el valor recibido. | aprobada | boolean | Builder |
 | public | estadoCuenta | no static | Asigna el valor recibido; si es nulo, asigna: PENDIENTE_APROBACION. | estadoCuenta | EstadoCuenta | Builder |
 | public | fechaRegistro | no static | Asigna la fecha recibida; si es nula, asigna la fecha por defecto. | fechaRegistro | LocalDateTime | Builder |

@@ -1,5 +1,7 @@
 package co.edu.uco.kudos.transversal.utilitario;
 
+import java.text.Normalizer;
+
 public final class UtilTexto {
 
     public static final String VACIO = "";
@@ -72,5 +74,10 @@ public final class UtilTexto {
             resultado.append(UtilObjeto.obtenerValorDefectoSiValorOriginalEsNulo(valor, VACIO));
         }
         return resultado.toString();
+    }
+
+    public String normalizarParaBuscar(String valor) {
+        var limpio = quitarEspaciosEnBlanco(valor).toLowerCase();
+        return Normalizer.normalize(limpio, Normalizer.Form.NFD).replaceAll("\\p{M}", "");
     }
 }

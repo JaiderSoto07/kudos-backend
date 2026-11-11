@@ -138,4 +138,16 @@ _4 registros de ejemplo. Los identificadores se abrevian (u-01, k-01…) para fa
 | P-RPT-007 | Solo un reporte PENDIENTE pasa a EN_REVISION. | Reporte | RN-211 |
 | P-RPT-008 | Un reporte abierto pasa a ACEPTADO cuando la moderación veta el contenido. | Reporte | RN-212 |
 | P-RPT-009 | Un reporte abierto pasa a RECHAZADO cuando la moderación libera el contenido; se notifica al reportante. | Reporte | RN-212, D-27 |
-| P-RPT-010 | Los moderadores consultan todos los reportes; los demás usuarios, solo los suyos. | PoliticaModeracion | CU-012, D-08 |
+| P-RPT-010 | Los moderadores consultan todos los reportes; los demás usuarios, solo los suyos. | AsegurarActorTieneRolRule (moderadores) | CU-012, D-08 |
+
+## En el código
+
+| Capa | Clase |
+|---|---|
+| Dominio (atributos y comportamiento) | `ReporteDominio` (`co.edu.uco.kudos.dominio`) |
+| Entidad (tabla) | `ReporteEntidad` |
+| DAO | `ReporteDAO` + implementación SQL Server |
+| DTO (API) | ReporteDto, ContenidoReportadoDto |
+| Negocio | ReporteNegocioImpl |
+
+La moderación que lo resolvió se guarda como `idModeracion` (UUID).

@@ -8,7 +8,6 @@ import co.edu.uco.kudos.negocio.negocio.PersonaNegocio;
 import co.edu.uco.kudos.negocio.negocio.assembler.impl.UsuarioEntidadAssembler;
 import co.edu.uco.kudos.transversal.utilitario.UtilTexto;
 
-import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -42,7 +41,6 @@ public class PersonaNegocioImpl implements PersonaNegocio {
     }
 
     private String normalizar(String valor) {
-        var limpio = UtilTexto.getUtilTexto().quitarEspaciosEnBlanco(valor).toLowerCase();
-        return Normalizer.normalize(limpio, Normalizer.Form.NFD).replaceAll("\\p{M}", "");
+        return UtilTexto.getUtilTexto().normalizarParaBuscar(valor);
     }
 }

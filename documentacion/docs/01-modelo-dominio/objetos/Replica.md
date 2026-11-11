@@ -18,7 +18,7 @@
 | autor | Usuario que escribe la réplica (RN-168) | [Usuario](Usuario.md) | Sí |
 | kudo | Kudo raíz de la conversación | [Kudo](Kudo.md) | Sí |
 | replicaPadre | Réplica a la que responde (RN-162) | [Replica](Replica.md) | No |
-| contenido | Texto de la réplica | [ContenidoTexto](../README.md#objetos-de-valor) | Sí |
+| contenido | Texto de la réplica | Texto | Sí |
 | fechaCreacion | Fecha y hora de publicación (RN-169) | FechaHora | Sí |
 | estado | Estado del ciclo de vida del contenido | [EstadoContenido](../README.md#enumeraciones) | Sí |
 | promedioCalificacion | Promedio de estrellas de sus calificaciones activas | Decimal | Sí |
@@ -56,10 +56,10 @@ _4 registros de ejemplo. Los identificadores se abrevian (u-01, k-01…) para fa
 | **Tipo de objeto** | Entidad raíz de agregado |
 | **Agregado** | Replica (raíz). Referencia al Kudo raíz y a su réplica padre por identificador. |
 | **¿Qué conoce? (información que administra)** | Su autor, su Kudo raíz, su réplica padre, su contenido, su fecha, su estado y el resumen de sus calificaciones. |
-| **¿Qué hace? (responsabilidades)** | • Responder Kudo<br>• Responder réplica<br>• Consultar conversación<br>• Marcar reportada<br>• Iniciar revisión<br>• Liberar réplica<br>• Vetar réplica<br>• Decidir si admite interacción<br>• Actualizar resumen de calificaciones |
+| **¿Qué hace? (responsabilidades)** | • Responder Kudo<br>• Responder réplica<br>• Consultar conversación<br>• Reportar<br>• Iniciar revisión<br>• Liberar réplica<br>• Vetar réplica<br>• Decidir si admite interacción<br>• Actualizar resumen de calificaciones |
 | **¿Qué decisiones toma?** | • Si admite interacción (no VETADA).<br>• Qué transición de estado es válida (State).<br>• Su promedio de calificaciones. |
-| **¿Qué decisiones delega?** | • La validación del contenido a ContenidoTexto.<br>• La verificación de que el Kudo admite interacción a Kudo.<br>• El armado del árbol de la conversación a Conversacion (patrón Composite). |
-| **¿Con quién colabora?** | Usuario, Kudo, Replica, ContenidoTexto, EstadoContenido, Calificacion, Reporte, Moderacion |
+| **¿Qué decisiones delega?** | • La validación del contenido a la regla ValidarContenidoRule.<br>• La verificación de que el Kudo admite interacción a Kudo.<br>• El armado del árbol de la conversación a ConversacionDtoAssembler, que cuelga cada réplica de su padre (idReplicaPadre). |
+| **¿Con quién colabora?** | Usuario, Kudo, Replica, EstadoContenido, Calificacion, Reporte, Moderacion |
 | **¿Qué eventos genera?** | • Réplica creada<br>• Réplica creada y réplica respondida<br>• Conversación consultada<br>• Réplica reportada<br>• Revisión iniciada<br>• Contenido liberado<br>• Réplica vetada<br>• Indicador recalculado |
 | **¿Qué invariantes protege?** | • INV-025 a INV-029: un autor, un único padre (Kudo o réplica), sin autorreferencia ni ciclos.<br>• RN-206 a RN-209: ciclo de vida del contenido. |
 
@@ -69,7 +69,7 @@ _4 registros de ejemplo. Los identificadores se abrevian (u-01, k-01…) para fa
 |---|---|---|---|---|---|---|---|---|---|
 | Descripción atributo | Identificador único de la réplica | Usuario que escribe la réplica (RN-168) | Kudo raíz de la conversación | Réplica a la que responde (RN-162) | Texto de la réplica | Fecha y hora de publicación (RN-169) | Estado del ciclo de vida del contenido | Promedio de estrellas de sus calificaciones activas | Número de calificaciones activas |
 | Identificador del objeto de dominio | Sí | No | No | No | No | No | No | No | No |
-| Tipo de dato | UUID | Usuario | Kudo | Replica | ContenidoTexto | FechaHora | EstadoContenido | Decimal | Entero |
+| Tipo de dato | UUID | Usuario | Kudo | Replica | Texto | FechaHora | EstadoContenido | Decimal | Entero |
 | Obligatorio | Sí | Sí | Sí | No | Sí | Sí | Sí | Sí | Sí |
 | Longitud mínima (si aplica) |  |  |  |  | 1 |  |  |  |  |
 | Longitud máxima (si aplica) |  |  |  |  | Sin límite |  |  |  |  |
@@ -86,7 +86,7 @@ _4 registros de ejemplo. Los identificadores se abrevian (u-01, k-01…) para fa
 | Responder Kudo | No requerido | Requerido | Requerido | No requerido | Requerido | No requerido | No requerido | No requerido | No requerido |
 | Responder réplica | No requerido | Requerido | Requerido | Requerido | Requerido | No requerido | No requerido | No requerido | No requerido |
 | Consultar conversación | Mostrar | Mostrar | Mostrar | Mostrar | Mostrar | Mostrar | Mostrar | Mostrar | Mostrar |
-| Marcar reportada | Requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido |
+| Reportar | Requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido |
 | Iniciar revisión | Requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido |
 | Liberar réplica | Requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido |
 | Vetar réplica | Requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido | No requerido |
@@ -103,22 +103,22 @@ No tiene combinaciones únicas además de su identificador.
 |---|---|---|---|---|---|---|---|---|---|---|
 | **Responder Kudo** (`responderKudo()`) | Agrega una réplica de primer nivel a la conversación de un Kudo. | autor | Usuario | Quien responde. | Replica | Réplica VISIBLE. | P-RPL-001 | Asegurar que el autor tenga cuenta ACTIVA. | El autor no está activo. | Rechazar la réplica. |
 |  |  | kudo | Kudo | Kudo raíz. |  |  | P-RPL-002 | Asegurar que el Kudo raíz admita interacción (no esté vetado). | La conversación está cerrada. | Rechazar la réplica. |
-|  |  | contenido | ContenidoTexto | Texto. |  |  | P-RPL-003 | Asegurar que el contenido no esté vacío; se guarda completo y sin límite. | El contenido está vacío. | Rechazar la réplica. |
+|  |  | contenido | String | Texto. |  |  | P-RPL-003 | Asegurar que el contenido no esté vacío; se guarda completo y sin límite. | El contenido está vacío. | Rechazar la réplica. |
 |  |  |  |  |  |  |  | P-RPL-004 | Toda réplica inicia en CREADA y al publicarse pasa a VISIBLE. |  |  |
 |  |  |  |  |  |  |  | P-RPL-005 | Notificar al autor del Kudo que recibió una réplica. |  |  |
 | **Responder réplica** (`responderReplica()`) | Agrega una respuesta a una réplica existente. | autor | Usuario | Quien responde. | Replica | Réplica hija VISIBLE. | P-RPL-001 | Asegurar que el autor tenga cuenta ACTIVA. | El autor no está activo. | Rechazar la réplica. |
 |  |  | padre | Replica | Réplica respondida. |  |  | P-RPL-002 | Asegurar que el Kudo raíz admita interacción (no esté vetado). | La conversación está cerrada. | Rechazar la réplica. |
-|  |  | contenido | ContenidoTexto | Texto. |  |  | P-RPL-003 | Asegurar que el contenido no esté vacío; se guarda completo y sin límite. | El contenido está vacío. | Rechazar la réplica. |
+|  |  | contenido | String | Texto. |  |  | P-RPL-003 | Asegurar que el contenido no esté vacío; se guarda completo y sin límite. | El contenido está vacío. | Rechazar la réplica. |
 |  |  |  |  |  |  |  | P-RPL-004 | Toda réplica inicia en CREADA y al publicarse pasa a VISIBLE. |  |  |
 |  |  |  |  |  |  |  | P-RPL-006 | Asegurar que la réplica padre exista, no esté vetada y pertenezca al mismo Kudo; el padre se fija al crear y no cambia. | La réplica padre no existe, está vetada o es de otro Kudo. | Rechazar la respuesta. |
 |  |  |  |  |  |  |  | P-RPL-007 | Notificar al autor de la réplica respondida. |  |  |
 | **Consultar conversación** (`consultarConversacion()`) | Arma el árbol completo de réplicas de un Kudo. | kudo | UUID | Kudo raíz. | Conversacion | Árbol de réplicas. | P-RPL-008 | La conversación se muestra como árbol completo en orden cronológico; las réplicas vetadas aparecen como "Contenido vetado" y conservan sus respuestas. |  |  |
-| **Marcar reportada** (`marcarReportada()`) | Registra que la réplica recibió un reporte. | Ninguno | - | No requiere datos de entrada. | Replica | Réplica REPORTADA (o sin cambio). | P-RPL-009 | Una réplica VISIBLE pasa a REPORTADA con su primer reporte. | La réplica está vetada. | Rechazar el reporte. |
+| **Reportar** (`reportar()`) | Registra que la réplica recibió un reporte. | Ninguno | - | No requiere datos de entrada. | Replica | Réplica REPORTADA (o sin cambio). | P-RPL-009 | Una réplica VISIBLE pasa a REPORTADA con su primer reporte. | La réplica está vetada. | Rechazar el reporte. |
 | **Iniciar revisión** (`iniciarRevision()`) | La réplica entra en revisión. | Ninguno | - | No requiere datos de entrada. | Replica | Réplica EN_REVISION. | P-RPL-010 | Solo una réplica REPORTADA puede pasar a EN_REVISION. | La réplica no está reportada. | Rechazar el inicio de la revisión. |
 | **Liberar réplica** (`liberar()`) | La réplica vuelve a estar visible. | Ninguno | - | No requiere datos de entrada. | Replica | Réplica VISIBLE. | P-RPL-011 | Solo una réplica EN_REVISION puede liberarse; vuelve a VISIBLE. | La réplica no está en revisión. | Rechazar la liberación. |
 | **Vetar réplica** (`vetar()`) | Inhabilita la réplica de forma definitiva. | Ninguno | - | No requiere datos de entrada. | Replica | Réplica VETADA. | P-RPL-012 | Una réplica no vetada puede vetarse; VETADA es final. | La réplica ya está vetada. | Rechazar el veto. |
 | **Decidir si admite interacción** (`admiteInteraccion()`) | Indica si la réplica acepta respuestas, calificaciones y reportes. | Ninguno | - | No requiere datos de entrada. | boolean | Verdadero si no está vetada. | P-RPL-014 | Una réplica admite respuestas, calificaciones y reportes solo si no está VETADA. | La réplica está vetada. | Rechazar la interacción. |
-| **Actualizar resumen de calificaciones** (`actualizarResumenCalificaciones()`) | Recalcula el promedio y la cantidad de calificaciones activas. | calificaciones | Lista de Estrellas | Calificaciones activas. | Replica | Réplica con resumen actualizado. | P-RPL-013 | El promedio de calificaciones es el promedio de las calificaciones activas, con dos decimales. |  |  |
+| **Actualizar resumen de calificaciones** (`actualizarResumenCalificaciones()`) | Recalcula el promedio y la cantidad de calificaciones activas. | calificaciones | Lista de enteros (estrellas) | Calificaciones activas. | Replica | Réplica con resumen actualizado. | P-RPL-013 | El promedio de calificaciones es el promedio de las calificaciones activas, con dos decimales. |  |  |
 
 ## Eventos
 
@@ -136,12 +136,12 @@ No tiene combinaciones únicas además de su identificador.
 |  |  |  |  |  |  | P-RPL-006 |  |  |  |
 |  |  |  |  |  |  | P-RPL-007 |  |  |  |
 | Usuario activo | Consultar conversación | Arma el árbol completo de réplicas de un Kudo. | Replica |  |  | P-RPL-008 |  | Conversación consultada | RF-055 |
-| Sistema (al crear un reporte) | Marcar reportada | Registra que la réplica recibió un reporte. | Replica |  |  | P-RPL-009 |  | Réplica reportada | EVT-030 / RN-234 |
+| Sistema (al crear un reporte) | Reportar | Registra que la réplica recibió un reporte. | Replica |  |  | P-RPL-009 |  | Réplica reportada | EVT-030 / RN-234 |
 | Sistema (desde ServicioModeracion) | Iniciar revisión | La réplica entra en revisión. | Replica |  |  | P-RPL-010 |  | Revisión iniciada | EVT-035 / RN-239 |
 | Sistema (desde ServicioModeracion) | Liberar réplica | La réplica vuelve a estar visible. | Replica |  |  | P-RPL-011 |  | Contenido liberado | EVT-037 / RN-242 |
 | Sistema (desde ServicioModeracion) | Vetar réplica | Inhabilita la réplica de forma definitiva. | Replica |  |  | P-RPL-012 |  | Réplica vetada | EVT-031 / RN-235 |
 | Sistema | Decidir si admite interacción | Indica si la réplica acepta respuestas, calificaciones y reportes. | Replica |  |  | P-RPL-014 |  | (decisión, sin evento) |  |
-| Sistema (suscriptor de calificaciones) | Actualizar resumen de calificaciones | Recalcula el promedio y la cantidad de calificaciones activas. | Replica |  |  | P-RPL-013 |  | Indicador recalculado | EVT-034 / RN-238 |
+| Sistema (al calificar) | Actualizar resumen de calificaciones | Recalcula el promedio y la cantidad de calificaciones activas. | Replica |  |  | P-RPL-013 |  | Indicador recalculado | EVT-034 / RN-238 |
 
 ## Políticas
 
@@ -149,7 +149,7 @@ No tiene combinaciones únicas además de su identificador.
 |---|---|---|---|
 | P-RPL-001 | Asegurar que el autor tenga cuenta ACTIVA. | Usuario | RN-168 |
 | P-RPL-002 | Asegurar que el Kudo raíz admita interacción (no esté vetado). | Kudo | RN-205, D-21, P-KUD-018 |
-| P-RPL-003 | Asegurar que el contenido no esté vacío; se guarda completo y sin límite. | ContenidoTexto | RN-170 |
+| P-RPL-003 | Asegurar que el contenido no esté vacío; se guarda completo y sin límite. | ValidarContenidoRule | RN-170 |
 | P-RPL-004 | Toda réplica inicia en CREADA y al publicarse pasa a VISIBLE. | EstadoContenido | RN-206 |
 | P-RPL-005 | Notificar al autor del Kudo que recibió una réplica. | Notificacion | D-27 |
 | P-RPL-006 | Asegurar que la réplica padre exista, no esté vetada y pertenezca al mismo Kudo; el padre se fija al crear y no cambia. | Replica | INV-026 a INV-029, D-22 |
@@ -161,3 +161,15 @@ No tiene combinaciones únicas además de su identificador.
 | P-RPL-012 | Una réplica no vetada puede vetarse; VETADA es final. | EstadoContenido | RN-209, D-21 |
 | P-RPL-013 | El promedio de calificaciones es el promedio de las calificaciones activas, con dos decimales. | Replica | RN-185, RN-238 |
 | P-RPL-014 | Una réplica admite respuestas, calificaciones y reportes solo si no está VETADA. | EstadoContenido | D-21 |
+
+## En el código
+
+| Capa | Clase |
+|---|---|
+| Dominio (atributos y comportamiento) | `ReplicaDominio` (`co.edu.uco.kudos.dominio`) |
+| Entidad (tabla) | `ReplicaEntidad` |
+| DAO | `ReplicaDAO` + implementación SQL Server |
+| DTO (API) | ReplicaDto |
+| Negocio | ReplicaNegocioImpl |
+
+La réplica padre se guarda como `idReplicaPadre` (UUID).

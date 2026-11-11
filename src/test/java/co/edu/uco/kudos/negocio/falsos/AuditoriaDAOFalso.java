@@ -2,6 +2,7 @@ package co.edu.uco.kudos.negocio.falsos;
 
 import co.edu.uco.kudos.dao.datos.entidad.AuditoriaDAO;
 import co.edu.uco.kudos.entidad.AuditoriaEntidad;
+import co.edu.uco.kudos.transversal.utilitario.UtilTexto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,14 @@ public class AuditoriaDAOFalso implements AuditoriaDAO {
 
     @Override
     public List<AuditoriaEntidad> consultarPorFiltro(AuditoriaEntidad filtro) {
-        return new ArrayList<>(registros);
+        var encontrados = new ArrayList<AuditoriaEntidad>();
+        for (var registro : registros) {
+            if ((UtilTexto.getUtilTexto().esVacia(filtro.getAccion()) || filtro.getAccion().equals(registro.getAccion()))
+                    && (UtilTexto.getUtilTexto().esVacia(filtro.getTipoObjeto()) || filtro.getTipoObjeto().equals(registro.getTipoObjeto()))) {
+                encontrados.add(registro);
+            }
+        }
+        return encontrados;
     }
 
     @Override

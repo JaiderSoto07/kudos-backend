@@ -92,7 +92,6 @@ erDiagram
     Boolean correo_verificado
     String numero_celular
     Boolean celular_verificado
-    String contrasena
     Boolean aprobada
     String estado_cuenta
     DateTime fecha_registro

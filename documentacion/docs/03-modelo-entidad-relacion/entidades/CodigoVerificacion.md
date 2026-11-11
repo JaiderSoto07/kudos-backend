@@ -31,7 +31,7 @@
 | Restricciones de índice · Nombre restricción índice a la que pertenece |  | ix_codigo_verificacion_usuario_canal | ix_codigo_verificacion_usuario_canal |  |  |  |  |  |  |
 | Valor por defecto | newid() |  |  |  |  | sysdatetime() |  | 0 | 0 |
 | Atributo del objeto de dominio | id | usuario | canal | destino | codigo | fechaGeneracion | fechaExpiracion | intentosFallidos | usado |
-| Descripción del campo | Identificador único del código | Usuario que debe verificar el dato | Dato que se verifica | Valor exacto al que se envió el código | Hash del código de 6 dígitos | Fecha y hora de generación | Fecha y hora en que vence | Número de intentos con código incorrecto | Indica si el código ya se usó con éxito |
+| Descripción del campo | Identificador único del código | Usuario que debe verificar el dato | Dato que se verifica | Valor exacto al que se envió el código | Código de 6 dígitos generado con SecureRandom | Fecha y hora de generación | Fecha y hora en que vence | Número de intentos con código incorrecto | Indica si el código ya se usó con éxito |
 
 ## Restricciones
 

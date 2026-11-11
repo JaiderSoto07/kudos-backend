@@ -14,7 +14,8 @@ Diagrama de clases del dominio y documentación de cada clase, igual que en Sigm
 
 - Flecha abierta: navegabilidad. La clase que guarda la referencia apunta a la clase referenciada; la etiqueta indica el atributo, por ejemplo `Kudo --> Categoria : categoria`.
 - Rombo relleno: composición; la parte pertenece al todo.
-- Los objetos de valor (verde) y las enumeraciones (amarillo) aparecen a la derecha y se usan como tipos de atributo.
+- Las enumeraciones (amarillo) aparecen a la derecha y se usan como tipos de atributo. `EstadoContenido` implementa el patrón **State**: cada constante decide qué transiciones permite.
+- Los nombres son **conceptuales**: en el código cada clase lleva el sufijo `Dominio` (por ejemplo `Kudo` → `KudoDominio`, en `co.edu.uco.kudos.dominio`). Atributos y métodos son los reales. La tabla completa está en el [modelo de dominio](../01-modelo-dominio/README.md#correspondencia-con-el-código).
 - A diferencia de Sigma, los métodos no son solo `registrar/consultar`: son comportamiento del dominio (`kudo.vetar()`, `usuario.intentarActivar()`), porque el enunciado exige objetos ricos (ARQ-008, ARQ-047, D-29).
 
 <details>
@@ -31,7 +32,6 @@ class ParametroGlobal {
   +String descripcion
   +LocalDateTime fechaModificacion
   +cambiarValor()
-  +consultar()
   +valorComoEntero()
 }
 class CodigoVerificacion {
@@ -44,9 +44,10 @@ class CodigoVerificacion {
   +LocalDateTime fechaExpiracion
   +int intentosFallidos
   +boolean usado
-  +generar()
-  +verificar()
-  +invalidar()
+  +estaVencido()
+  +intentosAgotados()
+  +registrarIntentoFallido()
+  +marcarUsado()
 }
 class Notificacion {
   +UUID id
@@ -58,9 +59,7 @@ class Notificacion {
   +LocalDateTime fechaCreacion
   +boolean leida
   +LocalDateTime fechaLectura
-  +crear()
   +marcarLeida()
-  +consultar()
 }
 class Auditoria {
   +UUID id
@@ -73,9 +72,6 @@ class Auditoria {
   +String estadoNuevo
   +String motivo
   +String detalle
-  +registrarDesdeEvento()
-  +consultar()
-  +consultarActividadPropia()
 }
 class Categoria {
   +UUID id
@@ -83,22 +79,20 @@ class Categoria {
   +String descripcion
   +boolean activa
   +LocalDateTime fechaCreacion
-  +crear()
   +modificar()
   +activar()
   +desactivar()
-  +consultar()
 }
 class Facultad {
   +UUID id
   +String nombre
   +EstadoFacultad estado
   +LocalDateTime fechaCreacion
-  +crear()
   +renombrar()
   +activar()
   +inactivar()
-  +consultar()
+  +admiteProgramas()
+  +admiteCoordinador()
 }
 class AsignacionRol {
   +UUID id
@@ -110,60 +104,58 @@ class AsignacionRol {
   +LocalDateTime fechaFin
   +boolean vigente
   +String motivoFin
-  +asignar()
+  +estaVigente()
   +cerrar()
-  +consultarTitularVigente()
-  +consultarHistorialCoordinadores()
+  +puedeVerFacultad()
+  +puedeVerPrograma()
+  +coordinaPrograma()
+  +puedeDecidir()
 }
 class Usuario {
   +UUID id
   +String nombres
   +String apellidos
-  +CorreoInstitucional correoInstitucional
+  +String correoInstitucional
   +boolean correoVerificado
-  +NumeroCelular numeroCelular
+  +String numeroCelular
   +boolean celularVerificado
-  +String contrasena
   +boolean aprobada
   +EstadoCuenta estadoCuenta
   +LocalDateTime fechaRegistro
-  +registrar()
-  +registrarPorAdministrador()
+  +aprobar()
   +verificarCorreo()
   +verificarCelular()
-  +aprobar()
   +intentarActivar()
-  +puedeIniciarSesion()
+  +estaActiva()
+  +motivoParaNoIngresar()
   +actualizarDatosPersonales()
   +cambiarCorreo()
   +cambiarCelular()
   +suspender()
   +reactivar()
   +desactivar()
-  +tieneRolVigente()
-  +consultar()
+  +nombreCompleto()
 }
 class Kudo {
   +UUID id
   +Usuario autor
   +Usuario destinatario
   +Categoria categoria
-  +ContenidoTexto contenido
+  +String contenido
   +LocalDateTime fechaCreacion
   +EstadoContenido estado
   +int cantidadVisualizaciones
   +BigDecimal promedioCalificacion
   +int cantidadCalificaciones
-  +crear()
-  +registrarVisualizacion()
-  +consultarMuro()
-  +consultarHistorial()
-  +marcarReportado()
+  +publicar()
+  +reportar()
   +iniciarRevision()
   +liberar()
   +vetar()
   +admiteInteraccion()
+  +esAutor()
   +actualizarResumenCalificaciones()
+  +registrarVisualizacion()
 }
 class ProgramaAcademico {
   +UUID id
@@ -171,10 +163,8 @@ class ProgramaAcademico {
   +Facultad facultad
   +boolean activo
   +LocalDateTime fechaCreacion
-  +crear()
   +renombrar()
   +inactivar()
-  +consultar()
 }
 class SolicitudRegistro {
   +UUID id
@@ -187,10 +177,9 @@ class SolicitudRegistro {
   +Usuario decididaPor
   +LocalDateTime fechaDecision
   +String motivoRechazo
-  +crear()
+  +estaPendiente()
   +aprobar()
   +rechazar()
-  +consultarPendientes()
 }
 class VinculacionPrograma {
   +UUID id
@@ -201,43 +190,40 @@ class VinculacionPrograma {
   +LocalDateTime fechaFin
   +boolean vigente
   +String motivoDesvinculacion
-  +vincular()
+  +estaVigente()
   +desvincular()
-  +consultarPorUsuario()
-  +consultarPorPrograma()
 }
 class Replica {
   +UUID id
   +Usuario autor
   +Kudo kudo
   +Replica replicaPadre
-  +ContenidoTexto contenido
+  +String contenido
   +LocalDateTime fechaCreacion
   +EstadoContenido estado
   +BigDecimal promedioCalificacion
   +int cantidadCalificaciones
-  +responderKudo()
-  +responderReplica()
-  +consultarConversacion()
-  +marcarReportada()
+  +publicar()
+  +reportar()
   +iniciarRevision()
   +liberar()
   +vetar()
   +admiteInteraccion()
+  +esAutor()
   +actualizarResumenCalificaciones()
+  +respondeAlKudo()
 }
 class Calificacion {
   +UUID id
   +Usuario autor
   +Kudo kudo
   +Replica replica
-  +Estrellas estrellas
+  +int estrellas
   +LocalDateTime fechaCalificacion
   +LocalDateTime fechaModificacion
   +boolean activa
-  +calificar()
   +modificarEstrellas()
-  +consultarValoraciones()
+  +esSobreKudo()
 }
 class Moderacion {
   +UUID id
@@ -249,10 +235,11 @@ class Moderacion {
   +LocalDateTime fechaCierre
   +DecisionModeracion decision
   +String motivoDecision
-  +iniciar()
+  +estaEnCurso()
+  +terminoEnVeto()
   +vetar()
   +liberar()
-  +consultarHistoricoVetos()
+  +esSobreKudo()
 }
 class Reporte {
   +UUID id
@@ -264,35 +251,11 @@ class Reporte {
   +LocalDateTime fechaReporte
   +EstadoReporte estado
   +Moderacion moderacion
-  +crear()
+  +estaAbierto()
   +pasarARevision()
   +aceptar()
   +rechazar()
-  +consultar()
-}
-class CorreoInstitucional {
-  <<ValueObject>>
-  -String valor
-  +crear()
-  +obtenerValor()
-}
-class NumeroCelular {
-  <<ValueObject>>
-  -String valor
-  +crear()
-  +obtenerValor()
-}
-class ContenidoTexto {
-  <<ValueObject>>
-  -String valor
-  +crear()
-  +obtenerValor()
-}
-class Estrellas {
-  <<ValueObject>>
-  -int valor
-  +crear()
-  +obtenerValor()
+  +esSobreKudo()
 }
 Usuario "1" *-- "0..*" AsignacionRol : Tiene
 AsignacionRol "0..*" --> "0..1" Facultad : facultad
@@ -323,11 +286,6 @@ Moderacion "0..*" --> "1" Usuario : moderador
 Reporte "0..*" --> "0..1" Moderacion : moderacion
 Auditoria "0..*" --> "0..1" Usuario : actor
 Notificacion "0..*" --> "1" Usuario : destinatario
-Usuario ..> CorreoInstitucional
-Usuario ..> NumeroCelular
-Kudo ..> ContenidoTexto
-Replica ..> ContenidoTexto
-Calificacion ..> Estrellas
 ```
 
 </details>
@@ -351,6 +309,10 @@ class Rol {
   DOCENTE
   ESTUDIANTE
   +rolAprobador()
+  +puedeModerar()
+  +esAutorregistrable()
+  +esCoordinador()
+  +nombreLegible()
 }
 class EstadoCuenta {
   <<enumeration>>
@@ -365,6 +327,8 @@ class EstadoFacultad {
   EN_CONFORMACION
   ACTIVA
   INACTIVA
+  +admiteProgramas()
+  +admiteCoordinador()
 }
 class TipoVinculo {
   <<enumeration>>
@@ -389,6 +353,12 @@ class EstadoContenido {
   REPORTADO
   EN_REVISION
   VETADO
+  +publicar()
+  +reportar()
+  +iniciarRevision()
+  +liberar()
+  +vetar()
+  +admiteInteraccion()
 }
 class MotivoReporte {
   <<enumeration>>
@@ -398,6 +368,7 @@ class MotivoReporte {
   SPAM
   INFORMACION_FALSA
   OTRO
+  +exigeDescripcion()
 }
 class EstadoReporte {
   <<enumeration>>
@@ -405,6 +376,7 @@ class EstadoReporte {
   EN_REVISION
   ACEPTADO
   RECHAZADO
+  +estaAbierto()
 }
 class EstadoModeracion {
   <<enumeration>>
@@ -439,7 +411,7 @@ class TipoParametro {
 </details>
 
 
-> **Clases de soporte del diseño** que no aparecen en el diagrama principal para no recargarlo: `Conversacion`, `NodoConversacion` e interfaz `ContenidoConversable` (Composite), `PoliticaAmbito`, `PoliticaModeracion` y `PoliticaGestionCategorias` (Specification), `ServicioAprobacion` y `ServicioModeracion` (servicios de dominio), y `PublicadorEventos`, `EventoDominio` y sus suscriptores (Observer). Se describen en [patrones](../05-arquitectura/patrones.md).
+> **Lo que no está en el diagrama**: la capa de negocio (`XxxNegocioImpl`), las reglas (`XxxRule`), las fachadas, los DAO y los ensambladores. Se describen en la [arquitectura](../05-arquitectura/README.md) y en los [patrones](../05-arquitectura/patrones.md).
 
 
 ## Clases
@@ -462,10 +434,6 @@ class TipoParametro {
 | [Calificacion](clases/Calificacion.md) | class | Valoración de 1 a 5 estrellas que un usuario asigna a un Kudo o a una réplica. Cada usuario tiene como máximo una calificación activa por contenido. |
 | [Moderacion](clases/Moderacion.md) | class | Revisión y decisión institucional sobre un Kudo o una réplica, tomada por el Rector o el Coordinador Académico. El histórico de vetos son las moderaciones con decisión VETAR. |
 | [Reporte](clases/Reporte.md) | class | Solicitud de revisión que un usuario hace sobre un Kudo o una réplica que considera inapropiado. |
-| [CorreoInstitucional](clases/CorreoInstitucional.md) | value object | Formato de correo, dominio institucional, normalizado a minúsculas. Usado en Usuario.correoInstitucional. |
-| [NumeroCelular](clases/NumeroCelular.md) | value object | 10 dígitos, inicia en 3. Usado en Usuario.numeroCelular. |
-| [ContenidoTexto](clases/ContenidoTexto.md) | value object | No vacío, sin límite de longitud, nunca se trunca. Usado en Kudo.contenido, Replica.contenido. |
-| [Estrellas](clases/Estrellas.md) | value object | Entero de 1 a 5. Usado en Calificacion.estrellas. |
 | [Rol](../01-modelo-dominio/README.md#rol) | enumeration | Rol institucional. Cada valor conoce qué rol lo aprueba. |
 | [EstadoCuenta](../01-modelo-dominio/README.md#estadocuenta) | enumeration | Ciclo de vida de la cuenta (D-17). |
 | [EstadoFacultad](../01-modelo-dominio/README.md#estadofacultad) | enumeration | Ciclo de vida de la Facultad (D-05). |

@@ -127,9 +127,19 @@ _4 registros de ejemplo. Los identificadores se abrevian (u-01, k-01…) para fa
 |---|---|---|---|
 | P-FAC-001 | Asegurar que el nombre de la Facultad tenga de 3 a 80 caracteres. | Facultad | RN-040 |
 | P-FAC-002 | Asegurar que no exista otra Facultad con el mismo nombre. | Facultad | UQ-FAC-1 |
-| P-FAC-003 | Asegurar que solo el Coordinador Académico cree, modifique o inactive Facultades. | PoliticaAutorizacion | D-04, RN-121, RN-122 |
+| P-FAC-003 | Asegurar que solo el Coordinador Académico cree, modifique o inactive Facultades. | AsegurarActorTieneRolRule | D-04, RN-121, RN-122 |
 | P-FAC-004 | Toda Facultad nace en estado EN_CONFORMACION. | Facultad | RN-045, D-05 |
 | P-FAC-005 | Asegurar que no se modifique una Facultad inactiva. | Facultad | D-05 |
 | P-FAC-006 | La Facultad pasa a ACTIVA cuando se le crea su primer Programa; solo una Facultad ACTIVA puede tener coordinador. | Facultad | RN-045, INV-010, D-05 |
 | P-FAC-007 | Asegurar que no tenga Programas activos al inactivarla. | Facultad | D-05, D-28 |
 | P-FAC-008 | Al consultar Facultades, mostrar su coordinador vigente; el Coordinador de Facultad ve solo la suya. | Facultad | RN-042, RN-122, RN-119 |
+
+## En el código
+
+| Capa | Clase |
+|---|---|
+| Dominio (atributos y comportamiento) | `FacultadDominio` (`co.edu.uco.kudos.dominio`) |
+| Entidad (tabla) | `FacultadEntidad` |
+| DAO | `FacultadDAO` + implementación SQL Server |
+| DTO (API) | FacultadDto |
+| Negocio | FacultadNegocioImpl |

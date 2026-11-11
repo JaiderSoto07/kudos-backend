@@ -135,7 +135,7 @@ Un agregado es el conjunto de objetos que cambia junto dentro de una misma trans
 | VinculacionPrograma | [VinculacionPrograma](objetos/VinculacionPrograma.md) | — | Relaciona dos agregados (Usuario y Facultad/Programa) y tiene historial propio; la gestiona el coordinador del programa. |
 | Categoria | [Categoria](objetos/Categoria.md) | — | Su activación no depende de ningún otro objeto. |
 | Kudo | [Kudo](objetos/Kudo.md) | — | Protege su propio ciclo de vida. Las réplicas no se incluyen porque la conversación es ilimitada (RN-163). |
-| Replica | [Replica](objetos/Replica.md) | — | Cada réplica cambia de estado por separado; el árbol se arma al consultarlo (Composite). |
+| Replica | [Replica](objetos/Replica.md) | — | Cada réplica cambia de estado por separado; el árbol se arma al consultarlo, por idReplicaPadre (D-22). |
 | Calificacion | [Calificacion](objetos/Calificacion.md) | — | Muchas personas califican el mismo contenido al tiempo; separarla evita bloquear el Kudo. El promedio se actualiza mediante el evento de calificación. |
 | Reporte | [Reporte](objetos/Reporte.md) | — | Lo crea cualquier usuario y lo resuelve la moderación. |
 | Moderacion | [Moderacion](objetos/Moderacion.md) | — | Registra la decisión; el ServicioModeracion coordina en la misma transacción el contenido y sus reportes. |
@@ -149,17 +149,16 @@ Responsabilidades que no pertenecen a una sola entidad (doc. 06 §29): coordinan
 
 | Servicio / política | Responsabilidad | Por qué no está en una entidad | Políticas |
 |---|---|---|---|
-| `ServicioAprobacion` | Aprobar una solicitud de registro | La aprobación toca varios agregados en una transacción: SolicitudRegistro (decisión), Usuario (aprobar y activar), AsignacionRol (rol y posible sustitución del coordinador anterior) y VinculacionPrograma (docentes y estudiantes). Ninguno de ellos debería conocer a los demás. | P-SRE-008, P-ASR-004 |
-| `ServicioModeracion` | Iniciar revisión, vetar y liberar contenido | Una decisión de moderación cambia la Moderacion, el estado del Kudo o la réplica y todos sus reportes abiertos. Coordinarlo en un servicio mantiene a cada objeto responsable solo de su estado. | P-MOD-003, P-MOD-006, P-MOD-008 |
-| `PoliticaAmbito` | Decidir si un actor puede actuar sobre un usuario, una Facultad o un Programa | Implementa la matriz de gestión y los ámbitos de autoridad (RN-112 a RN-131). Es una especificación (patrón Specification) reutilizada por varios casos de uso. | P-USU-022, P-VPR-003, P-SRE-006 |
-| `PoliticaModeracion` | Decidir si un actor puede moderar | Solo Rector y Coordinador Académico (D-02). | P-MOD-001 |
-| `PoliticaGestionCategorias` | Decidir si un actor puede gestionar categorías | Solo Administrador, Rector y Coordinador Académico (D-01). | P-CAT-003 |
-| `PublicadorEventos` | Entregar cada evento de dominio a sus suscriptores | Patrón Observer: los suscriptores AuditoriaSuscriptor, NotificacionSuscriptor e IndicadorSuscriptor reaccionan sin que el negocio los conozca (D-26). | P-AUD-001 |
-| `EnviadorNotificacion` | Enviar códigos por correo o SMS | Interfaz hacia el exterior (evento de integración). La implementación de este proyecto es simulada (D-10). | P-CVE-004 |
+| `SolicitudNegocioImpl` | Aprobar o rechazar una solicitud de registro | La aprobación toca varios agregados en una transacción: SolicitudRegistro (decisión), Usuario (aprobar y activar), AsignacionRol (rol y posible sustitución del coordinador anterior con CargoNegocioImpl) y VinculacionPrograma (docentes y estudiantes). Ninguno de ellos debería conocer a los demás. | P-SRE-006, P-SRE-008, P-ASR-004 |
+| `ModeracionNegocioImpl` | Iniciar revisión, vetar y liberar contenido | Una decisión de moderación cambia la Moderacion, el estado del Kudo o la réplica y todos sus reportes abiertos. Coordinarlo en la capa de negocio mantiene a cada objeto responsable solo de su estado. | P-MOD-003, P-MOD-006, P-MOD-008 |
+| `AsegurarActorTieneRolRule` | Decidir si un actor tiene un rol vigente permitido para una operación | Una sola regla reutilizable (singleton) que usan categorías, aprobaciones, organización, moderación y auditoría con su lista de roles. Si falla, responde 403. | P-USU-009, P-CAT-003, P-MOD-001, P-FAC-003 |
+| `AsignacionRol (ámbito)` | Decidir si una autoridad puede ver o decidir sobre una Facultad, un Programa o una solicitud | El objeto que conoce el rol y el ámbito responde la pregunta (experto en información): puedeDecidir, puedeVerFacultad, puedeVerPrograma y coordinaPrograma. | P-USU-022, P-VPR-003, P-SRE-006 |
+| `AuditoriaNegocioImpl / NotificacionNegocioImpl` | Registrar la auditoría y crear avisos | Cada negocio los llama dentro de la misma transacción de la operación (D-26), así la auditoría y los avisos quedan solo si la operación termina bien. | P-AUD-001, P-NOT-001 |
+| `EnviadorNotificacion` | Enviar códigos de verificación al celular | Interfaz hacia el exterior (evento de integración). La implementación de este proyecto, EnviadorNotificacionSimulado, es simulada (D-10). | P-CVE-004 |
 
 ## Catálogo de eventos de dominio
 
-Cada evento lo produce una responsabilidad de un objeto. El publicador de eventos lo entrega a la auditoría, a las notificaciones y a los indicadores (D-26). La columna *Referencia* indica el código del enunciado (EVT-xxx del doc. 06 y RN-213 a RN-242 del doc. 05).
+Cada evento lo produce una responsabilidad de un objeto. La capa de negocio lo registra en la auditoría con su nombre (por ejemplo `KudoPublicado`) y, si afecta a alguien, crea la notificación, en la misma transacción (D-26). La columna *Referencia* indica el código del enunciado (EVT-xxx del doc. 06 y RN-213 a RN-242 del doc. 05).
 
 | Evento | Objeto | Responsabilidad | Actor | Referencia |
 |---|---|---|---|---|
@@ -167,9 +166,9 @@ Cada evento lo produce una responsabilidad de un objeto. El publicador de evento
 | Código de verificación generado | [CodigoVerificacion](objetos/CodigoVerificacion.md#eventos) | Generar código | Sistema | Evento de integración |
 | Correo o celular verificado | [CodigoVerificacion](objetos/CodigoVerificacion.md#eventos) | Verificar código | Usuario registrado | EVT-002, EVT-003 |
 | Código invalidado | [CodigoVerificacion](objetos/CodigoVerificacion.md#eventos) | Invalidar código | Sistema |  |
-| Notificación creada | [Notificacion](objetos/Notificacion.md#eventos) | Crear notificación | Sistema (suscriptor de notificaciones) |  |
+| Notificación creada | [Notificacion](objetos/Notificacion.md#eventos) | Crear notificación | Sistema (capa de negocio) |  |
 | Notificación leída | [Notificacion](objetos/Notificacion.md#eventos) | Marcar como leída | Usuario activo |  |
-| Operación auditada | [Auditoria](objetos/Auditoria.md#eventos) | Registrar operación | Sistema (suscriptor de auditoría) | RN-096 a RN-100 |
+| Operación auditada | [Auditoria](objetos/Auditoria.md#eventos) | Registrar operación | Sistema (capa de negocio) | RN-096 a RN-100 |
 | Categoría creada | [Categoria](objetos/Categoria.md#eventos) | Crear categoría | Gestor de categorías | EVT-020 / RN-224 |
 | Categoría modificada | [Categoria](objetos/Categoria.md#eventos) | Modificar categoría | Gestor de categorías | EVT-021 / RN-225 |
 | Categoría activada | [Categoria](objetos/Categoria.md#eventos) | Activar categoría | Gestor de categorías | EVT-022 / RN-226 |
@@ -195,11 +194,11 @@ Cada evento lo produce una responsabilidad de un objeto. El publicador de evento
 | Cuenta desactivada | [Usuario](objetos/Usuario.md#eventos) | Desactivar cuenta | Autoridad | EVT-007 / RN-217 |
 | Kudo creado (publicado) | [Kudo](objetos/Kudo.md#eventos) | Crear Kudo | Usuario activo | EVT-024 / RN-228 |
 | Kudo consultado | [Kudo](objetos/Kudo.md#eventos) | Consultar Kudo | Usuario activo | EVT-025 / RN-229 |
-| Kudo reportado | [Kudo](objetos/Kudo.md#eventos) | Marcar reportado | Sistema (al crear un reporte) | EVT-026 / RN-230 |
+| Kudo reportado | [Kudo](objetos/Kudo.md#eventos) | Reportar | Sistema (al crear un reporte) | EVT-026 / RN-230 |
 | Revisión iniciada | [Kudo](objetos/Kudo.md#eventos) | Iniciar revisión | Sistema (desde ServicioModeracion) | EVT-035 / RN-239 |
 | Contenido liberado | [Kudo](objetos/Kudo.md#eventos) | Liberar Kudo | Sistema (desde ServicioModeracion) | EVT-037 / RN-242 |
 | Kudo vetado | [Kudo](objetos/Kudo.md#eventos) | Vetar Kudo | Sistema (desde ServicioModeracion) | EVT-027 / RN-231 |
-| Indicador recalculado | [Kudo](objetos/Kudo.md#eventos) | Actualizar resumen de calificaciones | Sistema (suscriptor de calificaciones) | EVT-034 / RN-238 |
+| Indicador recalculado | [Kudo](objetos/Kudo.md#eventos) | Actualizar resumen de calificaciones | Sistema (al calificar) | EVT-034 / RN-238 |
 | Programa creado | [ProgramaAcademico](objetos/ProgramaAcademico.md#eventos) | Crear Programa | Coordinador Académico | EVT-009 / RN-221 |
 | Programa modificado | [ProgramaAcademico](objetos/ProgramaAcademico.md#eventos) | Renombrar Programa | Coordinador Académico | RF-022 |
 | Programa inactivado | [ProgramaAcademico](objetos/ProgramaAcademico.md#eventos) | Inactivar Programa | Coordinador Académico |  |
@@ -210,11 +209,11 @@ Cada evento lo produce una responsabilidad de un objeto. El publicador de evento
 | Estudiante o docente desvinculado de programa | [VinculacionPrograma](objetos/VinculacionPrograma.md#eventos) | Desvincular de programa | Coordinador de Programa | EVT-017, EVT-019 |
 | Réplica creada | [Replica](objetos/Replica.md#eventos) | Responder Kudo | Usuario activo | EVT-028 / RN-232 |
 | Réplica creada y réplica respondida | [Replica](objetos/Replica.md#eventos) | Responder réplica | Usuario activo | EVT-028, EVT-029 / RN-233 |
-| Réplica reportada | [Replica](objetos/Replica.md#eventos) | Marcar reportada | Sistema (al crear un reporte) | EVT-030 / RN-234 |
+| Réplica reportada | [Replica](objetos/Replica.md#eventos) | Reportar | Sistema (al crear un reporte) | EVT-030 / RN-234 |
 | Revisión iniciada | [Replica](objetos/Replica.md#eventos) | Iniciar revisión | Sistema (desde ServicioModeracion) | EVT-035 / RN-239 |
 | Contenido liberado | [Replica](objetos/Replica.md#eventos) | Liberar réplica | Sistema (desde ServicioModeracion) | EVT-037 / RN-242 |
 | Réplica vetada | [Replica](objetos/Replica.md#eventos) | Vetar réplica | Sistema (desde ServicioModeracion) | EVT-031 / RN-235 |
-| Indicador recalculado | [Replica](objetos/Replica.md#eventos) | Actualizar resumen de calificaciones | Sistema (suscriptor de calificaciones) | EVT-034 / RN-238 |
+| Indicador recalculado | [Replica](objetos/Replica.md#eventos) | Actualizar resumen de calificaciones | Sistema (al calificar) | EVT-034 / RN-238 |
 | Calificación registrada | [Calificacion](objetos/Calificacion.md#eventos) | Calificar contenido | Usuario activo | EVT-032 / RN-236 |
 | Calificación actualizada | [Calificacion](objetos/Calificacion.md#eventos) | Modificar calificación | Usuario activo | EVT-033 / RN-237 |
 | Revisión iniciada | [Moderacion](objetos/Moderacion.md#eventos) | Iniciar revisión | Moderador | EVT-035 / RN-239 |
@@ -469,16 +468,39 @@ Tipo de dato de un parámetro global.
 | `TEXTO` | Valor textual |
 | `ENTERO` | Número entero |
 
-## Objetos de valor
+## Validaciones de formato
 
-Atributos con reglas propias. Son inmutables y se validan al construirse, así que nunca existe uno inválido.
+Los atributos con reglas de formato se validan con clases `Rule` reutilizables, igual que en Sigma. Se evaluaron objetos de valor (`CorreoInstitucional`, `NumeroCelular`, `Estrellas`) y se descartaron para mantener un solo estilo de validación.
 
-| Objeto de valor | Usado en | Regla que encapsula |
+| Atributo | Regla en el código | Qué valida |
 |---|---|---|
-| `CorreoInstitucional` | Usuario.correoInstitucional | Formato de correo, dominio institucional, normalizado a minúsculas |
-| `NumeroCelular` | Usuario.numeroCelular | 10 dígitos, inicia en 3 |
-| `ContenidoTexto` | Kudo.contenido, Replica.contenido | No vacío, sin límite de longitud, nunca se trunca |
-| `Estrellas` | Calificacion.estrellas | Entero de 1 a 5 |
+| `Usuario.correoInstitucional` | `ValidarCorreoInstitucionalRule` | Formato de correo, dominio en el parámetro `DOMINIO_CORREO`, minúsculas |
+| `Usuario.numeroCelular` | `ValidarCelularRule` | 10 dígitos que empiezan por 3 |
+| `Kudo.contenido`, `Replica.contenido` | `ValidarContenidoRule` | No vacío; sin límite de longitud y sin truncar |
+| `Calificacion.estrellas` | `ValidarEstrellasRule` | Entero de 1 a 5 |
+
+## Correspondencia con el código
+
+Los diagramas usan los nombres **conceptuales** del dominio. Cada objeto existe en el back-end en varias capas, con el mismo nombre y un sufijo:
+
+| Objeto | Dominio (comportamiento) | Entidad (tabla) | DTO (API) | DAO | Negocio que lo usa |
+|---|---|---|---|---|---|
+| [Usuario](objetos/Usuario.md) | `UsuarioDominio` | `UsuarioEntidad` | UsuarioDto, CuentaDto, RegistroDto, AutoridadDto, PersonaDto | `UsuarioDAO` | RegistroNegocioImpl, VerificacionNegocioImpl, CuentaNegocioImpl, AutenticacionNegocioImpl, AutoridadNegocioImpl, PersonaNegocioImpl |
+| [AsignacionRol](objetos/AsignacionRol.md) | `AsignacionRolDominio` | `AsignacionRolEntidad` | CargoDto | `AsignacionRolDAO` | CargoNegocioImpl, SolicitudNegocioImpl, AutoridadNegocioImpl |
+| [VinculacionPrograma](objetos/VinculacionPrograma.md) | `VinculacionProgramaDominio` | `VinculacionProgramaEntidad` | VinculoDto, DesvinculacionDto | `VinculacionProgramaDAO` | VinculacionNegocioImpl |
+| [SolicitudRegistro](objetos/SolicitudRegistro.md) | `SolicitudRegistroDominio` | `SolicitudRegistroEntidad` | SolicitudDto, RegistroDto, RechazoDto | `SolicitudRegistroDAO` | RegistroNegocioImpl, SolicitudNegocioImpl |
+| [CodigoVerificacion](objetos/CodigoVerificacion.md) | `CodigoVerificacionDominio` | `CodigoVerificacionEntidad` | CodigoVerificacionDto | `CodigoVerificacionDAO` | VerificacionNegocioImpl |
+| [Facultad](objetos/Facultad.md) | `FacultadDominio` | `FacultadEntidad` | FacultadDto | `FacultadDAO` | FacultadNegocioImpl |
+| [ProgramaAcademico](objetos/ProgramaAcademico.md) | `ProgramaAcademicoDominio` | `ProgramaAcademicoEntidad` | ProgramaAcademicoDto | `ProgramaAcademicoDAO` | ProgramaNegocioImpl |
+| [Categoria](objetos/Categoria.md) | `CategoriaDominio` | `CategoriaEntidad` | CategoriaDto | `CategoriaDAO` | CategoriaNegocioImpl |
+| [Kudo](objetos/Kudo.md) | `KudoDominio` | `KudoEntidad` | KudoDto, PaginaKudosDto | `KudoDAO` | KudoNegocioImpl |
+| [Replica](objetos/Replica.md) | `ReplicaDominio` | `ReplicaEntidad` | ReplicaDto | `ReplicaDAO` | ReplicaNegocioImpl |
+| [Calificacion](objetos/Calificacion.md) | `CalificacionDominio` | `CalificacionEntidad` | CalificacionDto, ValoracionesDto | `CalificacionDAO` | CalificacionNegocioImpl |
+| [Reporte](objetos/Reporte.md) | `ReporteDominio` | `ReporteEntidad` | ReporteDto, ContenidoReportadoDto | `ReporteDAO` | ReporteNegocioImpl |
+| [Moderacion](objetos/Moderacion.md) | `ModeracionDominio` | `ModeracionEntidad` | DecisionDto, VetoDto | `ModeracionDAO` | ModeracionNegocioImpl |
+| [Auditoria](objetos/Auditoria.md) | `AuditoriaDominio` | `AuditoriaEntidad` | AuditoriaDto, PaginaAuditoriaDto | `AuditoriaDAO` | AuditoriaNegocioImpl (lo llaman todos los negocios) |
+| [Notificacion](objetos/Notificacion.md) | `NotificacionDominio` | `NotificacionEntidad` | NotificacionDto | `NotificacionDAO` | NotificacionNegocioImpl (lo llaman todos los negocios) |
+| [ParametroGlobal](objetos/ParametroGlobal.md) | `ParametroGlobalDominio` | `ParametroGlobalEntidad` | — | `ParametroGlobalDAO` | VerificacionNegocioImpl y ValidarCorreoInstitucionalRule (lo leen) |
 
 ## Convenciones
 

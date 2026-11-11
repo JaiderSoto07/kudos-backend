@@ -49,7 +49,7 @@ _3 registros de ejemplo. Los identificadores se abrevian (u-01, k-01…) para fa
 | **¿Qué hace? (responsabilidades)** | • Cambiar valor<br>• Consultar parámetros<br>• Obtener valor entero |
 | **¿Qué decisiones toma?** | • Si un valor nuevo es coherente con su tipo de dato. |
 | **¿Qué decisiones delega?** | • Quién puede modificarlo a la política de autorización. |
-| **¿Con quién colabora?** | CorreoInstitucional, CodigoVerificacion |
+| **¿Con quién colabora?** | Usuario, CodigoVerificacion |
 | **¿Qué eventos genera?** | • Parámetro global modificado<br>• Parámetros consultados |
 | **¿Qué invariantes protege?** | • RN-130: solo los Administradores gestionan los parámetros.<br>• La clave no cambia. |
 
@@ -107,7 +107,17 @@ _3 registros de ejemplo. Los identificadores se abrevian (u-01, k-01…) para fa
 
 | Número política | Descripción política | Objeto responsable | Regla referenciada |
 |---|---|---|---|
-| P-PAR-001 | Asegurar que solo un Administrador modifique los parámetros globales. | PoliticaAutorizacion | RN-130, RN-131 |
+| P-PAR-001 | Asegurar que solo un Administrador modifique los parámetros globales. | AsegurarActorTieneRolRule | RN-130, RN-131 |
 | P-PAR-002 | Asegurar que el valor sea coherente con el tipo de dato del parámetro. | ParametroGlobal | D-11 |
 | P-PAR-003 | Asegurar que el parámetro exista; su clave no cambia y la modificación se audita. | ParametroGlobal | RN-131, P-AUD-001 |
-| P-PAR-004 | Solo los Administradores consultan la lista de parámetros. | PoliticaAutorizacion | RN-130 |
+| P-PAR-004 | Solo los Administradores consultan la lista de parámetros. | AsegurarActorTieneRolRule | RN-130 |
+
+## En el código
+
+| Capa | Clase |
+|---|---|
+| Dominio (atributos y comportamiento) | `ParametroGlobalDominio` (`co.edu.uco.kudos.dominio`) |
+| Entidad (tabla) | `ParametroGlobalEntidad` |
+| DAO | `ParametroGlobalDAO` + implementación SQL Server |
+| DTO (API) | — |
+| Negocio | VerificacionNegocioImpl y ValidarCorreoInstitucionalRule (lo leen) |

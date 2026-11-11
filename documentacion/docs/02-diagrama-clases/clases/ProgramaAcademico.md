@@ -5,6 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Clase | ProgramaAcademico |
+| Clase en el código | `ProgramaAcademicoDominio` |
 | Estereotipo | class (entidad de dominio) |
 | Descripción | Programa de formación que pertenece a exactamente una Facultad y es acompañado por un Coordinador de Programa. |
 | Modificador acceso | public |
@@ -48,20 +49,23 @@ Solo hay métodos de lectura (getters). No hay setters públicos: el estado camb
 | public | isActivo | getter | Obtiene el valor del atributo activo. | boolean/Boolean |  |
 | public | getFechaCreacion | getter | Obtiene el valor del atributo fechaCreacion. | Otro | LocalDateTime |
 
-## Métodos
+## Métodos de negocio
 
-Métodos de negocio: salen de las responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/ProgramaAcademico.md#responsabilidades). Las consultas se marcan `static`, como en Sigma: en la implementación las resuelve la capa de negocio con su DAO.
+Métodos **reales** de `ProgramaAcademicoDominio` (comportamiento del dominio rico, D-29).
 
-| Modificador de acceso | Nombre | Tipo acceso método | Tipo modificación método | Descripción | Parámetros · Nombre | Parámetros · Tipo de dato | Parámetros · Descripción | Tipo dato de retorno | Excepciones (políticas que puede incumplir) |
-|---|---|---|---|---|---|---|---|---|---|
-| public | crear | no static | final | Crea un programa en una Facultad no inactiva. | nombre | String | Nombre oficial. | ProgramaAcademico | P-PAC-001: El nombre no es válido.<br>P-PAC-002: Ya existe un Programa con ese nombre.<br>P-PAC-003: La Facultad no existe o está inactiva.<br>P-PAC-004: El actor no es Coordinador Académico. |
-|  |  |  |  |  | facultad | Facultad | Facultad a la que pertenece. |  |  |
-|  |  |  |  |  | actor | Usuario | Coordinador Académico. |  |  |
-| public | renombrar | no static | final | Cambia el nombre del programa. | nombre | String | Nuevo nombre. | ProgramaAcademico | P-PAC-001: El nombre no es válido.<br>P-PAC-002: Ya existe un Programa con ese nombre.<br>P-PAC-004: El actor no es Coordinador Académico.<br>P-PAC-006: El Programa está inactivo. |
-|  |  |  |  |  | actor | Usuario | Coordinador Académico. |  |  |
-| public | inactivar | no static | final | Saca de operación un programa sin vínculos ni coordinador vigentes. | actor | Usuario | Coordinador Académico. | ProgramaAcademico | P-PAC-004: El actor no es Coordinador Académico.<br>P-PAC-007: El Programa tiene personas o coordinador vigentes. |
-| public | consultar | static | final | Lista los programas visibles para el actor con su coordinador vigente. | actor | Usuario | Usuario que consulta. | Lista de ProgramaAcademico |  |
-|  |  |  |  |  | facultad | UUID | Filtro opcional. |  |  |
+| Modificador de acceso | Nombre | Parámetros | Tipo dato de retorno | Descripción |
+|---|---|---|---|---|
+| public | renombrar | String nuevoNombre | void | Cambia el nombre del programa. |
+| public | inactivar | — | void | Saca de operación un programa sin vínculos ni coordinador vigentes. |
+
+## Operaciones del caso de uso (capa de negocio)
+
+Responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/ProgramaAcademico.md#responsabilidades) que coordinan varios objetos o consultan la base de datos. Las implementa: ProgramaNegocioImpl.
+
+| Operación | Descripción | Políticas que protege |
+|---|---|---|
+| crear | Crea un programa en una Facultad no inactiva. | P-PAC-001, P-PAC-002, P-PAC-003, P-PAC-004, P-PAC-005 |
+| consultar | Lista los programas visibles para el actor con su coordinador vigente. | P-PAC-008 |
 
 ## Builder (clase interna public static)
 

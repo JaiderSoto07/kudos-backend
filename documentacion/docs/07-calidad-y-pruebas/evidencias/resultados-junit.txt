@@ -1,0 +1,37 @@
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.614 s -- in Traducción de excepciones a códigos HTTP (RNF-006)
+[INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.190 s -- in Kudo y réplica: ciclo de vida con EstadoContenido (State, RN-201 a RN-209, D-20, D-21)
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.230 s -- in Reportes, moderación, calificaciones, códigos, notificaciones y parámetros (D-10, D-11, D-23, D-24, D-27)
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.139 s -- in Facultades, programas, categorías, roles, vínculos y solicitudes (RN-039 a RN-145, D-01, D-05, D-15, D-16, D-17)
+[INFO] Tests run: 14, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.052 s -- in UsuarioDominio: aprobación, activación y estado de la cuenta (RN-084 a RN-111, D-07, D-17)
+[INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.783 s -- in Regla de permisos por rol vigente (RNF-002, POL-005)
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.214 s -- in Ensambladores y DTO de aprobaciones, asignaciones de rol y vínculos
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.091 s -- in Ensambladores y DTO de auditoría y notificaciones (M7)
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.222 s -- in Ensambladores de réplicas, calificaciones, conversación y valoraciones (M5)
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.244 s -- in Ensambladores y DTO de identidad, organización y notificaciones
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.070 s -- in Ensambladores y DTO de Kudos y personas
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.162 s -- in Ensambladores de reportes, moderaciones, bandeja e histórico de vetos (M6)
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.084 s -- in Ensambladores y DTO de organización: cargos y vínculos
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.123 s -- in Negocio de auditoría: consultar con filtros según el ámbito de cada rol (CU-038, RF-069, RF-070, RN-116, RN-128)
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.135 s -- in Negocio de autenticación: usuario de Google frente a la cuenta en UCO Kudos (RN-084 a RN-089, POL-003)
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.264 s -- in Negocio de autoridades: el Administrador registra al Rector y a otros Administradores (RF-039, RF-040, RN-094, RN-095)
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.227 s -- in Negocio de calificaciones: calificar, modificar y consultar valoraciones (CU-007 a CU-009, RF-057 a RF-060, RF-091, RF-092, D-23)
+[INFO] Tests run: 15, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.120 s -- in Negocio de categorías (CU-035, RN-132 a RN-145, D-01)
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.075 s -- in Negocio de mi cuenta: consultar y actualizar datos personales, celular y correo (CU-020, RF-008 a RF-011, RF-081)
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.082 s -- in Ensambladores DTO ? dominio
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.012 s -- in Ensambladores entidad ? dominio
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.161 s -- in Negocio de Kudos: crear, muro, detalle e historial (CU-001 a CU-003, CU-042, RF-046 a RF-052, RF-090, D-19, D-20, D-25)
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.176 s -- in Negocio de moderación: revisar, vetar, liberar e histórico de vetos (CU-013 a CU-015, CU-036, CU-037, D-21, D-24)
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.033 s -- in Negocio de notificaciones: mis avisos, marcar como leída y marcar todas (CU-039, RF-095, D-27)
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.266 s -- in Negocio de organización: Facultades, Programas y coordinadores (CU-028 a CU-031, CU-034, RF-015 a RF-024, D-04, D-05)
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.138 s -- in Negocio de registro: solicitud de cuenta con el correo de Google (CU-016, RF-001 a RF-005, D-17)
+[INFO] Tests run: 39, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.197 s -- in Reglas de identidad: registro, contacto y verificación (RF-001 a RF-011)
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.073 s -- in Negocio de réplicas: responder y consultar la conversación (CU-004 a CU-006, RF-053 a RF-056, D-21, D-22)
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.038 s -- in Negocio de reportes: reportar Kudos y réplicas, mis reportes y la bandeja del moderador (CU-010 a CU-012, D-24)
+[INFO] Tests run: 18, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.097 s -- in Negocio de solicitudes: aprobar y rechazar según el rol y el ámbito (CU-022 a CU-025, RF-035 a RF-038, RF-086 a RF-088, D-03, D-15, D-16)
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.041 s -- in Negocio de verificación del celular con código simulado (CU-017, RF-007, RF-080, D-10)
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.105 s -- in Negocio de vínculos con Programas: vincular, desvincular, suspender y reactivar (CU-032, CU-033, RF-025 a RF-034, RF-085, D-16)
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.085 s -- in Jerarquía de excepciones por capa (RNF-006)
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.004 s -- in Utilitarios transversales
+[INFO] Tests run: 240, Failures: 0, Errors: 0, Skipped: 0
+[INFO] BUILD SUCCESS
+[INFO] Total time:  21.359 s

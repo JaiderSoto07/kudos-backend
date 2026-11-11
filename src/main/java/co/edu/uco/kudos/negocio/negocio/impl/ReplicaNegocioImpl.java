@@ -27,6 +27,7 @@ import co.edu.uco.kudos.transversal.utilitario.UtilId;
 import co.edu.uco.kudos.transversal.utilitario.UtilTexto;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class ReplicaNegocioImpl implements ReplicaNegocio {
@@ -114,7 +115,7 @@ public class ReplicaNegocioImpl implements ReplicaNegocio {
     }
 
     private void notificar(UUID idActor, UsuarioDominio destinatario, String mensaje, UUID idKudo) {
-        if (UtilId.esValorDefecto(destinatario.getId()) || destinatario.getId().equals(idActor)) {
+        if (Objects.equals(destinatario.getId(), idActor)) {
             return;
         }
         var notificacion = new NotificacionDominio.Builder()

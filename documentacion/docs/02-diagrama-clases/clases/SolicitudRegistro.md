@@ -5,6 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Clase | SolicitudRegistro |
+| Clase en el código | `SolicitudRegistroDominio` |
 | Estereotipo | class (entidad de dominio) |
 | Descripción | Petición que hace una persona al registrarse para obtener un rol institucional. La decide (aprueba o rechaza) la autoridad que corresponde según la cadena de aprobación. |
 | Modificador acceso | public |
@@ -59,20 +60,24 @@ Solo hay métodos de lectura (getters). No hay setters públicos: el estado camb
 | public | getFechaDecision | getter | Obtiene el valor del atributo fechaDecision. | Otro | LocalDateTime |
 | public | getMotivoRechazo | getter | Obtiene el valor del atributo motivoRechazo. | String |  |
 
-## Métodos
+## Métodos de negocio
 
-Métodos de negocio: salen de las responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/SolicitudRegistro.md#responsabilidades). Las consultas se marcan `static`, como en Sigma: en la implementación las resuelve la capa de negocio con su DAO.
+Métodos **reales** de `SolicitudRegistroDominio` (comportamiento del dominio rico, D-29).
 
-| Modificador de acceso | Nombre | Tipo acceso método | Tipo modificación método | Descripción | Parámetros · Nombre | Parámetros · Tipo de dato | Parámetros · Descripción | Tipo dato de retorno | Excepciones (políticas que puede incumplir) |
-|---|---|---|---|---|---|---|---|---|---|
-| public | crear | no static | final | Registra la petición de rol de una persona que se autorregistra. | solicitante | Usuario | Persona registrada. | SolicitudRegistro | P-SRE-001: Se solicita el rol de Administrador o Rector.<br>P-SRE-002: Falta la Facultad o el Programa o no está activo.<br>P-SRE-003: Ya tiene una solicitud pendiente. |
-|  |  |  |  |  | rol | Rol | Rol solicitado. |  |  |
-|  |  |  |  |  | facultad | Facultad | Si es Coordinador de Facultad. |  |  |
-|  |  |  |  |  | programa | ProgramaAcademico | Si es Coordinador de Programa, Docente o Estudiante. |  |  |
-| public | aprobar | no static | final | La autoridad competente aprueba la solicitud; se asigna el rol y se aprueba la cuenta. | actor | Usuario | Autoridad que aprueba. | SolicitudRegistro | P-SRE-005: La solicitud ya fue decidida.<br>P-SRE-006: El actor no puede aprobar ese rol o la solicitud no es de su ámbito.<br>P-SRE-007: El actor es el solicitante.<br>P-SRE-008: Alguna de esas operaciones no es válida. |
-| public | rechazar | no static | final | La autoridad competente rechaza la solicitud con un motivo. | actor | Usuario | Autoridad que rechaza. | SolicitudRegistro | P-SRE-005: La solicitud ya fue decidida.<br>P-SRE-006: El actor no puede aprobar ese rol o la solicitud no es de su ámbito.<br>P-SRE-007: El actor es el solicitante.<br>P-SRE-010: Falta el motivo del rechazo. |
-|  |  |  |  |  | motivo | String | Razón del rechazo. |  |  |
-| public | consultarPendientes | static | final | Lista las solicitudes que la autoridad puede decidir. | actor | Usuario | Autoridad que consulta. | Lista de SolicitudRegistro |  |
+| Modificador de acceso | Nombre | Parámetros | Tipo dato de retorno | Descripción |
+|---|---|---|---|---|
+| public | estaPendiente | — | boolean | Indica si la solicitud sigue PENDIENTE. |
+| public | aprobar | UsuarioDominio autoridad | void | La autoridad competente aprueba la solicitud; se asigna el rol y se aprueba la cuenta. |
+| public | rechazar | UsuarioDominio autoridad, String motivo | void | La autoridad competente rechaza la solicitud con un motivo. |
+
+## Operaciones del caso de uso (capa de negocio)
+
+Responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/SolicitudRegistro.md#responsabilidades) que coordinan varios objetos o consultan la base de datos. Las implementa: RegistroNegocioImpl, SolicitudNegocioImpl.
+
+| Operación | Descripción | Políticas que protege |
+|---|---|---|
+| crear | Registra la petición de rol de una persona que se autorregistra. | P-SRE-001, P-SRE-002, P-SRE-003, P-SRE-004 |
+| consultarPendientes | Lista las solicitudes que la autoridad puede decidir. | P-SRE-011 |
 
 ## Builder (clase interna public static)
 

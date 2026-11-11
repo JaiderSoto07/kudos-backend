@@ -7,6 +7,7 @@ El documento 07 del enunciado entrega un catálogo mínimo de requisitos y pide 
 - Los requisitos **RF-001 a RF-077** y **RNF-001 a RNF-035** conservan el código del enunciado. Su texto se **refina**: se precisa qué hace el sistema, con qué condición y qué regla aplica.
 - Los requisitos **RF-078 en adelante** y **RNF-036 en adelante** son **complementados**: el enunciado los exige de forma implícita en reglas, eventos o casos de uso, pero no los lista como requisito. Se marcan con 🆕.
 - La relación de cada requisito con reglas, casos de uso, clases y pruebas está en la [matriz de trazabilidad](matriz-trazabilidad.md).
+- **Alcance de la versión entregada:** están implementados **todos** los requisitos funcionales del enunciado (RF-001 a RF-077) y los complementarios, salvo cuatro complementarios marcados ⛔ que quedan como **trabajo futuro**: RF-082 (historial de actividad propia), RF-089 (suspender, reactivar o desactivar cuentas a mano; la suspensión y reactivación automáticas sí existen, D-07), RF-096 (indicadores) y RF-097 (pantalla de parámetros globales).
 
 ---
 
@@ -16,22 +17,22 @@ El documento 07 del enunciado entrega un catálogo mínimo de requisitos y pide 
 
 | Código | Requisito refinado | Reglas / decisiones |
 |---|---|---|
-| RF-001 | El sistema debe permitir que una persona se registre indicando nombres, apellidos, correo institucional, celular, contraseña, rol solicitado y la Facultad o Programa que corresponda. El registro crea la cuenta en estado `PENDIENTE_APROBACION` y una `SolicitudRegistro` pendiente. | RN-069 a RN-076, D-17 |
+| RF-001 | El sistema debe permitir que una persona se registre indicando nombres, apellidos, celular, rol solicitado y la Facultad o Programa que corresponda. El nombre y el correo los entrega Google al ingresar (D-09); el correo debe ser de un dominio institucional. El registro crea la cuenta en estado `PENDIENTE_APROBACION` y una `SolicitudRegistro` pendiente. | RN-069 a RN-076, D-17 |
 | RF-002 | El sistema debe exigir el correo institucional en el registro y rechazar correos cuyo dominio no sea el institucional (parámetro `DOMINIO_CORREO`). | RN-069, RN-071, POL-001, D-12 |
 | RF-003 | El sistema debe exigir un número celular colombiano válido (10 dígitos que inician en 3) en el registro. | RN-070, RN-072, POL-002, D-12 |
 | RF-004 | El sistema debe rechazar el registro o el cambio de correo si ya existe otro usuario con ese correo. | RN-073 |
 | RF-005 | El sistema debe rechazar el registro o el cambio de celular si ya existe otro usuario con ese número. | RN-074 |
-| RF-006 | El sistema debe permitir validar el correo institucional con un código de 6 dígitos que vence a los 15 minutos y admite máximo 5 intentos fallidos. | RN-077, RN-079, D-10 |
+| RF-006 | El sistema debe validar el correo institucional. Como el ingreso es con Google, el correo queda verificado cuando Google confirma que la persona es dueña de esa cuenta; si el usuario cambia su correo, se verifica al ingresar con la nueva cuenta. | RN-077, RN-079, D-09, D-10 |
 | RF-007 | El sistema debe permitir validar el número celular con un código de 6 dígitos con las mismas condiciones del RF-006. | RN-078, RN-080, D-10 |
 | RF-008 | El sistema debe permitir a cada usuario consultar su información personal. También debe permitir a las autoridades consultar la de los usuarios de su ámbito. | RN-101, RN-112 a RN-127 |
 | RF-009 | El sistema debe permitir a cada usuario actualizar sus nombres, apellidos, correo y celular. No debe permitir modificar el propio rol. | RN-102, RN-104, RN-105, RN-107, RN-109 |
 | RF-010 | Al cambiar el correo, el sistema debe marcarlo como no verificado y generar una nueva validación pendiente. Mientras el nuevo correo no se valide, la cuenta deja de estar `ACTIVA`. | RN-081, RN-110, D-17 |
 | RF-011 | Al cambiar el celular, el sistema debe marcarlo como no verificado y generar una nueva validación pendiente, con el mismo efecto del RF-010. | RN-082, RN-111 |
-| RF-078 🆕 | El sistema debe permitir iniciar sesión con correo y contraseña **solo** a cuentas `ACTIVA`, es decir, aprobadas y con correo y celular verificados. Si la cuenta no está activa, debe indicar qué le falta. | RN-085 a RN-089, POL-003, D-09 |
+| RF-078 🆕 | El sistema debe permitir iniciar sesión con la cuenta de Google y dar acceso a las funciones **solo** a cuentas `ACTIVA`, es decir, aprobadas y con correo y celular verificados. Si la cuenta no está activa, debe indicar qué le falta. | RN-085 a RN-089, POL-003, D-09 |
 | RF-079 🆕 | El sistema debe permitir cerrar sesión. | RNF-001 |
 | RF-080 🆕 | El sistema debe permitir solicitar un nuevo código de verificación. Al hacerlo, invalida los códigos anteriores del mismo canal. | D-10 |
 | RF-081 🆕 | El sistema debe permitir a cada usuario consultar el estado de sus validaciones (correo, celular y aprobación). | RN-103 |
-| RF-082 🆕 | El sistema debe permitir a cada usuario consultar su historial de actividad (Kudos emitidos y recibidos, réplicas, calificaciones, reportes y cambios a su cuenta). | RN-106 |
+| RF-082 🆕 ⛔ | El sistema debe permitir a cada usuario consultar su historial de actividad (Kudos emitidos y recibidos, réplicas, calificaciones, reportes y cambios a su cuenta). | RN-106 |
 
 ### 1.2 Gestión de roles
 
@@ -92,7 +93,7 @@ El documento 07 del enunciado entrega un catálogo mínimo de requisitos y pide 
 | RF-086 🆕 | El sistema debe permitir a la autoridad competente rechazar una solicitud con motivo obligatorio. | RN-212 (por analogía), D-17 |
 | RF-087 🆕 | El sistema debe mostrar a cada autoridad únicamente las solicitudes pendientes de su ámbito. | POL-004, RN-112 a RN-127 |
 | RF-088 🆕 | El sistema debe impedir que un usuario apruebe su propia solicitud o decida sobre usuarios fuera de su ámbito. | RN-108, POL-004, POL-005 |
-| RF-089 🆕 | El sistema debe permitir a la autoridad que gestiona a un usuario suspenderlo, reactivarlo o desactivarlo, indicando motivo. | RN-216, RN-217, D-07 |
+| RF-089 🆕 ⛔ | El sistema debe permitir a la autoridad que gestiona a un usuario suspenderlo, reactivarlo o desactivarlo, indicando motivo. | RN-216, RN-217, D-07 |
 
 ### 1.7 Gestión de categorías
 
@@ -165,8 +166,8 @@ El documento 07 del enunciado entrega un catálogo mínimo de requisitos y pide 
 | RF-070 | El sistema debe permitir consultar la auditoría filtrando por fecha, actor, acción y objeto, según el ámbito del usuario. | RN-116, RN-128 |
 | RF-071 | El sistema debe conservar la trazabilidad histórica: no hay borrado físico de información de negocio. | POL-007, D-28 |
 | RF-095 🆕 | El sistema debe generar notificaciones dentro de la aplicación para los usuarios afectados por un evento, y permitir consultarlas y marcarlas como leídas. | D-27 |
-| RF-096 🆕 | El sistema debe ofrecer indicadores: Kudos por categoría, por Facultad y por Programa; personas más reconocidas; Kudos mejor calificados; y participación (Kudos, réplicas y calificaciones por periodo). | RN-185, doc. 01 §5 "medir participación" |
-| RF-097 🆕 | El sistema debe permitir a los Administradores consultar y modificar los parámetros globales. | RN-130, RN-131, D-11 |
+| RF-096 🆕 ⛔ | El sistema debe ofrecer indicadores: Kudos por categoría, por Facultad y por Programa; personas más reconocidas; Kudos mejor calificados; y participación (Kudos, réplicas y calificaciones por periodo). | RN-185, doc. 01 §5 "medir participación" |
+| RF-097 🆕 ⛔ | El sistema debe permitir a los Administradores consultar y modificar los parámetros globales. | RN-130, RN-131, D-11 |
 
 ### 1.14 Consultas organizacionales
 
@@ -189,9 +190,9 @@ Cada requisito se refina con un **criterio verificable**: cómo se demuestra que
 
 | Código | Requisito | Criterio verificable |
 |---|---|---|
-| RNF-001 | Autenticación | Login con correo y contraseña con Spring Security. La sesión se maneja con cookie `HttpOnly` y `SameSite=Lax` y expira tras 30 minutos de inactividad. Todos los endpoints `/api/**`, salvo registro, verificación y login, responden 401 sin sesión. |
+| RNF-001 | Autenticación | Ingreso con Google (OAuth2 / OpenID Connect) mediante Spring Security, aprobado por el docente. La sesión se maneja con la cookie `JSESSIONID` `HttpOnly` y `SameSite=Lax` y expira tras 30 minutos de inactividad. Todos los endpoints `/api/**` responden 401 sin sesión. |
 | RNF-002 | Autorización basada en roles | Cada operación verifica el rol vigente y el **ámbito**: Facultad o Programa propios. Hay pruebas que demuestran el rechazo por rol y por ámbito. |
-| RNF-003 | Protección de información sensible | Contraseñas y códigos de verificación se guardan con hash BCrypt. Nunca se envían en las respuestas ni se escriben en los logs. Las credenciales de la base de datos van en un archivo fuera del control de versiones, como en Sigma. |
+| RNF-003 | Protección de información sensible | No hay contraseñas: la autenticación la hace Google. Los códigos de verificación se generan con `SecureRandom`, vencen a los 15 minutos y admiten 5 intentos. Como el envío es simulado (D-10), el código se muestra en un aviso de demostración. Las credenciales de la base de datos y de Google van en archivos fuera del control de versiones, como en Sigma. |
 | RNF-004 | Impedir accesos no autorizados | Las cuentas no `ACTIVA` no inician sesión. Los intentos rechazados responden 403 con un mensaje claro y quedan registrados en el log. |
 
 ### 2.2 Disponibilidad y manejo de errores
@@ -233,7 +234,7 @@ Cada requisito se refina con un **criterio verificable**: cómo se demuestra que
 |---|---|---|
 | RNF-018 | Clean Code | Nombres expresivos en español del dominio, métodos cortos y sin comentarios compensatorios. Se verifica con el análisis estático. |
 | RNF-019 | SOLID | Cada principio se justifica con ejemplos concretos en [Arquitectura](../05-arquitectura/README.md). |
-| RNF-020 | Bajo acoplamiento | Las capas dependen de interfaces: fachada, negocio, DAO y publicador de eventos. |
+| RNF-020 | Bajo acoplamiento | Las capas dependen de interfaces: fachada, negocio, DAO (`DAOFactory`), ensambladores y `EnviadorNotificacion`. |
 | RNF-021 | Alta cohesión | Cada objeto de dominio protege sus propias reglas (Tell, Don't Ask). |
 | RNF-022 | Separación de responsabilidades | Controlador = HTTP; fachada = transacción y conversión; negocio = reglas; DAO = SQL; dominio = comportamiento. |
 
@@ -242,7 +243,7 @@ Cada requisito se refina con un **criterio verificable**: cómo se demuestra que
 | Código | Requisito | Criterio verificable |
 |---|---|---|
 | RNF-023 | Verificable mediante pruebas | Pruebas unitarias JUnit 5 del dominio y las reglas, pruebas de la fachada con DAO falsos y colección Bruno de la API. En el front, Vitest para stores y validaciones. |
-| RNF-024 | Diseño testeable | El negocio recibe sus dependencias (DAOFactory, publicador, reloj) por constructor, así las pruebas no necesitan base de datos. Meta: **≥ 80 % de cobertura de líneas en el paquete `dominio`**, medida con JaCoCo. |
+| RNF-024 | Diseño testeable | El negocio recibe su `DAOFactory` por constructor, así las pruebas usan una fábrica falsa en memoria y no necesitan base de datos. Meta: **≥ 80 % de cobertura**, medida con JaCoCo (resultado real en [Calidad y pruebas](../07-calidad-y-pruebas/README.md)). |
 | RNF-025 | Análisis estático de ambos repositorios | Back: SonarQube Community (o SonarLint) + JaCoCo. Front: ESLint + oxlint, como en Sigma. |
 | RNF-026 | Evidencias de ejecución | Capturas o reportes exportados en `07-calidad-y-pruebas/evidencias/`. |
 | RNF-027 | Hallazgos y correcciones documentados | Tabla hallazgo → causa → corrección → antes/después en [`07-calidad-y-pruebas`](../07-calidad-y-pruebas/README.md). |
@@ -256,7 +257,7 @@ Cada requisito se refina con un **criterio verificable**: cómo se demuestra que
 | RNF-030 | Manual de puesta a punto | Requisitos previos, instalación, configuración, variables de entorno, ejecución, pruebas y despliegue (MAN-001 a MAN-007). |
 | RNF-031 | Estilo arquitectónico del curso | Capas `controlador → fachada → negocio → dao` (D-29). |
 | RNF-032 | Decisiones justificadas | [Decisiones de diseño](decisiones-de-diseno.md) y sección de arquitectura. |
-| RNF-033 | Coherencia con la orientación a objetos | Dominio rico, polimorfismo (State, Composite) y composición sobre herencia. |
+| RNF-033 | Coherencia con la orientación a objetos | Dominio rico, polimorfismo con el patrón State (`EstadoContenido`) y composición sobre herencia. |
 | RNF-034 | Análisis relacionado con diseño e implementación | Los códigos RN, D, CU y RF aparecen en clases, reglas y pruebas. |
 | RNF-035 | Trazabilidad requisitos-diseño-solución | [Matriz de trazabilidad](matriz-trazabilidad.md). |
 

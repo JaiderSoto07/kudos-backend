@@ -7,9 +7,10 @@ Proyecto Integrador Final del curso **Diseño Orientado a Objetos**.
 |---|---|
 | Modalidad | Individual |
 | Fecha límite | Viernes 13 de noviembre de 2026, 12:00 m. |
-| Back-End | Java + Spring Boot, JDBC + HikariCP, SQL Server |
-| Front-End | Vue 3 + Vite + Pinia + Vue Router |
-| Pruebas de servicios | Bruno |
+| Back-End | Java 26 + Spring Boot 4.1.1, JDBC + HikariCP, SQL Server (repositorio `kudos-backend`) |
+| Front-End | Vue 3 + Vite + Pinia + Vue Router (repositorio `kudos-frontend`) |
+| Autenticación | Google (OAuth2 / OpenID Connect), aprobada por el docente; cuenta, aprobación y rol en nuestra base de datos |
+| Pruebas | JUnit 5 + JaCoCo (240), Vitest (112), Bruno (84 peticiones), SonarQube Cloud, ESLint + oxlint |
 | Formato de documentación | Markdown (RNF-028) |
 
 ---
@@ -20,16 +21,22 @@ Misma organización de la documentación entregada en Sigma (modelo de dominio, 
 
 | # | Documento | Qué contiene | Estado |
 |---|---|---|---|
-| 0 | [Análisis](docs/00-analisis/requisitos.md) | [Requisitos](docs/00-analisis/requisitos.md), [catálogo de reglas de negocio](docs/00-analisis/reglas-de-negocio.md), [decisiones de diseño](docs/00-analisis/decisiones-de-diseno.md), [especificación de casos de uso](docs/00-analisis/casos-de-uso.md) y [matriz de trazabilidad](docs/00-analisis/matriz-trazabilidad.md) | ✅ (la matriz tiene componentes y pruebas planeados) |
+| 0 | [Análisis](docs/00-analisis/requisitos.md) | [Requisitos](docs/00-analisis/requisitos.md), [catálogo de reglas de negocio](docs/00-analisis/reglas-de-negocio.md), [decisiones de diseño](docs/00-analisis/decisiones-de-diseno.md), [especificación de casos de uso](docs/00-analisis/casos-de-uso.md) y [matriz de trazabilidad](docs/00-analisis/matriz-trazabilidad.md) | ✅ (la matriz usa las clases y pruebas reales) |
 | 1 | [Modelo de dominio](docs/01-modelo-dominio/README.md) | Diagrama de línea de vida, objetos, reglas de negocio, agregados, servicios, catálogo de eventos y, por objeto: muestreo, caracterización, responsabilidades, eventos y políticas | ✅ |
-| 2 | [Diagrama de clases](docs/02-diagrama-clases/README.md) | Diagrama UML y una página por clase: relaciones, atributos, constructores, accesores, métodos y `Builder` | ✅ |
+| 2 | [Diagrama de clases](docs/02-diagrama-clases/README.md) | Diagrama UML con los atributos y métodos reales y una página por clase: relaciones, atributos, constructores, accesores, métodos de negocio, operaciones del caso de uso y `Builder` | ✅ |
 | 3 | [Modelo entidad-relación](docs/03-modelo-entidad-relacion/README.md) | Diagrama, diccionario de datos por entidad, scripts SQL y validación de restricciones | ✅ |
 | 4 | [Diagrama de casos de uso](docs/04-diagrama-casos-uso/README.md) | Actores, generalizaciones y casos de uso por módulo | ✅ |
-| 5 | [Arquitectura](docs/05-arquitectura/README.md) y [patrones](docs/05-arquitectura/patrones.md) | Capas, paquetes, transacciones, errores, seguridad, eventos, API REST, front-end, SOLID y patrones justificados | ✅ |
-| 6 | [Diagramas de comportamiento](docs/06-diagramas-comportamiento/README.md) | Diagramas de estado, de actividad y de secuencia | ✅ |
-| 7 | [Calidad y pruebas](docs/07-calidad-y-pruebas/README.md) | Estrategia de pruebas, análisis estático, hallazgos y evidencias | ✅ Estrategia · ⏳ Resultados del código |
-| — | [Manual de puesta a punto](manual-puesta-a-punto.md) | Requisitos previos, instalación, configuración, variables de entorno, ejecución, pruebas y despliegue | ✅ Versión 1 |
+| 5 | [Arquitectura](docs/05-arquitectura/README.md), [patrones](docs/05-arquitectura/patrones.md) y [API REST](docs/05-arquitectura/api-rest.md) | Capas y paquetes reales, transacciones, errores, seguridad con Google, auditoría, front-end, SOLID, patrones justificados (y descartados) y los 64 endpoints | ✅ |
+| 6 | [Diagramas de comportamiento](docs/06-diagramas-comportamiento/README.md) | 6 diagramas de estado, 3 de actividad y 5 de secuencia con las clases reales | ✅ |
+| 7 | [Calidad y pruebas](docs/07-calidad-y-pruebas/README.md) | Estrategia, resultados de las pruebas, cobertura, análisis estático, 17 hallazgos con su corrección y evidencias | ✅ |
+| — | [Manual de puesta a punto](manual-puesta-a-punto.md) | Requisitos previos, instalación, configuración (base de datos y Google), variables de entorno, ejecución, pruebas y despliegue | ✅ Probado |
 | — | [Scripts SQL](sql) | Crear usuario, crear tablas, datos iniciales, datos de demostración y validación | ✅ Validados en SQL Server 2025 |
+
+### Alcance de la versión entregada
+
+Están implementados **todos** los requisitos funcionales del enunciado (RF-001 a RF-077) y sus casos de uso (CU-001 a CU-015), más los complementarios del análisis (registro, verificación, aprobaciones por ámbito, muro, revisión y liberación de contenido, notificaciones y auditoría). Cuatro requisitos complementarios que propusimos en el análisis quedan como **trabajo futuro**, marcados ⛔ en los [requisitos](docs/00-analisis/requisitos.md): historial de actividad propia (RF-082), suspender, reactivar o desactivar cuentas a mano (RF-089; la suspensión y reactivación automáticas sí existen), indicadores (RF-096) y pantalla de parámetros globales (RF-097).
+
+Los diagramas usan los nombres **conceptuales** del dominio (`Kudo`, `Usuario`…); en el código cada clase de dominio lleva el sufijo `Dominio` (`KudoDominio`). La [tabla de correspondencia](docs/01-modelo-dominio/README.md#correspondencia-con-el-código) dice dónde vive cada objeto en cada capa.
 
 ### Correspondencia con el contenido mínimo del enunciado (doc. 09 §10 y §11)
 
@@ -40,7 +47,7 @@ Misma organización de la documentación entregada en Sigma (modelo de dominio, 
 | 6. Modelo enriquecido | Sección **Caracterización** de cada objeto: caracterización del objeto, de sus atributos y responsabilidades |
 | 7. Eventos | Sección **Eventos** de cada objeto + [catálogo de eventos](docs/01-modelo-dominio/README.md#catálogo-de-eventos-de-dominio) |
 | 8. Políticas | Sección **Políticas** de cada objeto + [catálogo de reglas de negocio](docs/00-analisis/reglas-de-negocio.md) (POL, INV y RN con la política que las garantiza) + [decisiones de diseño](docs/00-analisis/decisiones-de-diseno.md) |
-| 9. Modelo de dominio | [Modelo de dominio](docs/01-modelo-dominio/README.md): agregados, entidades, objetos de valor y servicios |
+| 9. Modelo de dominio | [Modelo de dominio](docs/01-modelo-dominio/README.md): agregados, entidades, servicios, validaciones y correspondencia con el código |
 | 10. Diagramas UML | UML-001 [casos de uso](docs/04-diagrama-casos-uso/README.md), UML-002 [clases](docs/02-diagrama-clases/README.md), UML-003 a UML-005 [secuencia, actividad y estado](docs/06-diagramas-comportamiento/README.md) |
 | 11. Modelo de datos | [MER](docs/03-modelo-entidad-relacion/README.md) |
 | 12. Arquitectura | [Arquitectura](docs/05-arquitectura/README.md) |
@@ -74,7 +81,7 @@ Misma organización de la documentación entregada en Sigma (modelo de dominio, 
 | Arquitectura por capas | [SVG](assets/diagramas/arquitectura-capas.svg) · [PNG](assets/diagramas/arquitectura-capas.png) | [arquitectura-capas.drawio](fuentes/arquitectura-capas.drawio) |
 | Estados (6) | `diagramas-estado-1` a `-6` | [diagramas-estado.drawio](fuentes/diagramas-estado.drawio) |
 | Actividades (3) | `diagramas-actividad-1` a `-3` | [diagramas-actividad.drawio](fuentes/diagramas-actividad.drawio) |
-| Secuencias (4) | `diagramas-secuencia-1` a `-4` | [diagramas-secuencia.drawio](fuentes/diagramas-secuencia.drawio) |
+| Secuencias (5) | `diagramas-secuencia-1` a `-5` | [diagramas-secuencia.drawio](fuentes/diagramas-secuencia.drawio) |
 
 > Los SVG llevan el diagrama incrustado: también se abren y se editan en draw.io. Cada documento muestra además una versión en texto (Mermaid) plegable.
 
@@ -87,12 +94,12 @@ documentacion/
 ├── docs/
 │   ├── 00-analisis/                   ← requisitos, reglas de negocio, decisiones, casos de uso, trazabilidad
 │   ├── 01-modelo-dominio/             ← README + objetos/*.md (16 objetos)
-│   ├── 02-diagrama-clases/            ← README + clases/*.md (16 entidades y 4 objetos de valor)
+│   ├── 02-diagrama-clases/            ← README + clases/*.md (16 clases)
 │   ├── 03-modelo-entidad-relacion/    ← README + entidades/*.md (16 tablas)
 │   ├── 04-diagrama-casos-uso/         ← actores y casos de uso por módulo
-│   ├── 05-arquitectura/               ← arquitectura y patrones
+│   ├── 05-arquitectura/               ← arquitectura, patrones y API REST
 │   ├── 06-diagramas-comportamiento/   ← estados, actividades y secuencias
-│   └── 07-calidad-y-pruebas/          ← estrategia, análisis estático, hallazgos y evidencias
+│   └── 07-calidad-y-pruebas/          ← resultados, hallazgos y evidencias/ (capturas y salidas de las pruebas)
 ├── sql/                               ← scripts de base de datos y validación
 ├── assets/diagramas/                  ← imágenes de los diagramas (SVG y PNG)
 └── fuentes/                           ← diagramas editables (.drawio)
@@ -135,7 +142,7 @@ La situación deseada es una plataforma única que cumpla cinco condiciones:
 - Administra la estructura académica: facultades, programas y vínculos de docentes y estudiantes.
 - Conserva todo con auditoría.
 
-Hay además una condición de acceso. Cada persona entra con una **identidad institucional verificada**: correo institucional y celular, ambos validados. Su cuenta debe estar **aprobada** por la autoridad que le corresponde según la jerarquía.
+Hay además una condición de acceso. Cada persona entra con una **identidad institucional verificada**: el correo lo confirma Google al ingresar y el celular se valida con un código. Su cuenta debe estar **aprobada** por la autoridad que le corresponde según la jerarquía.
 
 ## 3. Objetivos
 
@@ -158,7 +165,7 @@ Diseñar e implementar con orientación a objetos una plataforma completamente f
 | Área | Evidencia |
 |---|---|
 | Análisis | Requisitos, reglas, eventos, políticas e invariantes |
-| Diseño | Modelo anémico → modelo enriquecido, entidades, objetos de valor, agregados y servicios |
+| Diseño | Modelo anémico → modelo enriquecido, entidades con comportamiento, patrón State, agregados y servicios |
 | Arquitectura | Estilo por capas del curso, SOLID, bajo acoplamiento y alta cohesión |
 | Calidad | Clean Code, refactorización, análisis estático y pruebas |
 
@@ -197,13 +204,19 @@ Reglas transversales sobre los roles (RN-001 a RN-038):
 
 1. **El problema es más organizacional que técnico.** La mayor parte de las 250 reglas trata de quién puede hacer qué: roles excluyentes, cadena de aprobación, ámbitos de autoridad y moderación. Por eso el análisis empezó por la estructura de la Universidad y no por los Kudos.
 2. **El enunciado tiene vacíos y contradicciones que hubo que resolver con criterio.** Por ejemplo: quién crea categorías (D-01), quién veta (D-02), quién aprueba a los Docentes (D-03) y quién crea Facultades (D-04). Cada caso quedó registrado con su justificación, de modo que el diseño se puede defender regla por regla.
-3. **La mejor regla es la que la estructura hace imposible de violar.** Las 38 reglas de exclusividad de roles se cumplen con un solo rol vigente por persona (D-13). Los ciclos en la conversación son imposibles porque el padre de una réplica nunca cambia (D-22). Correos y celulares inválidos no existen porque se validan al construirse (D-12).
+3. **La mejor regla es la que la estructura hace imposible de violar.** Las 38 reglas de exclusividad de roles se cumplen con un solo rol vigente por persona (D-13). Los ciclos en la conversación son imposibles porque el padre de una réplica nunca cambia (D-22). Y un contenido vetado no puede volver a interactuar porque su estado (patrón State) rechaza toda transición (D-20).
 4. **Pasar del modelo anémico al enriquecido cambió dónde viven las reglas.** En el anémico, el Kudo era una fila con un estado. En el enriquecido, el Kudo sabe si admite réplicas, cuándo puede ser vetado y qué evento produce. Las 84 responsabilidades y 162 políticas quedaron repartidas en los objetos que tienen la información para cumplirlas (Tell, Don't Ask).
-5. **Se usaron patrones solo donde resolvían un problema concreto.** State para el ciclo de vida del contenido, Composite para la conversación, Observer para la auditoría y Specification para los ámbitos. Otros, como Command, Chain of Responsibility y Template Method, se evaluaron y se descartaron con su motivo.
-6. **La trazabilidad se diseñó desde el principio.** Los eventos de dominio alimentan la auditoría, las notificaciones y los indicadores. Además, nada se borra físicamente (D-28). Así se cumplen RN-096 a RN-100 y POL-007 sin que el negocio dependa de la auditoría.
+5. **Se usaron patrones solo donde resolvían un problema concreto.** State para el ciclo de vida del contenido, Builder y Singleton como en Sigma, Abstract Factory para compartir la transacción, Facade, DAO y DTO + Assembler entre capas. Otros que aparecían en el diseño inicial (Observer, Composite, objetos de valor, Specification) se **descartaron al implementar** porque una solución más simple resolvía lo mismo; quedó registrado el motivo.
+6. **La trazabilidad se diseñó desde el principio.** Cada operación registra su evento de dominio en la auditoría dentro de la misma transacción, y nada se borra físicamente (D-26, D-28). Así se cumplen RN-096 a RN-100 y POL-007: no existe una operación sin su registro ni un registro de algo que no pasó.
 7. **La base de datos es una segunda línea de defensa.** Los índices únicos filtrados y los `CHECK` garantizan las reglas críticas aunque falle el código o haya concurrencia. Se comprobó con 16 de 16 violaciones rechazadas en SQL Server.
 8. **Mantener la arquitectura del curso facilitó el diseño sin limitarlo.** Las capas de Sigma se conservaron y solo se cambió lo que el enunciado exigía: un dominio con comportamiento. Así la solución se puede explicar y modificar en vivo.
 
 ### 17.2 Sobre la implementación y las pruebas
 
-*Se completa al terminar los repositorios del back-end y del front-end, con los resultados de las pruebas y del análisis estático registrados en [calidad y pruebas](docs/07-calidad-y-pruebas/README.md).*
+1. **Construir por módulos completos funcionó.** Cada módulo (identidad, aprobaciones, organización, Kudos, conversación, moderación, auditoría y notificaciones) se terminó de punta a punta: reglas, negocio, fachada, controlador, colección de Bruno, pantallas y pruebas, y se verificó contra la base real antes de seguir. Así nunca quedó una capa a medias.
+2. **El diseño se simplificó al implementar, y eso quedó documentado.** Observer, Composite, objetos de valor y Specification resolvían problemas que, en el código, se resolvían más simple con la arquitectura del curso. La documentación se ajustó para decir lo que el código hace; los patrones descartados quedan con su razón.
+3. **Las pruebas sin base de datos dieron velocidad y confianza.** Con la `DAOFactory` inyectada, las 240 pruebas del back-end corren en segundos y cubren el 99,7 % de las líneas medidas. Las pruebas del front (112) recorren las pantallas completas contra un servidor falso.
+4. **El análisis estático encontró problemas reales.** SonarQube marcó posibles nulos, duplicación y accesos fuera de rango; cada hallazgo se corrigió con una refactorización concreta (17 hallazgos registrados), y ESLint y oxlint mantuvieron el front sin errores.
+5. **La base de datos y las pruebas contra la base real atraparon lo que las pruebas unitarias no ven**, como un aviso que no cabía en su columna; se corrigió en un solo lugar para todos los módulos.
+6. **Delegar la autenticación en Google fue la decisión correcta.** El sistema no guarda contraseñas y las reglas de la cuenta (aprobación, verificación del celular, rol y ámbito) siguen en nuestro dominio, como exige el enunciado.
+7. **Trabajo futuro:** historial de actividad propia, gestión manual de cuentas, tablero de indicadores y pantalla de parámetros (requisitos complementarios marcados ⛔), y un proveedor real de SMS detrás de la interfaz `EnviadorNotificacion`.

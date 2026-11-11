@@ -71,6 +71,7 @@ Cada decisión tiene un código **D-xx**. El modelo, el código y las pruebas lo
 | **Decisión** | **Suspender** es temporal y reversible: la cuenta se puede reactivar. **Desactivar** es definitivo para ese rol y conserva todo el historial. Lo hace la autoridad que **gestiona** al usuario según la Matriz de Gestión (por ejemplo, el Coord. de Programa a sus estudiantes). Ambas acciones exigen un motivo y quedan auditadas. |
 | **Precisión** | Un Docente o Estudiante puede estar vinculado a varios Programas. Su cuenta la puede suspender, reactivar o desactivar el Coordinador de **cualquiera** de los Programas donde tenga un vínculo vigente: RN-112 permite gestionar a quienes pertenecen a su programa y RN-114 solo prohíbe gestionar a quienes pertenecen *exclusivamente* a otros. Para retirar a la persona solo de su programa, el coordinador usa la desvinculación (D-16). |
 | **Justificación** | Respeta POL-004 (cada actor actúa en su ámbito) y RN-098 y RN-099 (auditoría de activación y desactivación). |
+| **En esta versión** | La suspensión y la reactivación ocurren **automáticamente**: si al desvincular a una persona se queda sin vínculos vigentes, su cuenta pasa a `SUSPENDIDA`, y al volver a vincularla se reactiva (ambas quedan auditadas y notificadas). Suspender, reactivar o desactivar a mano (RF-089) queda **fuera del alcance** de esta versión. |
 
 ### D-08 — Quiénes son las "autoridades autorizadas"
 
@@ -85,15 +86,15 @@ Cada decisión tiene un código **D-xx**. El modelo, el código y las pruebas lo
 | | |
 |---|---|
 | **Vacío** | RNF-001 exige autenticación, pero no define el mecanismo. Sigma usaba Google OAuth. |
-| **Decisión** | Login con **correo institucional y contraseña**. La contraseña se guarda con hash BCrypt y la sesión la maneja Spring Security. No se usa Google OAuth. |
-| **Justificación** | El enunciado exige verificar correo **y celular** con códigos propios (RN-077 a RN-082). Además, la cuenta solo entra si está aprobada y verificada (RN-085 a RN-089). Ese control debe estar en nuestro dominio, no en un proveedor externo. |
+| **Decisión** | Ingreso con **Google (OAuth2 / OpenID Connect)**, igual que Sigma, y **aprobado por el docente**. Google responde "¿quién eres?" y confirma que el correo es de la persona. Todo lo demás está en nuestro dominio y base de datos: que el correo sea institucional (parámetro `DOMINIO_CORREO`), la verificación del celular (D-10), la aprobación, el estado de la cuenta (RN-084 a RN-089) y el rol con su ámbito (RNF-002). No se guardan contraseñas. |
+| **Justificación** | Evita manejar contraseñas (menos riesgo) y deja en nuestro dominio las reglas que el enunciado exige: la cuenta solo usa la aplicación si está aprobada y verificada. Al ingresar, si el correo no existe se muestra el registro; si existe sin estar `ACTIVA`, se muestra lo que falta. |
 
 ### D-10 — Cómo se verifican correo y celular
 
 | | |
 |---|---|
 | **Vacío** | No hay proveedores reales de correo ni de SMS. |
-| **Decisión** | Al registrarse, o al cambiar el correo o el celular, se genera un **código de verificación** de 6 dígitos que vence en 15 minutos. El envío pasa por una interfaz `EnviadorNotificacion`. En este proyecto la implementación es **simulada**: el código queda en la bandeja de notificaciones y en el log. |
+| **Decisión** | El **correo** lo verifica Google (D-09). Para el **celular**, al registrarse o al cambiarlo, se genera un **código** de 6 dígitos con `SecureRandom` que vence en 15 minutos y admite 5 intentos (parámetros). El envío pasa por la interfaz `EnviadorNotificacion`; en este proyecto la implementación es **simulada** (`EnviadorNotificacionSimulado`): el código se guarda como notificación y la pantalla de verificación lo muestra en un aviso de demostración. |
 | **Justificación** | Por inversión de dependencias (ARQ-029), el dominio no conoce SMTP ni SMS. Pasar a un proveedor real solo exige otra implementación de la interfaz. Esto es un **evento de integración** (doc. 01 §12). |
 
 ### D-11 — Parámetros globales
@@ -101,7 +102,7 @@ Cada decisión tiene un código **D-xx**. El modelo, el código y las pruebas lo
 | | |
 |---|---|
 | **Vacío** | RN-130 dice que el Administrador gestiona "parámetros globales", sin listarlos. |
-| **Decisión** | Hay una tabla de parámetros administrables. Ejemplos: dominio del correo institucional (`uco.edu.co`), vigencia del código de verificación (15 min) e intentos máximos de verificación (5). |
+| **Decisión** | Hay una tabla de parámetros administrables. Ejemplos: dominios del correo institucional (`DOMINIO_CORREO`, en demostración `gmail.com,uco.net.co`), vigencia del código de verificación (15 min) e intentos máximos de verificación (5). En esta versión se leen desde la base de datos; la pantalla para modificarlos (RF-097) queda fuera del alcance. |
 | **Justificación** | Da contenido real a RN-130 y evita valores fijos en el código (OCP). |
 
 ### D-12 — Formato de los datos de contacto
@@ -109,7 +110,7 @@ Cada decisión tiene un código **D-xx**. El modelo, el código y las pruebas lo
 | | |
 |---|---|
 | **Decisión** | **Correo**: debe terminar en `@` + el dominio institucional del parámetro. Se guarda en minúsculas y sin espacios. **Celular**: número colombiano de 10 dígitos que empieza por `3`. |
-| **Justificación** | Correo y celular son **objetos de valor** (`CorreoInstitucional`, `NumeroCelular`). Se validan a sí mismos al construirse, así que nunca existe uno inválido. |
+| **Justificación** | Las validaciones están en reglas reutilizables, igual que en Sigma: `ValidarCorreoInstitucionalRule` y `ValidarCelularRule`. Se evaluaron objetos de valor (`CorreoInstitucional`, `NumeroCelular`), pero se prefirió un solo estilo de validación en todo el proyecto. |
 
 ---
 
@@ -196,14 +197,14 @@ CREADO ──publicar──► VISIBLE ──reportar──► REPORTADO ──i
 | | |
 |---|---|
 | **Decisión** | Una réplica guarda su **padre**, que es un Kudo u otra réplica (INV-027), y el **Kudo raíz** de su conversación. El padre se fija al crearla y **nunca cambia**. Como el padre siempre existe antes que la hija, ni una autorreferencia (INV-028) ni un ciclo (INV-029) son posibles por construcción. |
-| **Patrón** | **Composite**: Kudo y Réplica comparten la interfaz `ContenidoConversable`, que define qué se puede responder, calificar y reportar. La conversación se arma como árbol recursivo. |
+| **Implementación** | La conversación se arma como **árbol**: `ConversacionDtoAssembler.armarArbol` trae todas las réplicas del Kudo en una consulta y cuelga cada una de la lista `respuestas` de su padre; el front-end la dibuja con un componente recursivo. Se evaluó Composite con una interfaz común `ContenidoConversable`, pero no hacía falta una jerarquía de clases. |
 
 ### D-23 — Calificaciones
 
 | | |
 |---|---|
-| **Decisión** | Es un objeto de valor `Estrellas` (1–5). Hay **una** calificación activa por usuario y contenido (RN-178 a RN-181). Si el usuario vuelve a calificar, **se modifica** la existente: se genera el evento "Calificación actualizada" y se guarda el valor anterior en la auditoría. Nadie califica su propio contenido. No se puede calificar contenido vetado. El atributo `activa` existe porque el enunciado habla de "calificación **activa**" (RN-180, RN-181) y deja abierta la opción de retirar una calificación en el futuro; en esta versión una calificación se **modifica**, no se retira, así que permanece activa. |
-| **Indicadores (RN-185)** | Promedio de estrellas y número de calificaciones por contenido. Kudos recibidos y emitidos por persona. Kudos por categoría y por Facultad o Programa. Se recalculan con el evento "Calificación registrada/actualizada" (RN-238). |
+| **Decisión** | Las estrellas son un entero de 1 a 5 validado por `ValidarEstrellasRule`. Hay **una** calificación activa por usuario y contenido (RN-178 a RN-181). Si el usuario vuelve a calificar, **se modifica** la existente: se genera el evento "Calificación actualizada" y se guarda el valor anterior en la auditoría. Nadie califica su propio contenido. No se puede calificar contenido vetado. El atributo `activa` existe porque el enunciado habla de "calificación **activa**" (RN-180, RN-181) y deja abierta la opción de retirar una calificación en el futuro; en esta versión una calificación se **modifica**, no se retira, así que permanece activa. |
+| **Indicadores (RN-185)** | Promedio de estrellas y número de calificaciones por contenido: se recalculan cada vez que se registra o modifica una calificación (RN-238). Los Kudos recibidos y emitidos por persona se ven en el historial. El tablero de indicadores por categoría, Facultad o Programa (RF-096) queda fuera del alcance de esta versión. |
 
 ### D-24 — Reportes
 
@@ -222,12 +223,12 @@ CREADO ──publicar──► VISIBLE ──reportar──► REPORTADO ──i
 
 ## 5. Trazabilidad y notificaciones
 
-### D-26 — Auditoría por eventos de dominio
+### D-26 — Auditoría desde el negocio
 
 | | |
 |---|---|
-| **Decisión** | Cada operación relevante produce un **evento de dominio**, por ejemplo `KudoPublicado` o `ContenidoVetado`. Un publicador entrega el evento a quien le interese: **auditoría**, **notificaciones** e **indicadores**. Un registro de auditoría guarda: fecha, actor, acción, tipo y id del objeto, estado anterior y nuevo, motivo y detalle. |
-| **Patrón** | **Observer** (publicador/suscriptores). La lógica de negocio no sabe que existe la auditoría, así que agregar un nuevo suscriptor no modifica el negocio (OCP, SRP). |
+| **Decisión** | Cada operación relevante registra un **evento de dominio** en la auditoría con un nombre en pasado, por ejemplo `KudoPublicado` o `KudoVetado`. Lo hace el negocio llamando `auditoriaNegocio.registrar(...)` dentro de la **misma transacción** de la operación. Un registro guarda: fecha, actor, acción, tipo y id del objeto, estado anterior y nuevo, motivo y detalle. Las notificaciones se crean igual, con `notificacionNegocio.notificar(...)`. |
+| **Justificación** | Es simple y explícito, y si la operación falla, la auditoría tampoco queda (todo o nada). Se evaluó el patrón **Observer** (publicador y suscriptores), pero agregaba clases sin aportar en este alcance. La consulta respeta el ámbito de cada rol (CU-038). |
 
 ### D-27 — Notificaciones
 
@@ -259,7 +260,7 @@ CREADO ──publicar──► VISIBLE ──reportar──► REPORTADO ──i
 | | |
 |---|---|
 | **Decisión** | Se usa la misma arquitectura por capas del proyecto de referencia del curso (Sigma — Pizzería UCO): `controlador → fachada → negocio → dao`, con los paquetes `dominio`, `entidad`, `dto`, ensambladores y `transversal`. |
-| **Cambio respecto a Sigma** | En Sigma los objetos de `dominio` solo tienen Builder y getters, es decir, son **anémicos**. El enunciado penaliza eso (ARQ-008, ARQ-047, ARQ-049). En Kudos los objetos de dominio **tienen comportamiento**: por ejemplo `kudo.vetar(moderador, motivo)`, `reporte.aceptar()` o `cuenta.intentarActivar()`. Las clases `Rule` se mantienen solo para las validaciones que **necesitan consultar la base de datos**, como la unicidad de correo o que no exista otro Rector. |
+| **Cambio respecto a Sigma** | En Sigma los objetos de `dominio` solo tienen Builder y getters, es decir, son **anémicos**. El enunciado penaliza eso (ARQ-008, ARQ-047, ARQ-049). En Kudos los objetos de dominio **tienen comportamiento**: por ejemplo `kudo.vetar()` (que delega en el patrón State), `reporte.aceptar(idModeracion)`, `usuario.intentarActivar()` o `asignacion.puedeDecidir(solicitud)`. Las clases `Rule` (singleton, una regla por clase) hacen las validaciones de datos y las que **necesitan consultar la base de datos**, como la unicidad del correo o que no exista otro Rector. |
 | **Justificación** | Es el estilo visto en el curso (ARQ-001), y enriquecido cumple los criterios de objetos ricos y Tell, Don't Ask (ARQ-043). |
 
 ### D-30 — Persistencia
@@ -283,10 +284,10 @@ CREADO ──publicar──► VISIBLE ──reportar──► REPORTADO ──i
 | D-06 | Coord. de Programa con un solo programa | INV-009 |
 | D-07 | Suspender y desactivar | RN-216, RN-217 |
 | D-08 | Autoridades de moderación | CU-012, CU-015 |
-| D-09 | Login propio con BCrypt | RNF-001 |
+| D-09 | Ingreso con Google + cuenta en nuestra base | RNF-001 |
 | D-10 | Códigos de verificación (envío simulado) | RN-077 a RN-082 |
 | D-11 | Parámetros globales | RN-130 |
-| D-12 | Objetos de valor para correo y celular | RN-069 a RN-076 |
+| D-12 | Formato de correo y celular (reglas) | RN-069 a RN-076 |
 | D-13 | Un solo rol activo por estructura | RN-001 a RN-038 |
 | D-14 | Unicidad con regla de negocio e índice filtrado | INV-001 a INV-004 |
 | D-15 | Sustitución de coordinadores | RN-043, RN-044, RN-220, RN-223 |
@@ -296,11 +297,11 @@ CREADO ──publicar──► VISIBLE ──reportar──► REPORTADO ──i
 | D-19 | Restricciones del Kudo | RN-146 a RN-154 |
 | D-20 | Ciclo de vida del contenido (State) | RN-201 a RN-209 |
 | D-21 | Efectos del veto | RN-205, INV-034, INV-035 |
-| D-22 | Árbol de réplicas (Composite) | INV-025 a INV-029 |
+| D-22 | Árbol de réplicas sin ciclos | INV-025 a INV-029 |
 | D-23 | Calificaciones e indicadores | RN-175 a RN-185 |
 | D-24 | Reportes | RN-186 a RN-190, RN-210 a RN-212 |
 | D-25 | Contador de visualizaciones | RN-229 |
-| D-26 | Auditoría por eventos (Observer) | RN-096 a RN-100, RN-249, RN-250 |
+| D-26 | Auditoría desde el negocio | RN-096 a RN-100, RN-249, RN-250 |
 | D-27 | Notificaciones | Entidad Notificación |
 | D-28 | No hay borrado físico | POL-007, RN-100 |
 | D-29 | Capas del curso con dominio rico | ARQ-001, ARQ-047 |

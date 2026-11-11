@@ -5,6 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Clase | ParametroGlobal |
+| Clase en el código | `ParametroGlobalDominio` |
 | Estereotipo | class (entidad de dominio) |
 | Descripción | Valor de configuración de la plataforma que administran los Administradores (RN-130, D-11). |
 | Modificador acceso | public |
@@ -47,16 +48,22 @@ Solo hay métodos de lectura (getters). No hay setters públicos: el estado camb
 | public | getDescripcion | getter | Obtiene el valor del atributo descripcion. | String |  |
 | public | getFechaModificacion | getter | Obtiene el valor del atributo fechaModificacion. | Otro | LocalDateTime |
 
-## Métodos
+## Métodos de negocio
 
-Métodos de negocio: salen de las responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/ParametroGlobal.md#responsabilidades). Las consultas se marcan `static`, como en Sigma: en la implementación las resuelve la capa de negocio con su DAO.
+Métodos **reales** de `ParametroGlobalDominio` (comportamiento del dominio rico, D-29).
 
-| Modificador de acceso | Nombre | Tipo acceso método | Tipo modificación método | Descripción | Parámetros · Nombre | Parámetros · Tipo de dato | Parámetros · Descripción | Tipo dato de retorno | Excepciones (políticas que puede incumplir) |
-|---|---|---|---|---|---|---|---|---|---|
-| public | cambiarValor | no static | final | Modifica el valor de un parámetro de configuración. | valor | String | Nuevo valor. | ParametroGlobal | P-PAR-001: El actor no es Administrador.<br>P-PAR-002: El valor no corresponde al tipo de dato.<br>P-PAR-003: El parámetro no existe. |
-|  |  |  |  |  | actor | Usuario | Administrador. |  |  |
-| public | consultar | static | final | Lista los parámetros globales. | actor | Usuario | Administrador. | Lista de ParametroGlobal |  |
-| public | valorComoEntero | no static | final | Entrega el valor de un parámetro numérico. |  |  |  | int | P-PAR-002: El valor no corresponde al tipo de dato. |
+| Modificador de acceso | Nombre | Parámetros | Tipo dato de retorno | Descripción |
+|---|---|---|---|---|
+| public | cambiarValor | String nuevoValor | void | Modifica el valor de un parámetro de configuración. |
+| public | valorComoEntero | — | int | Entrega el valor de un parámetro numérico. |
+
+## Operaciones del caso de uso (capa de negocio)
+
+Responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/ParametroGlobal.md#responsabilidades) que coordinan varios objetos o consultan la base de datos. Las implementa: VerificacionNegocioImpl y ValidarCorreoInstitucionalRule (lo leen).
+
+| Operación | Descripción | Políticas que protege |
+|---|---|---|
+| consultar | Lista los parámetros globales. | P-PAR-004 |
 
 ## Builder (clase interna public static)
 

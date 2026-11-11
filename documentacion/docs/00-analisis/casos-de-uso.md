@@ -17,6 +17,8 @@ El diagrama UML de casos de uso está en [`04-diagrama-casos-uso`](../04-diagram
 
 ## 1. Catálogo
 
+⛔ = caso de uso complementario fuera del alcance de esta versión (trabajo futuro). Todos los casos de uso del enunciado (CU-001 a CU-015) están implementados.
+
 | Código | Caso de uso | Actor principal | Módulo | RF |
 |---|---|---|---|---|
 | CU-001 | Crear Kudo | Usuario activo | Kudos | RF-046, RF-051, RF-052 |
@@ -39,13 +41,13 @@ El diagrama UML de casos de uso está en [`04-diagrama-casos-uso`](../04-diagram
 | CU-018 🆕 | Iniciar sesión | Usuario registrado | Identidad | RF-078 |
 | CU-019 🆕 | Cerrar sesión | Usuario activo | Identidad | RF-079 |
 | CU-020 🆕 | Consultar y actualizar información personal | Usuario activo | Identidad | RF-008 a RF-011, RF-081 |
-| CU-021 🆕 | Consultar historial de actividad propia | Usuario activo | Identidad | RF-082 |
+| CU-021 🆕 ⛔ | Consultar historial de actividad propia | Usuario activo | Identidad | RF-082 |
 | CU-022 🆕 | Aprobar solicitud de registro | Autoridad aprobadora | Aprobaciones | RF-035 a RF-038, RF-087, RF-088 |
 | CU-023 🆕 | Rechazar solicitud de registro | Autoridad aprobadora | Aprobaciones | RF-086 a RF-088 |
 | CU-024 🆕 | Registrar Rector | Administrador | Aprobaciones | RF-039 |
 | CU-025 🆕 | Registrar Administrador | Administrador | Aprobaciones | RF-040 |
-| CU-026 🆕 | Suspender o reactivar cuenta | Autoridad que gestiona | Cuentas | RF-089 |
-| CU-027 🆕 | Desactivar cuenta | Autoridad que gestiona | Cuentas | RF-089 |
+| CU-026 🆕 ⛔ | Suspender o reactivar cuenta | Autoridad que gestiona | Cuentas | RF-089 |
+| CU-027 🆕 ⛔ | Desactivar cuenta | Autoridad que gestiona | Cuentas | RF-089 |
 | CU-028 🆕 | Crear Facultad | Coordinador Académico | Organización | RF-015 |
 | CU-029 🆕 | Modificar o inactivar Facultad | Coordinador Académico | Organización | RF-017, RF-083 |
 | CU-030 🆕 | Crear Programa Académico | Coordinador Académico | Organización | RF-020 |
@@ -58,8 +60,8 @@ El diagrama UML de casos de uso está en [`04-diagrama-casos-uso`](../04-diagram
 | CU-037 🆕 | Liberar contenido revisado | Moderador | Moderación | RF-094 |
 | CU-038 🆕 | Consultar auditoría | Autoridades (según ámbito) | Auditoría | RF-069 a RF-071 |
 | CU-039 🆕 | Consultar notificaciones | Usuario activo | Notificaciones | RF-095 |
-| CU-040 🆕 | Consultar indicadores | Usuario activo | Indicadores | RF-096 |
-| CU-041 🆕 | Gestionar parámetros globales | Administrador | Configuración | RF-097 |
+| CU-040 🆕 ⛔ | Consultar indicadores | Usuario activo | Indicadores | RF-096 |
+| CU-041 🆕 ⛔ | Gestionar parámetros globales | Administrador | Configuración | RF-097 |
 | CU-042 🆕 | Consultar muro de Kudos | Usuario activo | Kudos | RF-090 |
 
 ---
@@ -165,7 +167,7 @@ El diagrama UML de casos de uso está en [`04-diagrama-casos-uso`](../04-diagram
 |---|---|
 | **Flujo** | 1. El actor abre un Kudo. 2. El sistema arma el **árbol completo** de réplicas en orden cronológico dentro de cada nivel, con sangría por nivel y opción de contraer o expandir (RNF-037). Cada nodo muestra autor, fecha, contenido, estado y promedio de calificación. |
 | **Alternos** | 2a. Las réplicas vetadas se muestran como *"Contenido vetado"* y sus respuestas siguen visibles (D-21). |
-| **Patrón** | Composite (D-22) |
+| **Implementación** | El árbol se arma en `ConversacionDtoAssembler` a partir de `idReplicaPadre` y el front-end lo dibuja con un componente recursivo (D-22) |
 
 ---
 
@@ -268,15 +270,15 @@ El diagrama UML de casos de uso está en [`04-diagrama-casos-uso`](../04-diagram
 | Campo | Contenido |
 |---|---|
 | **Actor** | Persona no registrada |
-| **Postcondición** | Existe un `Usuario` en `PENDIENTE_APROBACION`, con una `SolicitudRegistro` `PENDIENTE` y códigos de verificación enviados por correo y celular |
+| **Postcondición** | Existe un `Usuario` en `PENDIENTE_APROBACION` con el correo ya verificado por Google, una `SolicitudRegistro` `PENDIENTE` y un código de verificación enviado al celular |
 | **Eventos** | `UsuarioRegistrado` (EVT-001, RN-213) |
 
 **Flujo principal**
-1. La persona ingresa nombres, apellidos, correo institucional, celular y contraseña.
-2. Selecciona el rol que solicita: Coordinador Académico, Coordinador de Facultad, Coordinador de Programa, Docente o Estudiante.
+1. La persona ingresa con su cuenta de Google. Como el correo no está registrado, la aplicación le muestra el formulario de registro con el nombre y el correo que entregó Google.
+2. Completa nombres, apellidos y celular, y selecciona el rol que solicita: Coordinador Académico, Coordinador de Facultad, Coordinador de Programa, Docente o Estudiante.
 3. Si es Coordinador de Facultad, selecciona la Facultad (solo `ACTIVA`). Si es Coordinador de Programa, Docente o Estudiante, selecciona el Programa (solo activos).
 4. Confirma.
-5. El sistema valida los datos, crea la cuenta y la solicitud, y envía los códigos de verificación (D-10).
+5. El sistema valida los datos, crea la cuenta (correo verificado, celular por verificar) y la solicitud, y envía el código de verificación al celular (D-10).
 6. El sistema notifica a la autoridad aprobadora (D-27).
 7. El sistema informa que debe verificar sus datos y esperar la aprobación.
 
@@ -284,7 +286,6 @@ El diagrama UML de casos de uso está en [`04-diagrama-casos-uso`](../04-diagram
 - 5a. El correo no tiene el dominio institucional → se rechaza (RN-069).
 - 5b. El correo o el celular ya están registrados → se rechaza (RN-073, RN-074).
 - 5c. El celular tiene formato inválido → se rechaza.
-- 5d. La contraseña es débil → se rechaza.
 
 **Reglas**: RN-069 a RN-080, RN-090 a RN-093, D-12, D-17.
 
@@ -294,11 +295,11 @@ El diagrama UML de casos de uso está en [`04-diagrama-casos-uso`](../04-diagram
 
 | Campo | Contenido |
 |---|---|
-| **Actor** | Usuario registrado (aún sin sesión, o con sesión después de cambiar un dato) |
+| **Actor** | Usuario registrado que ingresó con Google y aún no tiene el celular verificado |
 | **Postcondición** | El dato queda verificado. Si además la cuenta está aprobada y el otro dato está verificado, la cuenta pasa a `ACTIVA` |
 | **Eventos** | `CorreoVerificado` (EVT-002) o `CelularVerificado` (EVT-003); `CuentaActivada` (EVT-005, RN-215) si aplica |
 
-**Flujo principal**: 1. El usuario ingresa su correo y el código recibido en el canal correspondiente. 2. El sistema compara el código con el hash del código vigente de ese canal. 3. Marca el código como usado y el dato como verificado. 4. Intenta activar la cuenta.
+**Flujo principal**: 1. El usuario escribe el código de 6 dígitos que recibió en el celular (en modo demostración se muestra en pantalla). 2. El sistema lo compara con el código vigente de ese canal. 3. Marca el código como usado y el celular como verificado. 4. Intenta activar la cuenta. El **correo** no usa código: lo verifica Google al ingresar (D-09).
 
 **Alternos**
 - 2a. Código incorrecto → suma un intento fallido. Al 5.º intento el código se invalida (D-10).
@@ -313,8 +314,8 @@ El diagrama UML de casos de uso está en [`04-diagrama-casos-uso`](../04-diagram
 
 | **Actor** | Usuario registrado |
 |---|---|
-| **Flujo** | 1. Ingresa correo y contraseña. 2. El sistema verifica las credenciales. 3. Verifica que la cuenta esté `ACTIVA`. 4. Crea la sesión y muestra el muro con el menú de su rol. |
-| **Excepciones** | 2a. Credenciales inválidas → mensaje genérico, sin revelar si el correo existe. 3a. Cuenta no activa → se rechaza indicando qué falta: aprobación, verificación de correo o de celular, o si está suspendida o desactivada (RN-089). |
+| **Flujo** | 1. Elige "Ingresar con Google". 2. Google autentica a la persona y devuelve su correo. 3. El sistema busca el correo: si no existe, lleva al registro (CU-016); si la cuenta no está `ACTIVA`, muestra qué le falta; si está `ACTIVA`, carga su rol vigente. 4. Crea la sesión y muestra el muro con el menú de su rol. |
+| **Excepciones** | 2a. Google rechaza el ingreso o la persona lo cancela → vuelve a la pantalla de ingreso con un mensaje. 3a. Cuenta no activa → se rechaza indicando qué falta: aprobación, verificación de correo o de celular, o si está suspendida o desactivada (RN-089). |
 
 ### CU-019 Cerrar sesión 🆕
 
@@ -335,10 +336,12 @@ El diagrama UML de casos de uso está en [`04-diagrama-casos-uso`](../04-diagram
 **Flujo principal**: 1. El actor consulta sus datos, su rol, sus vínculos y el estado de sus validaciones. 2. Modifica nombres, apellidos, correo o celular. 3. Confirma. 4. El sistema valida y guarda los cambios, y deja auditoría con valor anterior y nuevo.
 
 **Alternos**
-- 4a. Si cambió el correo o el celular: ese dato queda **no verificado**, se envía un nuevo código y la cuenta pasa a `PENDIENTE_VERIFICACION`. La sesión actual se cierra (RN-081, RN-082, RN-110, RN-111).
+- 4a. Si cambió el celular: queda **no verificado**, se envía un nuevo código y la cuenta pasa a `PENDIENTE_VERIFICACION` hasta verificarlo. Si cambió el correo: queda no verificado, la sesión se cierra y se verifica al ingresar con Google usando el correo nuevo (RN-081, RN-082, RN-110, RN-111).
 - 2a. Intenta cambiar su rol → no hay opción para hacerlo (RN-107).
 
 ### CU-021 Consultar historial de actividad propia 🆕
+
+> ⛔ **Fuera del alcance de esta versión.** Es un caso de uso complementario (🆕) propuesto en el análisis, no exigido por el docente. Queda documentado como trabajo futuro.
 
 | **Actor** | Usuario activo |
 |---|---|
@@ -386,7 +389,7 @@ El diagrama UML de casos de uso está en [`04-diagrama-casos-uso`](../04-diagram
 
 | **Actor** | Administrador |
 |---|---|
-| **Flujo** | 1. Ingresa los datos personales del nuevo Rector o Administrador. 2. El sistema crea el usuario ya **aprobado**, con su `AsignacionRol` vigente, y envía los códigos de verificación. La cuenta queda `PENDIENTE_VERIFICACION` hasta que verifique correo y celular. |
+| **Flujo** | 1. Ingresa los datos personales del nuevo Rector o Administrador. 2. El sistema crea el usuario ya **aprobado**, con su `AsignacionRol` vigente. La cuenta queda `PENDIENTE_VERIFICACION`: el correo se verifica cuando la persona ingresa con Google y el celular con el código. |
 | **Excepciones** | Si ya existe un Rector vigente → se rechaza (INV-001). Datos duplicados → se rechaza. |
 | **Eventos** | `UsuarioRegistrado`, `UsuarioAprobado`, `RectorAsignado` (EVT-015) |
 | **Reglas** | RN-094, RN-095, RN-129 |
@@ -394,6 +397,8 @@ El diagrama UML de casos de uso está en [`04-diagrama-casos-uso`](../04-diagram
 ---
 
 ### CU-026 Suspender o reactivar cuenta 🆕 / CU-027 Desactivar cuenta 🆕
+
+> ⛔ **Fuera del alcance de esta versión (a mano).** En el código, la suspensión y la reactivación ocurren automáticamente al desvincular a una persona de su último Programa y al volver a vincularla (D-07). Suspender, reactivar o desactivar a mano queda como trabajo futuro.
 
 | **Actor** | La autoridad que gestiona al usuario (Matriz de gestión, doc. 10 §6) |
 |---|---|
@@ -519,15 +524,19 @@ Agrupa las consultas de RF-016 a RF-033 y RF-072 a RF-077:
 
 | **Actor** | Usuario activo |
 |---|---|
-| **Flujo** | El sistema muestra sus notificaciones, las no leídas primero, con contador. Al abrir una se marca como leída y se navega al objeto relacionado. |
+| **Flujo** | El sistema muestra sus notificaciones, las no leídas primero, con contador. Al abrir una se marca como leída y se navega al objeto relacionado. También puede marcarlas todas como leídas. Los códigos de verificación no aparecen aquí: se muestran en la pantalla de verificación (D-10). |
 
 ### CU-040 Consultar indicadores 🆕
+
+> ⛔ **Fuera del alcance de esta versión.** Es un caso de uso complementario (🆕) propuesto en el análisis, no exigido por el docente. Queda documentado como trabajo futuro.
 
 | **Actor** | Usuario activo (las autoridades ven también los de su ámbito) |
 |---|---|
 | **Flujo** | El sistema muestra: Kudos por categoría, Kudos por Facultad y Programa del destinatario, personas más reconocidas, Kudos mejor calificados y participación por periodo. |
 
 ### CU-041 Gestionar parámetros globales 🆕
+
+> ⛔ **Fuera del alcance de esta versión.** Es un caso de uso complementario (🆕) propuesto en el análisis, no exigido por el docente. Queda documentado como trabajo futuro.
 
 | **Actor** | Administrador |
 |---|---|

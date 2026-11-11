@@ -140,3 +140,13 @@ _8 registros de ejemplo. Los identificadores se abrevian (u-01, k-01…) para fa
 | P-ASR-006 | Asegurar que solo se cierre una asignación vigente, con motivo y fecha de fin no anterior a la de inicio; la asignación cerrada se conserva. | AsignacionRol | RN-043, RN-051, D-28 |
 | P-ASR-007 | Al consultar el titular de un cargo, mostrar solo la asignación vigente. | AsignacionRol | RF-018, RF-023, RF-076, RF-077 |
 | P-ASR-008 | El historial de coordinadores incluye las asignaciones vigentes y cerradas, en orden cronológico. | AsignacionRol | RN-043, RN-051, RF-019, RF-024 |
+
+## En el código
+
+| Capa | Clase |
+|---|---|
+| Dominio (atributos y comportamiento) | `AsignacionRolDominio` (`co.edu.uco.kudos.dominio`) |
+| Entidad (tabla) | `AsignacionRolEntidad` |
+| DAO | `AsignacionRolDAO` + implementación SQL Server |
+| DTO (API) | CargoDto |
+| Negocio | CargoNegocioImpl, SolicitudNegocioImpl, AutoridadNegocioImpl |

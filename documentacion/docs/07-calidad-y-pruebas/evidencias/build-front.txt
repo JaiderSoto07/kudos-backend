@@ -1,0 +1,4 @@
+dist/assets/index-C9RrO0wa.js                    59.46 kB │ gzip: 23.01 kB
+dist/assets/adaptadores-CGjgSD2X.js              73.95 kB │ gzip: 28.56 kB
+
+✓ built in 964ms

@@ -132,8 +132,18 @@ _6 registros de ejemplo. Los identificadores se abrevian (u-01, k-01…) para fa
 | P-PAC-001 | Asegurar que el nombre del Programa tenga de 3 a 100 caracteres. | ProgramaAcademico | RN-048 |
 | P-PAC-002 | Asegurar que no exista otro Programa con el mismo nombre. | ProgramaAcademico | UQ-PRO-1 |
 | P-PAC-003 | Asegurar que el Programa pertenezca a exactamente una Facultad existente y no inactiva. | Facultad | RN-046, RN-049, INV-008 |
-| P-PAC-004 | Asegurar que solo el Coordinador Académico cree, modifique o inactive Programas. | PoliticaAutorizacion | D-04 |
+| P-PAC-004 | Asegurar que solo el Coordinador Académico cree, modifique o inactive Programas. | AsegurarActorTieneRolRule | D-04 |
 | P-PAC-005 | Al crear el primer Programa de una Facultad EN_CONFORMACION, activar la Facultad. | Facultad | P-FAC-006 |
 | P-PAC-006 | Asegurar que el Programa esté activo para modificarlo, vincular personas o asignarle coordinador. | ProgramaAcademico | INV-009 |
 | P-PAC-007 | Asegurar que no tenga vínculos ni coordinador vigentes al inactivarlo. | ProgramaAcademico | D-28 |
-| P-PAC-008 | El Coordinador de Facultad consulta los Programas de su Facultad; el Coordinador Académico, todos. | PoliticaAmbito | RN-118, RN-122 |
+| P-PAC-008 | El Coordinador de Facultad consulta los Programas de su Facultad; el Coordinador Académico, todos. | AsignacionRol (ámbito) | RN-118, RN-122 |
+
+## En el código
+
+| Capa | Clase |
+|---|---|
+| Dominio (atributos y comportamiento) | `ProgramaAcademicoDominio` (`co.edu.uco.kudos.dominio`) |
+| Entidad (tabla) | `ProgramaAcademicoEntidad` |
+| DAO | `ProgramaAcademicoDAO` + implementación SQL Server |
+| DTO (API) | ProgramaAcademicoDto |
+| Negocio | ProgramaNegocioImpl |

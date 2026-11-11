@@ -11,4 +11,10 @@ public interface NotificacionNegocio {
     void notificar(NotificacionDominio datos);
 
     List<NotificacionDominio> consultarPorTipo(UUID idDestinatario, TipoNotificacion tipo);
+
+    List<NotificacionDominio> consultarMias(UUID idActor);
+
+    void marcarLeida(UUID idActor, UUID idNotificacion);
+
+    void marcarTodasLeidas(UUID idActor);
 }

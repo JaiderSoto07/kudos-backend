@@ -164,8 +164,8 @@ De las 292 reglas, invariantes y políticas, **194** las cita directamente una p
 | RN-072 | El número celular será obligatorio. | [P-USU-004](../01-modelo-dominio/objetos/Usuario.md#políticas) | D-12, RF-001, RF-003 |
 | RN-073 | El correo institucional deberá ser único. | [P-USU-003](../01-modelo-dominio/objetos/Usuario.md#políticas) | D-12, RF-001, RF-004 |
 | RN-074 | El número celular deberá ser único. | [P-USU-005](../01-modelo-dominio/objetos/Usuario.md#políticas) | D-12, RF-001, RF-005 |
-| RN-075 | No podrá existir una cuenta activa sin correo institucional. | *Objetos de valor CorreoInstitucional y NumeroCelular, CodigoVerificacion y Usuario.intentarActivar() (D-10, D-12, D-17)* | D-12, RF-001 |
-| RN-076 | No podrá existir una cuenta activa sin número celular. | *Objetos de valor CorreoInstitucional y NumeroCelular, CodigoVerificacion y Usuario.intentarActivar() (D-10, D-12, D-17)* | D-12, RF-001 |
+| RN-075 | No podrá existir una cuenta activa sin correo institucional. | *Google verifica el correo; ValidarCorreoInstitucionalRule, ValidarCelularRule, CodigoVerificacion y Usuario.intentarActivar() (D-09, D-10, D-12, D-17)* | D-12, RF-001 |
+| RN-076 | No podrá existir una cuenta activa sin número celular. | *Google verifica el correo; ValidarCorreoInstitucionalRule, ValidarCelularRule, CodigoVerificacion y Usuario.intentarActivar() (D-09, D-10, D-12, D-17)* | D-12, RF-001 |
 
 ### Verificación de Identidad (doc. 03)
 
@@ -220,7 +220,7 @@ De las 292 reglas, invariantes y políticas, **194** las cita directamente una p
 | RN-103 | Todo usuario podrá consultar el estado de sus validaciones. | *Usuario: métodos de actualización que publican su evento* | RF-081 |
 | RN-104 | Todo usuario podrá actualizar su correo institucional. | *Usuario: métodos de actualización que publican su evento* | RF-009 |
 | RN-105 | Todo usuario podrá actualizar su número celular. | *Usuario: métodos de actualización que publican su evento* | RF-009 |
-| RN-106 | Todo usuario podrá consultar su historial de actividad. | [P-AUD-006](../01-modelo-dominio/objetos/Auditoria.md#políticas) | RF-082 |
+| RN-106 | Todo usuario podrá consultar su historial de actividad. | [P-AUD-006](../01-modelo-dominio/objetos/Auditoria.md#políticas) | RF-082 ⛔ |
 | RN-107 | Ningún usuario podrá modificar directamente su rol institucional. | [P-USU-018](../01-modelo-dominio/objetos/Usuario.md#políticas) | RF-009 |
 | RN-108 | Ningún usuario podrá aprobarse a sí mismo. | [P-SRE-007](../01-modelo-dominio/objetos/SolicitudRegistro.md#políticas), [P-USU-024](../01-modelo-dominio/objetos/Usuario.md#políticas) | D-17, RF-088 |
 | RN-109 | Toda modificación realizada por un usuario sobre su información personal deberá registrarse en auditoría. | [P-USU-019](../01-modelo-dominio/objetos/Usuario.md#políticas) | RF-009 |
@@ -269,8 +269,8 @@ De las 292 reglas, invariantes y políticas, **194** las cita directamente una p
 | Código | Regla | Dónde se garantiza | Decisión / requisito |
 |---|---|---|---|
 | RN-129 | Los Administradores gestionarán Administradores y Rectores. | [P-USU-009](../01-modelo-dominio/objetos/Usuario.md#políticas), [P-USU-022](../01-modelo-dominio/objetos/Usuario.md#políticas) | RF-039, RF-040 |
-| RN-130 | Los Administradores gestionarán parámetros globales de la plataforma. | [P-PAR-001](../01-modelo-dominio/objetos/ParametroGlobal.md#políticas), [P-PAR-004](../01-modelo-dominio/objetos/ParametroGlobal.md#políticas) | D-11, RF-097 |
-| RN-131 | Los Administradores gestionarán configuraciones técnicas del sistema. | [P-PAR-001](../01-modelo-dominio/objetos/ParametroGlobal.md#políticas), [P-PAR-003](../01-modelo-dominio/objetos/ParametroGlobal.md#políticas) | RF-097 |
+| RN-130 | Los Administradores gestionarán parámetros globales de la plataforma. | [P-PAR-001](../01-modelo-dominio/objetos/ParametroGlobal.md#políticas), [P-PAR-004](../01-modelo-dominio/objetos/ParametroGlobal.md#políticas) | D-11, RF-097 ⛔ |
+| RN-131 | Los Administradores gestionarán configuraciones técnicas del sistema. | [P-PAR-001](../01-modelo-dominio/objetos/ParametroGlobal.md#políticas), [P-PAR-003](../01-modelo-dominio/objetos/ParametroGlobal.md#políticas) | RF-097 ⛔ |
 
 ### Gestión de Categorías de Kudos (doc. 04)
 
@@ -295,56 +295,56 @@ De las 292 reglas, invariantes y políticas, **194** las cita directamente una p
 
 | Código | Regla | Dónde se garantiza | Decisión / requisito |
 |---|---|---|---|
-| RN-146 | Un Kudo representa un reconocimiento institucional. | *Kudo + EstadoContenido (State) + ContenidoTexto (D-19, D-20)* | D-19, RF-046 |
+| RN-146 | Un Kudo representa un reconocimiento institucional. | *Kudo + EstadoContenido (State) + ValidarContenidoRule (D-19, D-20)* | D-19, RF-046 |
 | RN-147 | Todo Kudo deberá tener un autor. | [P-KUD-001](../01-modelo-dominio/objetos/Kudo.md#políticas) | D-19, RF-046 |
 | RN-148 | Todo Kudo deberá tener un destinatario. | [P-KUD-002](../01-modelo-dominio/objetos/Kudo.md#políticas) | D-19, RF-046 |
 | RN-149 | Todo Kudo deberá estar asociado a una categoría. | [P-KUD-003](../01-modelo-dominio/objetos/Kudo.md#políticas) | D-19, RF-046, RF-051 |
 | RN-150 | Todo Kudo deberá registrar fecha de creación. | [P-KUD-005](../01-modelo-dominio/objetos/Kudo.md#políticas) | D-19, RF-046 |
-| RN-151 | Todo Kudo deberá conservar trazabilidad histórica. | *Kudo + EstadoContenido (State) + ContenidoTexto (D-19, D-20)* | D-19 |
+| RN-151 | Todo Kudo deberá conservar trazabilidad histórica. | *Kudo + EstadoContenido (State) + ValidarContenidoRule (D-19, D-20)* | D-19 |
 | RN-152 | El contenido textual de un Kudo no tendrá límite de longitud. | [P-KUD-004](../01-modelo-dominio/objetos/Kudo.md#políticas) | D-19, RF-052 |
 | RN-153 | El sistema no podrá truncar automáticamente el contenido de un Kudo. | [P-KUD-004](../01-modelo-dominio/objetos/Kudo.md#políticas) | D-19, RF-052 |
 | RN-154 | El contenido completo deberá permanecer disponible para consulta. | [P-KUD-008](../01-modelo-dominio/objetos/Kudo.md#políticas) | D-19, RF-047 |
 | RN-155 | Todo Kudo podrá ser visualizado por la comunidad autenticada. | [P-KUD-008](../01-modelo-dominio/objetos/Kudo.md#políticas), [P-KUD-011](../01-modelo-dominio/objetos/Kudo.md#políticas) | RF-047, RF-090 |
-| RN-156 | Todo Kudo podrá recibir réplicas. | *Kudo + EstadoContenido (State) + ContenidoTexto (D-19, D-20)* | RF-053 |
-| RN-157 | Todo Kudo podrá recibir calificaciones. | *Kudo + EstadoContenido (State) + ContenidoTexto (D-19, D-20)* | RF-057 |
+| RN-156 | Todo Kudo podrá recibir réplicas. | *Kudo + EstadoContenido (State) + ValidarContenidoRule (D-19, D-20)* | RF-053 |
+| RN-157 | Todo Kudo podrá recibir calificaciones. | *Kudo + EstadoContenido (State) + ValidarContenidoRule (D-19, D-20)* | RF-057 |
 | RN-158 | Todo Kudo podrá ser reportado. | [P-RPT-002](../01-modelo-dominio/objetos/Reporte.md#políticas) | RF-061 |
-| RN-159 | Todo Kudo podrá ser vetado conforme a las políticas institucionales. | *Kudo + EstadoContenido (State) + ContenidoTexto (D-19, D-20)* | RF-065 |
+| RN-159 | Todo Kudo podrá ser vetado conforme a las políticas institucionales. | *Kudo + EstadoContenido (State) + ValidarContenidoRule (D-19, D-20)* | RF-065 |
 | RN-160 | Las operaciones asociadas al ciclo de vida de un Kudo deberán generar eventos auditables. | [P-AUD-001](../01-modelo-dominio/objetos/Auditoria.md#políticas) | RF-069 |
 
 ### Gestión de Réplicas (doc. 04)
 
 | Código | Regla | Dónde se garantiza | Decisión / requisito |
 |---|---|---|---|
-| RN-161 | Los usuarios podrán crear réplicas sobre un Kudo. | *Replica + Conversacion (Composite) + EstadoContenido (D-20, D-22)* | RF-053 |
-| RN-162 | Los usuarios podrán crear réplicas sobre otras réplicas. | *Replica + Conversacion (Composite) + EstadoContenido (D-20, D-22)* | RF-054 |
+| RN-161 | Los usuarios podrán crear réplicas sobre un Kudo. | *Replica (árbol por idReplicaPadre) + EstadoContenido (D-20, D-22)* | RF-053 |
+| RN-162 | Los usuarios podrán crear réplicas sobre otras réplicas. | *Replica (árbol por idReplicaPadre) + EstadoContenido (D-20, D-22)* | RF-054 |
 | RN-163 | Las conversaciones podrán crecer indefinidamente. | [P-RPL-008](../01-modelo-dominio/objetos/Replica.md#políticas) | RF-056 |
 | RN-164 | No existirá límite en la profundidad de una conversación. | [P-RPL-008](../01-modelo-dominio/objetos/Replica.md#políticas) | RF-056 |
-| RN-165 | No existirá límite en la cantidad de réplicas que un usuario pueda realizar. | *Replica + Conversacion (Composite) + EstadoContenido (D-20, D-22)* | RF-056 |
-| RN-166 | Una misma persona podrá realizar múltiples réplicas sobre un mismo Kudo. | *Replica + Conversacion (Composite) + EstadoContenido (D-20, D-22)* | RF-056 |
-| RN-167 | Una misma persona podrá realizar múltiples réplicas sobre la misma réplica. | *Replica + Conversacion (Composite) + EstadoContenido (D-20, D-22)* | RF-056 |
+| RN-165 | No existirá límite en la cantidad de réplicas que un usuario pueda realizar. | *Replica (árbol por idReplicaPadre) + EstadoContenido (D-20, D-22)* | RF-056 |
+| RN-166 | Una misma persona podrá realizar múltiples réplicas sobre un mismo Kudo. | *Replica (árbol por idReplicaPadre) + EstadoContenido (D-20, D-22)* | RF-056 |
+| RN-167 | Una misma persona podrá realizar múltiples réplicas sobre la misma réplica. | *Replica (árbol por idReplicaPadre) + EstadoContenido (D-20, D-22)* | RF-056 |
 | RN-168 | Toda réplica deberá tener un autor. | [P-RPL-001](../01-modelo-dominio/objetos/Replica.md#políticas) |  |
-| RN-169 | Toda réplica deberá tener una fecha de creación. | *Replica + Conversacion (Composite) + EstadoContenido (D-20, D-22)* |  |
+| RN-169 | Toda réplica deberá tener una fecha de creación. | *Replica (árbol por idReplicaPadre) + EstadoContenido (D-20, D-22)* |  |
 | RN-170 | El contenido textual de una réplica no tendrá límite de longitud. | [P-RPL-003](../01-modelo-dominio/objetos/Replica.md#políticas) | RF-052 |
-| RN-171 | Toda réplica podrá ser calificada. | *Replica + Conversacion (Composite) + EstadoContenido (D-20, D-22)* | RF-058 |
+| RN-171 | Toda réplica podrá ser calificada. | *Replica (árbol por idReplicaPadre) + EstadoContenido (D-20, D-22)* | RF-058 |
 | RN-172 | Toda réplica podrá ser reportada. | [P-RPT-002](../01-modelo-dominio/objetos/Reporte.md#políticas) | RF-062 |
-| RN-173 | Toda réplica podrá ser vetada conforme a las políticas institucionales. | *Replica + Conversacion (Composite) + EstadoContenido (D-20, D-22)* | RF-066 |
-| RN-174 | Toda réplica deberá conservar historial y trazabilidad. | *Replica + Conversacion (Composite) + EstadoContenido (D-20, D-22)* |  |
+| RN-173 | Toda réplica podrá ser vetada conforme a las políticas institucionales. | *Replica (árbol por idReplicaPadre) + EstadoContenido (D-20, D-22)* | RF-066 |
+| RN-174 | Toda réplica deberá conservar historial y trazabilidad. | *Replica (árbol por idReplicaPadre) + EstadoContenido (D-20, D-22)* |  |
 
 ### Gestión de Calificaciones (doc. 04)
 
 | Código | Regla | Dónde se garantiza | Decisión / requisito |
 |---|---|---|---|
-| RN-175 | Los Kudos podrán recibir calificaciones. | *Calificacion + objeto de valor Estrellas + índices UQ-CAL-1 y UQ-CAL-2 (D-23)* | D-23, RF-057 |
-| RN-176 | Las réplicas podrán recibir calificaciones. | *Calificacion + objeto de valor Estrellas + índices UQ-CAL-1 y UQ-CAL-2 (D-23)* | D-23, RF-058 |
+| RN-175 | Los Kudos podrán recibir calificaciones. | *Calificacion + ValidarEstrellasRule + índices UQ-CAL-1 y UQ-CAL-2 (D-23)* | D-23, RF-057 |
+| RN-176 | Las réplicas podrán recibir calificaciones. | *Calificacion + ValidarEstrellasRule + índices UQ-CAL-1 y UQ-CAL-2 (D-23)* | D-23, RF-058 |
 | RN-177 | La escala de calificación será de 1 a 5 estrellas. | [P-CAL-005](../01-modelo-dominio/objetos/Calificacion.md#políticas) | D-23, RF-059 |
 | RN-178 | Una persona podrá calificar un mismo Kudo solamente una vez. | [P-CAL-006](../01-modelo-dominio/objetos/Calificacion.md#políticas) | D-23, RF-060 |
 | RN-179 | Una persona podrá calificar una misma réplica solamente una vez. | [P-CAL-006](../01-modelo-dominio/objetos/Calificacion.md#políticas) | D-23, RF-060 |
 | RN-180 | No podrán existir dos calificaciones activas de una misma persona para un mismo Kudo. | [P-CAL-006](../01-modelo-dominio/objetos/Calificacion.md#políticas) | D-23, RF-060 |
 | RN-181 | No podrán existir dos calificaciones activas de una misma persona para una misma réplica. | [P-CAL-006](../01-modelo-dominio/objetos/Calificacion.md#políticas) | D-23, RF-060 |
-| RN-182 | Toda calificación deberá registrar la fecha en que fue realizada. | *Calificacion + objeto de valor Estrellas + índices UQ-CAL-1 y UQ-CAL-2 (D-23)* | D-23 |
+| RN-182 | Toda calificación deberá registrar la fecha en que fue realizada. | *Calificacion + ValidarEstrellasRule + índices UQ-CAL-1 y UQ-CAL-2 (D-23)* | D-23 |
 | RN-183 | Toda calificación deberá registrar quién la realizó. | [P-CAL-001](../01-modelo-dominio/objetos/Calificacion.md#políticas) | D-23 |
 | RN-184 | Toda calificación deberá asociarse al contenido calificado. | [P-CAL-002](../01-modelo-dominio/objetos/Calificacion.md#políticas) | D-23 |
-| RN-185 | Las calificaciones deberán participar en el cálculo de indicadores definidos por el equipo. | [P-CAL-007](../01-modelo-dominio/objetos/Calificacion.md#políticas), [P-KUD-017](../01-modelo-dominio/objetos/Kudo.md#políticas), [P-RPL-013](../01-modelo-dominio/objetos/Replica.md#políticas) | D-23, RF-092, RF-096 |
+| RN-185 | Las calificaciones deberán participar en el cálculo de indicadores definidos por el equipo. | [P-CAL-007](../01-modelo-dominio/objetos/Calificacion.md#políticas), [P-KUD-017](../01-modelo-dominio/objetos/Kudo.md#políticas), [P-RPL-013](../01-modelo-dominio/objetos/Replica.md#políticas) | D-23, RF-092, RF-096 ⛔ |
 
 ### Reportes de Contenido (doc. 04)
 
@@ -360,8 +360,8 @@ De las 292 reglas, invariantes y políticas, **194** las cita directamente una p
 
 | Código | Regla | Dónde se garantiza | Decisión / requisito |
 |---|---|---|---|
-| RN-191 | Los Kudos podrán ser vetados por razones institucionales. | *Moderacion + PoliticaModeracion: solo Rector y Coord. Académico (D-02)* | RF-065 |
-| RN-192 | Las réplicas podrán ser vetadas por razones institucionales. | *Moderacion + PoliticaModeracion: solo Rector y Coord. Académico (D-02)* | RF-066 |
+| RN-191 | Los Kudos podrán ser vetados por razones institucionales. | *Moderacion + AsegurarActorTieneRolRule: solo Rector y Coord. Académico (D-02)* | RF-065 |
+| RN-192 | Las réplicas podrán ser vetadas por razones institucionales. | *Moderacion + AsegurarActorTieneRolRule: solo Rector y Coord. Académico (D-02)* | RF-066 |
 | RN-193 | Solo el Rector podrá vetar cualquier Kudo de la plataforma. | [P-MOD-001](../01-modelo-dominio/objetos/Moderacion.md#políticas) | D-02, RF-065 |
 | RN-194 | Solo el Coordinador Académico podrá vetar cualquier Kudo de la plataforma. | [P-MOD-001](../01-modelo-dominio/objetos/Moderacion.md#políticas) | D-02, RF-065 |
 | RN-195 | Solo el Rector podrá vetar cualquier réplica de la plataforma. | [P-MOD-001](../01-modelo-dominio/objetos/Moderacion.md#políticas) | D-02, RF-066 |
@@ -405,8 +405,8 @@ De las 292 reglas, invariantes y políticas, **194** las cita directamente una p
 | RN-213 | Debe generarse un evento cuando un usuario se registra. | *Evento de dominio publicado por el objeto responsable (ver catálogo de eventos)* |  |
 | RN-214 | Debe generarse un evento cuando un usuario es aprobado. | *Evento de dominio publicado por el objeto responsable (ver catálogo de eventos)* |  |
 | RN-215 | Debe generarse un evento cuando una cuenta es activada. | *Evento de dominio publicado por el objeto responsable (ver catálogo de eventos)* |  |
-| RN-216 | Debe generarse un evento cuando una cuenta es suspendida. | [P-USU-023](../01-modelo-dominio/objetos/Usuario.md#políticas) | D-07, RF-089 |
-| RN-217 | Debe generarse un evento cuando una cuenta es desactivada. | [P-USU-026](../01-modelo-dominio/objetos/Usuario.md#políticas) | D-07, RF-089 |
+| RN-216 | Debe generarse un evento cuando una cuenta es suspendida. | [P-USU-023](../01-modelo-dominio/objetos/Usuario.md#políticas) | D-07, RF-089 ⛔ |
+| RN-217 | Debe generarse un evento cuando una cuenta es desactivada. | [P-USU-026](../01-modelo-dominio/objetos/Usuario.md#políticas) | D-07, RF-089 ⛔ |
 
 ### Eventos de Facultades (doc. 05)
 
@@ -529,7 +529,7 @@ De las 292 reglas, invariantes y políticas, **194** las cita directamente una p
 
 | Código | Invariante | Dónde se garantiza | Decisión / requisito |
 |---|---|---|---|
-| INV-017 | Todo Kudo debe pertenecer a una categoría. | *Kudo, Categoria y ContenidoTexto (D-19)* | RF-051 |
+| INV-017 | Todo Kudo debe pertenecer a una categoría. | *Kudo, Categoria y ValidarContenidoRule (D-19)* | RF-051 |
 | INV-018 | Las categorías históricas deben mantenerse disponibles para consulta. | [P-CAT-005](../01-modelo-dominio/objetos/Categoria.md#políticas), [P-CAT-008](../01-modelo-dominio/objetos/Categoria.md#políticas) | RF-045 |
 | INV-019 | Una categoría inactiva no puede utilizarse para nuevos Kudos. | [P-CAT-007](../01-modelo-dominio/objetos/Categoria.md#políticas), [P-KUD-003](../01-modelo-dominio/objetos/Kudo.md#políticas) |  |
 
@@ -537,17 +537,17 @@ De las 292 reglas, invariantes y políticas, **194** las cita directamente una p
 
 | Código | Invariante | Dónde se garantiza | Decisión / requisito |
 |---|---|---|---|
-| INV-020 | Todo Kudo tiene exactamente un autor. | *Kudo, Categoria y ContenidoTexto (D-19)* |  |
-| INV-021 | Todo Kudo tiene exactamente un destinatario. | *Kudo, Categoria y ContenidoTexto (D-19)* |  |
+| INV-020 | Todo Kudo tiene exactamente un autor. | *Kudo, Categoria y ValidarContenidoRule (D-19)* |  |
+| INV-021 | Todo Kudo tiene exactamente un destinatario. | *Kudo, Categoria y ValidarContenidoRule (D-19)* |  |
 | INV-022 | Todo Kudo posee fecha de creación. | [P-KUD-005](../01-modelo-dominio/objetos/Kudo.md#políticas) |  |
-| INV-023 | Todo Kudo pertenece a una categoría válida. | *Kudo, Categoria y ContenidoTexto (D-19)* |  |
+| INV-023 | Todo Kudo pertenece a una categoría válida. | *Kudo, Categoria y ValidarContenidoRule (D-19)* |  |
 | INV-024 | Todo Kudo debe conservar su contenido completo. | [P-KUD-004](../01-modelo-dominio/objetos/Kudo.md#políticas) | RF-052 |
 
 ### Invariantes de Réplicas
 
 | Código | Invariante | Dónde se garantiza | Decisión / requisito |
 |---|---|---|---|
-| INV-025 | Toda réplica tiene exactamente un autor. | *Replica (Composite): padre fijo, sin ciclos por construcción (D-22)* | D-22 |
+| INV-025 | Toda réplica tiene exactamente un autor. | *Replica: padre fijo, sin ciclos por construcción (D-22)* | D-22 |
 | INV-026 | Toda réplica tiene exactamente un padre. | [P-RPL-006](../01-modelo-dominio/objetos/Replica.md#políticas) | D-22 |
 | INV-027 | El padre de una réplica puede ser: - Un Kudo. - Otra réplica. | [P-RPL-006](../01-modelo-dominio/objetos/Replica.md#políticas) | D-22 |
 | INV-028 | Una réplica no puede referenciarse a sí misma. | [P-RPL-006](../01-modelo-dominio/objetos/Replica.md#políticas) | D-22 |

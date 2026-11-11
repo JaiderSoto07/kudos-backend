@@ -129,7 +129,7 @@ _2 registros de ejemplo. Los identificadores se abrevian (u-01, k-01…) para fa
 
 | Número política | Descripción política | Objeto responsable | Regla referenciada |
 |---|---|---|---|
-| P-MOD-001 | Asegurar que el moderador tenga rol vigente RECTOR o COORDINADOR_ACADEMICO. | PoliticaModeracion | RN-193 a RN-200, RN-243 a RN-248, INV-033, D-02 |
+| P-MOD-001 | Asegurar que el moderador tenga rol vigente RECTOR o COORDINADOR_ACADEMICO. | AsegurarActorTieneRolRule (moderadores) | RN-193 a RN-200, RN-243 a RN-248, INV-033, D-02 |
 | P-MOD-002 | Asegurar que el contenido esté REPORTADO y no tenga otra moderación en curso. | Moderacion | RN-203, RN-208, UQ-MOD-1 |
 | P-MOD-003 | Al iniciar la revisión, el contenido y sus reportes pendientes pasan a EN_REVISION. | ServicioModeracion | RN-203, RN-208, RN-211, P-KUD-014, P-RPL-010, P-RPT-007 |
 | P-MOD-004 | Asegurar que el contenido no esté vetado; si no hay moderación en curso, se crea y se cierra en el mismo acto (veto directo). | Moderacion | RN-204, RN-209 |
@@ -137,4 +137,14 @@ _2 registros de ejemplo. Los identificadores se abrevian (u-01, k-01…) para fa
 | P-MOD-006 | Al vetar: el contenido pasa a VETADO, sus reportes abiertos a ACEPTADO, se notifica al autor y se audita la decisión. | ServicioModeracion | RN-205, RN-212, RN-249, INV-034, INV-035, P-KUD-016, P-RPL-012, P-RPT-008 |
 | P-MOD-007 | Asegurar que exista una moderación en curso para liberar el contenido. | Moderacion | RN-240 |
 | P-MOD-008 | Al liberar: el contenido vuelve a VISIBLE, sus reportes pasan a RECHAZADO y se notifica a los reportantes. | ServicioModeracion | RN-212, RN-242, P-KUD-015, P-RPL-011, P-RPT-009 |
-| P-MOD-009 | El histórico de vetos lo consultan solo los moderadores y muestra el contenido original, el motivo y los reportes resueltos. | PoliticaModeracion | CU-015, D-08 |
+| P-MOD-009 | El histórico de vetos lo consultan solo los moderadores y muestra el contenido original, el motivo y los reportes resueltos. | AsegurarActorTieneRolRule (moderadores) | CU-015, D-08 |
+
+## En el código
+
+| Capa | Clase |
+|---|---|
+| Dominio (atributos y comportamiento) | `ModeracionDominio` (`co.edu.uco.kudos.dominio`) |
+| Entidad (tabla) | `ModeracionEntidad` |
+| DAO | `ModeracionDAO` + implementación SQL Server |
+| DTO (API) | DecisionDto, VetoDto |
+| Negocio | ModeracionNegocioImpl |

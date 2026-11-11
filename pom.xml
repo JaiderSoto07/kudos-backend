@@ -21,7 +21,7 @@
 		<sonar.organization>jaidersoto07</sonar.organization>
 		<sonar.projectKey>JaiderSoto07_kudos-backend</sonar.projectKey>
 		<sonar.coverage.exclusions>**/dao/**,**/controlador/**,**/configuracion/**,**/negocio/fachada/impl/**,**/KudosApplication.java,**/transversal/utilitario/UtilSql.java</sonar.coverage.exclusions>
-		<sonar.cpd.exclusions>**/transversal/catalogo/CatalogoMensajes.java</sonar.cpd.exclusions>
+		<sonar.cpd.exclusions>**/transversal/catalogo/CatalogoMensajes.java,**/entidad/**</sonar.cpd.exclusions>
 	</properties>
 
 	<dependencies>

@@ -662,6 +662,50 @@ public final class CatalogoMensajes {
         public static final String CONTENIDO_LIBERADO = "El contenido quedó liberado y vuelve a estar visible.";
     }
 
+    public static final class Auditoria {
+
+        private Auditoria() {
+        }
+
+        public static final String ACTOR_NO_PUEDE_CONSULTAR = "Solo las autoridades pueden consultar la auditoría.";
+        public static final String RANGO_FECHAS_INVALIDO = "La fecha inicial no puede ser posterior a la fecha final.";
+    }
+
+    public static final class Notificacion {
+
+        private Notificacion() {
+        }
+
+        public static final String NOTIFICACION_NO_EXISTE = "La notificación indicada no existe.";
+        public static final String NOTIFICACION_AJENA = "Solo puedes marcar como leídas tus propias notificaciones.";
+    }
+
+    public static final class AuditoriaFachada {
+
+        private AuditoriaFachada() {
+        }
+
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_CONSULTANDO = "Se presentó un problema inesperado consultando la auditoría." + INTENTE_DE_NUEVO;
+    }
+
+    public static final class NotificacionFachada {
+
+        private NotificacionFachada() {
+        }
+
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_CONSULTANDO = "Se presentó un problema inesperado consultando tus notificaciones." + INTENTE_DE_NUEVO;
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_MARCANDO = "Se presentó un problema inesperado marcando la notificación como leída." + INTENTE_DE_NUEVO;
+    }
+
+    public static final class NotificacionControlador {
+
+        private NotificacionControlador() {
+        }
+
+        public static final String NOTIFICACION_LEIDA = "La notificación quedó marcada como leída.";
+        public static final String NOTIFICACIONES_LEIDAS = "Todas tus notificaciones quedaron marcadas como leídas.";
+    }
+
     public static final class OrganizacionFachada {
 
         private OrganizacionFachada() {

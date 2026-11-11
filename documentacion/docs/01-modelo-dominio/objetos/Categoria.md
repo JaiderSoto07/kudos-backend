@@ -130,9 +130,19 @@ _6 registros de ejemplo. Los identificadores se abrevian (u-01, k-01…) para fa
 |---|---|---|---|
 | P-CAT-001 | Asegurar que el nombre tenga de 3 a 50 caracteres y la descripción de 10 a 250. | Categoria | RN-132 |
 | P-CAT-002 | Asegurar que no exista otra categoría con el mismo nombre. | Categoria | UQ-CAT-1 |
-| P-CAT-003 | Asegurar que solo Administrador, Rector o Coordinador Académico gestionen categorías. | PoliticaGestionCategorias | RN-134 a RN-143, D-01 |
+| P-CAT-003 | Asegurar que solo Administrador, Rector o Coordinador Académico gestionen categorías. | AsegurarActorTieneRolRule (gestores) | RN-134 a RN-143, D-01 |
 | P-CAT-004 | Toda categoría nace activa. | Categoria | RN-133 |
 | P-CAT-005 | Los Kudos existentes conservan la categoría con la que se crearon, aunque esta cambie o se desactive. | Kudo | RN-145, INV-018 |
 | P-CAT-006 | Asegurar que solo se active una categoría inactiva. | Categoria | RN-142 |
 | P-CAT-007 | Asegurar que solo se desactive una categoría activa; desde entonces no se usa en Kudos nuevos. | Categoria | RN-143, RN-144, INV-019 |
 | P-CAT-008 | Todos los usuarios consultan las categorías activas; los gestores consultan también las inactivas. | Categoria | INV-018 |
+
+## En el código
+
+| Capa | Clase |
+|---|---|
+| Dominio (atributos y comportamiento) | `CategoriaDominio` (`co.edu.uco.kudos.dominio`) |
+| Entidad (tabla) | `CategoriaEntidad` |
+| DAO | `CategoriaDAO` + implementación SQL Server |
+| DTO (API) | CategoriaDto |
+| Negocio | CategoriaNegocioImpl |

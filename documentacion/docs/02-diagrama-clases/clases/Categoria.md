@@ -5,6 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Clase | Categoria |
+| Clase en el código | `CategoriaDominio` |
 | Estereotipo | class (entidad de dominio) |
 | Descripción | Clasificación institucional de los reconocimientos (RN-132). Puede estar activa o inactiva; solo las activas se usan para Kudos nuevos. |
 | Modificador acceso | public |
@@ -45,21 +46,24 @@ Solo hay métodos de lectura (getters). No hay setters públicos: el estado camb
 | public | isActiva | getter | Obtiene el valor del atributo activa. | boolean/Boolean |  |
 | public | getFechaCreacion | getter | Obtiene el valor del atributo fechaCreacion. | Otro | LocalDateTime |
 
-## Métodos
+## Métodos de negocio
 
-Métodos de negocio: salen de las responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/Categoria.md#responsabilidades). Las consultas se marcan `static`, como en Sigma: en la implementación las resuelve la capa de negocio con su DAO.
+Métodos **reales** de `CategoriaDominio` (comportamiento del dominio rico, D-29).
 
-| Modificador de acceso | Nombre | Tipo acceso método | Tipo modificación método | Descripción | Parámetros · Nombre | Parámetros · Tipo de dato | Parámetros · Descripción | Tipo dato de retorno | Excepciones (políticas que puede incumplir) |
-|---|---|---|---|---|---|---|---|---|---|
-| public | crear | no static | final | Crea una categoría institucional de reconocimiento. | nombre | String | Nombre. | Categoria | P-CAT-001: El nombre o la descripción no son válidos.<br>P-CAT-002: Ya existe una categoría con ese nombre.<br>P-CAT-003: El actor no puede gestionar categorías. |
-|  |  |  |  |  | descripcion | String | Qué reconoce. |  |  |
-|  |  |  |  |  | actor | Usuario | Gestor de categorías. |  |  |
-| public | modificar | no static | final | Cambia el nombre o la descripción de una categoría. | nombre | String | Nuevo nombre. | Categoria | P-CAT-001: El nombre o la descripción no son válidos.<br>P-CAT-002: Ya existe una categoría con ese nombre.<br>P-CAT-003: El actor no puede gestionar categorías. |
-|  |  |  |  |  | descripcion | String | Nueva descripción. |  |  |
-|  |  |  |  |  | actor | Usuario | Gestor de categorías. |  |  |
-| public | activar | no static | final | Permite de nuevo usar la categoría en Kudos nuevos. | actor | Usuario | Gestor de categorías. | Categoria | P-CAT-003: El actor no puede gestionar categorías.<br>P-CAT-006: La categoría ya está activa. |
-| public | desactivar | no static | final | Impide usar la categoría en Kudos nuevos. | actor | Usuario | Gestor de categorías. | Categoria | P-CAT-003: El actor no puede gestionar categorías.<br>P-CAT-007: La categoría ya está inactiva. |
-| public | consultar | static | final | Lista las categorías; las inactivas solo para los gestores. | actor | Usuario | Usuario que consulta. | Lista de Categoria |  |
+| Modificador de acceso | Nombre | Parámetros | Tipo dato de retorno | Descripción |
+|---|---|---|---|---|
+| public | modificar | String nuevoNombre, String nuevaDescripcion | void | Cambia el nombre o la descripción de una categoría. |
+| public | activar | — | void | Permite de nuevo usar la categoría en Kudos nuevos. |
+| public | desactivar | — | void | Impide usar la categoría en Kudos nuevos. |
+
+## Operaciones del caso de uso (capa de negocio)
+
+Responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/Categoria.md#responsabilidades) que coordinan varios objetos o consultan la base de datos. Las implementa: CategoriaNegocioImpl.
+
+| Operación | Descripción | Políticas que protege |
+|---|---|---|
+| crear | Crea una categoría institucional de reconocimiento. | P-CAT-001, P-CAT-002, P-CAT-003, P-CAT-004 |
+| consultar | Lista las categorías; las inactivas solo para los gestores. | P-CAT-008 |
 
 ## Builder (clase interna public static)
 

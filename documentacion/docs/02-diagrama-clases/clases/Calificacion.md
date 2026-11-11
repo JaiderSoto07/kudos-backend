@@ -5,6 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Clase | Calificacion |
+| Clase en el código | `CalificacionDominio` |
 | Estereotipo | class (entidad de dominio) |
 | Descripción | Valoración de 1 a 5 estrellas que un usuario asigna a un Kudo o a una réplica. Cada usuario tiene como máximo una calificación activa por contenido. |
 | Modificador acceso | public |
@@ -18,7 +19,6 @@
 | Necesita de | Asociación | Kudo |
 | Necesita de | Asociación | Replica |
 | Necesita de | Asociación | Usuario |
-| Necesita de | Composición (objeto de valor) | Estrellas |
 
 ## Atributos
 
@@ -28,7 +28,7 @@
 | private | autor | Otro | Usuario | final | no static | Instancia por defecto de Usuario | Usuario que califica (RN-183) |
 | private | kudo | Otro | Kudo | final | no static | Instancia por defecto de Kudo | Kudo calificado |
 | private | replica | Otro | Replica | final | no static | Instancia por defecto de Replica | Réplica calificada |
-| private | estrellas | Otro | Estrellas | no final | no static | Instancia vacía de Estrellas | Valoración asignada (RN-177) |
+| private | estrellas | int |  | no final | no static | 0 | Valoración asignada (RN-177) |
 | private | fechaCalificacion | Otro | LocalDateTime | final | no static | Fecha actual | Fecha y hora en que se registró (RN-182) |
 | private | fechaModificacion | Otro | LocalDateTime | no final | no static | Fecha por defecto (UtilFecha) | Fecha y hora del último cambio de estrellas (RN-237) |
 | private | activa | boolean/Boolean |  | no final | no static | true | Indica si es la calificación activa del usuario para ese contenido |
@@ -49,22 +49,28 @@ Solo hay métodos de lectura (getters). No hay setters públicos: el estado camb
 | public | getAutor | getter | Obtiene el valor del atributo autor. | Otro | Usuario |
 | public | getKudo | getter | Obtiene el valor del atributo kudo. | Otro | Kudo |
 | public | getReplica | getter | Obtiene el valor del atributo replica. | Otro | Replica |
-| public | getEstrellas | getter | Obtiene el valor del atributo estrellas. | Otro | Estrellas |
+| public | getEstrellas | getter | Obtiene el valor del atributo estrellas. | int |  |
 | public | getFechaCalificacion | getter | Obtiene el valor del atributo fechaCalificacion. | Otro | LocalDateTime |
 | public | getFechaModificacion | getter | Obtiene el valor del atributo fechaModificacion. | Otro | LocalDateTime |
 | public | isActiva | getter | Obtiene el valor del atributo activa. | boolean/Boolean |  |
 
-## Métodos
+## Métodos de negocio
 
-Métodos de negocio: salen de las responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/Calificacion.md#responsabilidades). Las consultas se marcan `static`, como en Sigma: en la implementación las resuelve la capa de negocio con su DAO.
+Métodos **reales** de `CalificacionDominio` (comportamiento del dominio rico, D-29).
 
-| Modificador de acceso | Nombre | Tipo acceso método | Tipo modificación método | Descripción | Parámetros · Nombre | Parámetros · Tipo de dato | Parámetros · Descripción | Tipo dato de retorno | Excepciones (políticas que puede incumplir) |
-|---|---|---|---|---|---|---|---|---|---|
-| public | calificar | no static | final | Registra la valoración de un usuario sobre un Kudo o una réplica. | autor | Usuario | Quien califica. | Calificacion | P-CAL-001: El usuario no está activo.<br>P-CAL-002: No indica contenido o indica ambos.<br>P-CAL-003: El contenido está vetado.<br>P-CAL-004: El usuario es el autor del contenido.<br>P-CAL-005: El valor está fuera de la escala. |
-|  |  |  |  |  | contenido | Kudo o Replica | Contenido calificado. |  |  |
-|  |  |  |  |  | estrellas | Estrellas | De 1 a 5. |  |  |
-| public | modificarEstrellas | no static | final | Cambia las estrellas de la calificación activa del usuario. | estrellas | Estrellas | Nuevo valor. | Calificacion | P-CAL-005: El valor está fuera de la escala.<br>P-CAL-008: La calificación no es del usuario o no está activa. |
-| public | consultarValoraciones | static | final | Muestra el resumen de calificaciones de un contenido. | contenido | UUID | Kudo o réplica. | ResumenValoraciones |  |
+| Modificador de acceso | Nombre | Parámetros | Tipo dato de retorno | Descripción |
+|---|---|---|---|---|
+| public | modificarEstrellas | int nuevasEstrellas | void | Cambia las estrellas de la calificación activa del usuario. |
+| public | esSobreKudo | — | boolean | Indica si el objeto se refiere a un Kudo (si no, a una réplica). |
+
+## Operaciones del caso de uso (capa de negocio)
+
+Responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/Calificacion.md#responsabilidades) que coordinan varios objetos o consultan la base de datos. Las implementa: CalificacionNegocioImpl.
+
+| Operación | Descripción | Políticas que protege |
+|---|---|---|
+| calificar | Registra la valoración de un usuario sobre un Kudo o una réplica. | P-CAL-001, P-CAL-002, P-CAL-003, P-CAL-004, P-CAL-005, P-CAL-006, P-CAL-007 |
+| consultarValoraciones | Muestra el resumen de calificaciones de un contenido. | P-CAL-009 |
 
 ## Builder (clase interna public static)
 
@@ -77,7 +83,7 @@ Patrón **Builder**, igual que en Sigma: reúne los valores, los sanea (nulos a 
 | public | autor | no static | Asigna el valor recibido; si es nulo, asigna: Instancia por defecto de Usuario. | autor | Usuario | Builder |
 | public | kudo | no static | Asigna el valor recibido; si es nulo, asigna: Instancia por defecto de Kudo. | kudo | Kudo | Builder |
 | public | replica | no static | Asigna el valor recibido; si es nulo, asigna: Instancia por defecto de Replica. | replica | Replica | Builder |
-| public | estrellas | no static | Asigna el valor recibido; si es nulo, asigna: Instancia vacía de Estrellas. | estrellas | Estrellas | Builder |
+| public | estrellas | no static | Asigna el valor recibido; si es nulo o negativo, asigna 0. | estrellas | int | Builder |
 | public | fechaCalificacion | no static | Asigna la fecha recibida; si es nula, asigna la fecha por defecto. | fechaCalificacion | LocalDateTime | Builder |
 | public | fechaModificacion | no static | Asigna la fecha recibida; si es nula, asigna la fecha por defecto. | fechaModificacion | LocalDateTime | Builder |
 | public | activa | no static | Asigna el valor recibido. | activa | boolean | Builder |

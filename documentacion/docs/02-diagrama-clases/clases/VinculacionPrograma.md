@@ -5,6 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Clase | VinculacionPrograma |
+| Clase en el código | `VinculacionProgramaDominio` |
 | Estereotipo | class (entidad de dominio) |
 | Descripción | Vínculo, con historial, entre un Docente o Estudiante y un Programa Académico. Resuelve la relación muchos a muchos y conserva la trazabilidad de vinculaciones y desvinculaciones. |
 | Modificador acceso | public |
@@ -53,20 +54,24 @@ Solo hay métodos de lectura (getters). No hay setters públicos: el estado camb
 | public | getFechaFin | getter | Obtiene el valor del atributo fechaFin. | Otro | LocalDateTime |
 | public | getMotivoDesvinculacion | getter | Obtiene el valor del atributo motivoDesvinculacion. | String |  |
 
-## Métodos
+## Métodos de negocio
 
-Métodos de negocio: salen de las responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/VinculacionPrograma.md#responsabilidades). Las consultas se marcan `static`, como en Sigma: en la implementación las resuelve la capa de negocio con su DAO.
+Métodos **reales** de `VinculacionProgramaDominio` (comportamiento del dominio rico, D-29).
 
-| Modificador de acceso | Nombre | Tipo acceso método | Tipo modificación método | Descripción | Parámetros · Nombre | Parámetros · Tipo de dato | Parámetros · Descripción | Tipo dato de retorno | Excepciones (políticas que puede incumplir) |
-|---|---|---|---|---|---|---|---|---|---|
-| public | vincular | no static | final | Vincula a un docente o estudiante al programa del coordinador. | usuario | Usuario | Docente o estudiante. | VinculacionPrograma | P-VPR-001: La persona no es docente ni estudiante o su cuenta está desactivada.<br>P-VPR-002: El programa no existe o está inactivo.<br>P-VPR-003: El actor no coordina ese programa.<br>P-VPR-004: Ya existe un vínculo vigente. |
-|  |  |  |  |  | programa | ProgramaAcademico | Programa del coordinador. |  |  |
-|  |  |  |  |  | actor | Usuario | Coordinador de Programa. |  |  |
-| public | desvincular | no static | final | Cierra el vínculo de una persona con el programa sin borrarlo. | actor | Usuario | Coordinador de Programa. | VinculacionPrograma | P-VPR-003: El actor no coordina ese programa.<br>P-VPR-006: El vínculo no está vigente o falta el motivo. |
-|  |  |  |  |  | motivo | String | Razón de la desvinculación. |  |  |
-| public | consultarPorUsuario | static | final | Lista los programas vigentes e históricos de un docente o estudiante. | usuario | UUID | Persona consultada. | Lista de VinculacionPrograma |  |
-| public | consultarPorPrograma | static | final | Lista los docentes y estudiantes vigentes de un programa. | programa | UUID | Programa consultado. | Lista de VinculacionPrograma | P-VPR-009: El actor no tiene permiso sobre el programa. |
-|  |  |  |  |  | tipo | TipoVinculo | Docentes o estudiantes. |  |  |
+| Modificador de acceso | Nombre | Parámetros | Tipo dato de retorno | Descripción |
+|---|---|---|---|---|
+| public | estaVigente | — | boolean | Indica si no tiene fecha de fin. |
+| public | desvincular | String motivo | void | Cierra el vínculo de una persona con el programa sin borrarlo. |
+
+## Operaciones del caso de uso (capa de negocio)
+
+Responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/VinculacionPrograma.md#responsabilidades) que coordinan varios objetos o consultan la base de datos. Las implementa: VinculacionNegocioImpl.
+
+| Operación | Descripción | Políticas que protege |
+|---|---|---|
+| vincular | Vincula a un docente o estudiante al programa del coordinador. | P-VPR-001, P-VPR-002, P-VPR-003, P-VPR-004, P-VPR-005 |
+| consultarPorUsuario | Lista los programas vigentes e históricos de un docente o estudiante. | P-VPR-008 |
+| consultarPorPrograma | Lista los docentes y estudiantes vigentes de un programa. | P-VPR-009 |
 
 ## Builder (clase interna public static)
 

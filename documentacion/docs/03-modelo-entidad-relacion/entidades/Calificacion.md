@@ -12,9 +12,9 @@
 
 | Nombre | id_calificacion | id_autor | id_kudo | id_replica | estrellas | fecha_calificacion | fecha_modificacion | activa |
 |---|---|---|---|---|---|---|---|---|
-| Tipo de dato | uniqueidentifier | uniqueidentifier | uniqueidentifier | uniqueidentifier | tinyint | datetime2 | datetime2 | bit |
+| Tipo de dato | uniqueidentifier | uniqueidentifier | uniqueidentifier | uniqueidentifier | int | datetime2 | datetime2 | bit |
 | Longitud |  |  |  |  |  |  |  |  |
-| Cantidad dígitos parte entera |  |  |  |  | 3 |  |  |  |
+| Cantidad dígitos parte entera |  |  |  |  | 10 |  |  |  |
 | Cantidad dígitos parte decimal (Precisión) |  |  |  |  |  |  |  |  |
 | ¿Es autoincremento? | NO | NO | NO | NO | NO | NO | NO | NO |
 | ¿Es obligatorio? | SI | SI | NO | NO | SI | SI | NO | SI |

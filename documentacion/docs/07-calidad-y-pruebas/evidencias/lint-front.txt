@@ -1,0 +1,13 @@
+
+> kudos-frontend@0.0.0 lint
+> run-s "lint:*"
+
+
+> kudos-frontend@0.0.0 lint:oxlint
+> oxlint . --fix
+
+
+> kudos-frontend@0.0.0 lint:eslint
+> eslint . --fix --cache
+
+Resultado: sin errores ni advertencias

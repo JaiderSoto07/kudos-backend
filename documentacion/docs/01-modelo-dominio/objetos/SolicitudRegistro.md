@@ -143,9 +143,19 @@ _5 registros de ejemplo. Los identificadores se abrevian (u-01, k-01…) para fa
 | P-SRE-003 | Asegurar que el solicitante no tenga otra solicitud pendiente. | SolicitudRegistro | UQ-SOL-1 |
 | P-SRE-004 | Notificar a la autoridad aprobadora que tiene una solicitud por decidir. | Notificacion | D-27 |
 | P-SRE-005 | Asegurar que solo se decida una solicitud pendiente. | SolicitudRegistro | D-17 |
-| P-SRE-006 | Asegurar que quien decide tenga el rol aprobador del rol solicitado y que la solicitud sea de su ámbito. | Rol / PoliticaAmbito | RN-090 a RN-093, RN-117, RN-121, RN-126, POL-004 |
+| P-SRE-006 | Asegurar que quien decide tenga el rol aprobador del rol solicitado y que la solicitud sea de su ámbito. | AsignacionRol.puedeDecidir | RN-090 a RN-093, RN-117, RN-121, RN-126, POL-004 |
 | P-SRE-007 | Asegurar que nadie decida su propia solicitud. | SolicitudRegistro | RN-108 |
 | P-SRE-008 | Al aprobar, aprobar la cuenta, asignar el rol (con sustitución si aplica) y, si es docente o estudiante, vincularlo al programa. | ServicioAprobacion | RN-090 a RN-093, P-USU-014, P-ASR-001 a P-ASR-004, P-VPR-001 |
 | P-SRE-009 | Registrar en auditoría toda aprobación y todo rechazo, y notificar al solicitante. | Auditoria | RN-096, RNF-017, D-27 |
 | P-SRE-010 | Asegurar que el rechazo tenga motivo. | SolicitudRegistro | D-17 |
-| P-SRE-011 | Mostrar a cada autoridad solo las solicitudes pendientes que puede decidir. | PoliticaAmbito | POL-004, RF-087 |
+| P-SRE-011 | Mostrar a cada autoridad solo las solicitudes pendientes que puede decidir. | AsignacionRol (ámbito) | POL-004, RF-087 |
+
+## En el código
+
+| Capa | Clase |
+|---|---|
+| Dominio (atributos y comportamiento) | `SolicitudRegistroDominio` (`co.edu.uco.kudos.dominio`) |
+| Entidad (tabla) | `SolicitudRegistroEntidad` |
+| DAO | `SolicitudRegistroDAO` + implementación SQL Server |
+| DTO (API) | SolicitudDto, RegistroDto, RechazoDto |
+| Negocio | RegistroNegocioImpl, SolicitudNegocioImpl |

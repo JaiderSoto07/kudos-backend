@@ -5,6 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Clase | Notificacion |
+| Clase en el código | `NotificacionDominio` |
 | Estereotipo | class (entidad de dominio) |
 | Descripción | Aviso dentro de la aplicación dirigido a un usuario sobre algo que le concierne. |
 | Modificador acceso | public |
@@ -54,18 +55,22 @@ Solo hay métodos de lectura (getters). No hay setters públicos: el estado camb
 | public | isLeida | getter | Obtiene el valor del atributo leida. | boolean/Boolean |  |
 | public | getFechaLectura | getter | Obtiene el valor del atributo fechaLectura. | Otro | LocalDateTime |
 
-## Métodos
+## Métodos de negocio
 
-Métodos de negocio: salen de las responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/Notificacion.md#responsabilidades). Las consultas se marcan `static`, como en Sigma: en la implementación las resuelve la capa de negocio con su DAO.
+Métodos **reales** de `NotificacionDominio` (comportamiento del dominio rico, D-29).
 
-| Modificador de acceso | Nombre | Tipo acceso método | Tipo modificación método | Descripción | Parámetros · Nombre | Parámetros · Tipo de dato | Parámetros · Descripción | Tipo dato de retorno | Excepciones (políticas que puede incumplir) |
-|---|---|---|---|---|---|---|---|---|---|
-| public | crear | no static | final | Crea un aviso para el usuario afectado por un evento. | destinatario | Usuario | A quién se avisa. | Notificacion |  |
-|  |  |  |  |  | tipo | TipoNotificacion | Tipo de aviso. |  |  |
-|  |  |  |  |  | mensaje | String | Texto. |  |  |
-|  |  |  |  |  | referencia | UUID | Objeto relacionado. |  |  |
-| public | marcarLeida | no static | final | Registra que el destinatario leyó la notificación. | actor | Usuario | Usuario que la lee. | Notificacion | P-NOT-002: La notificación no es del usuario. |
-| public | consultar | static | final | Lista las notificaciones del usuario. | usuario | Usuario | Usuario que consulta. | Lista de Notificacion |  |
+| Modificador de acceso | Nombre | Parámetros | Tipo dato de retorno | Descripción |
+|---|---|---|---|---|
+| public | marcarLeida | — | void | Registra que el destinatario leyó la notificación. |
+
+## Operaciones del caso de uso (capa de negocio)
+
+Responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/Notificacion.md#responsabilidades) que coordinan varios objetos o consultan la base de datos. Las implementa: NotificacionNegocioImpl (lo llaman todos los negocios).
+
+| Operación | Descripción | Políticas que protege |
+|---|---|---|
+| crear | Crea un aviso para el usuario afectado por un evento. | P-NOT-001 |
+| consultar | Lista las notificaciones del usuario. | P-NOT-003 |
 
 ## Builder (clase interna public static)
 

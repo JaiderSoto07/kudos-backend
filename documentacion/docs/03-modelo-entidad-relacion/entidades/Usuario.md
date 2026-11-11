@@ -12,7 +12,7 @@
 
 | Nombre | id_usuario | nombres | apellidos | correo_institucional | correo_verificado | numero_celular | celular_verificado | aprobada | estado_cuenta | fecha_registro |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Tipo de dato | uniqueidentifier | nvarchar | nvarchar | varchar | bit | varchar | bit | bit | varchar | datetime2 |
+| Tipo de dato | uniqueidentifier | nvarchar | nvarchar | nvarchar | bit | nvarchar | bit | bit | varchar | datetime2 |
 | Longitud |  | 60 | 60 | 100 |  | 10 |  |  | 22 |  |
 | Cantidad dígitos parte entera |  |  |  |  |  |  |  |  |  |  |
 | Cantidad dígitos parte decimal (Precisión) |  |  |  |  |  |  |  |  |  |  |

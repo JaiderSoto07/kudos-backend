@@ -5,6 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Clase | Kudo |
+| Clase en el código | `KudoDominio` |
 | Estereotipo | class (entidad de dominio) |
 | Descripción | Reconocimiento formal que una persona otorga a otra persona de la comunidad universitaria. Es la raíz de su conversación. |
 | Modificador acceso | public |
@@ -21,7 +22,6 @@
 | Es usada por | Asociación | Calificacion |
 | Es usada por | Asociación | Reporte |
 | Es usada por | Asociación | Moderacion |
-| Necesita de | Composición (objeto de valor) | ContenidoTexto |
 | Necesita de | Dependencia (enumeración) | EstadoContenido |
 
 ## Atributos
@@ -32,7 +32,7 @@
 | private | autor | Otro | Usuario | final | no static | Instancia por defecto de Usuario | Usuario que otorga el reconocimiento (RN-147) |
 | private | destinatario | Otro | Usuario | final | no static | Instancia por defecto de Usuario | Usuario que recibe el reconocimiento (RN-148) |
 | private | categoria | Otro | Categoria | final | no static | Instancia por defecto de Categoria | Categoría del reconocimiento (RN-149) |
-| private | contenido | Otro | ContenidoTexto | final | no static | Instancia vacía de ContenidoTexto | Texto del reconocimiento |
+| private | contenido | String |  | final | no static | "" (cadena vacía) | Texto del reconocimiento |
 | private | fechaCreacion | Otro | LocalDateTime | final | no static | Fecha actual | Fecha y hora de publicación (RN-150) |
 | private | estado | Otro | EstadoContenido | no final | no static | CREADO | Estado del ciclo de vida del contenido |
 | private | cantidadVisualizaciones | int |  | no final | no static | 0 | Número de veces que ha sido consultado (RN-229, D-25) |
@@ -55,34 +55,38 @@ Solo hay métodos de lectura (getters). No hay setters públicos: el estado camb
 | public | getAutor | getter | Obtiene el valor del atributo autor. | Otro | Usuario |
 | public | getDestinatario | getter | Obtiene el valor del atributo destinatario. | Otro | Usuario |
 | public | getCategoria | getter | Obtiene el valor del atributo categoria. | Otro | Categoria |
-| public | getContenido | getter | Obtiene el valor del atributo contenido. | Otro | ContenidoTexto |
+| public | getContenido | getter | Obtiene el valor del atributo contenido. | String |  |
 | public | getFechaCreacion | getter | Obtiene el valor del atributo fechaCreacion. | Otro | LocalDateTime |
 | public | getEstado | getter | Obtiene el valor del atributo estado. | Otro | EstadoContenido |
 | public | getCantidadVisualizaciones | getter | Obtiene el valor del atributo cantidadVisualizaciones. | int |  |
 | public | getPromedioCalificacion | getter | Obtiene el valor del atributo promedioCalificacion. | Otro | BigDecimal |
 | public | getCantidadCalificaciones | getter | Obtiene el valor del atributo cantidadCalificaciones. | int |  |
 
-## Métodos
+## Métodos de negocio
 
-Métodos de negocio: salen de las responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/Kudo.md#responsabilidades). Las consultas se marcan `static`, como en Sigma: en la implementación las resuelve la capa de negocio con su DAO.
+Métodos **reales** de `KudoDominio` (comportamiento del dominio rico, D-29).
 
-| Modificador de acceso | Nombre | Tipo acceso método | Tipo modificación método | Descripción | Parámetros · Nombre | Parámetros · Tipo de dato | Parámetros · Descripción | Tipo dato de retorno | Excepciones (políticas que puede incumplir) |
-|---|---|---|---|---|---|---|---|---|---|
-| public | crear | no static | final | Crea y publica un reconocimiento de un usuario activo a otro. | autor | Usuario | Quien reconoce. | Kudo | P-KUD-001: El autor no está activo.<br>P-KUD-002: El destinatario no está activo o es el mismo autor.<br>P-KUD-003: La categoría no existe o está inactiva.<br>P-KUD-004: El contenido está vacío. |
-|  |  |  |  |  | destinatario | Usuario | Quien es reconocido. |  |  |
-|  |  |  |  |  | categoria | Categoria | Categoría activa. |  |  |
-|  |  |  |  |  | contenido | ContenidoTexto | Texto del reconocimiento. |  |  |
-| public | registrarVisualizacion | static | final | Muestra el Kudo completo y registra la visualización. | id | UUID | Kudo consultado. | Kudo |  |
-|  |  |  |  |  | actor | Usuario | Usuario que consulta. |  |  |
-| public | consultarMuro | static | final | Lista los Kudos no vetados, del más reciente al más antiguo. | pagina | int | Página. | Página de Kudo | P-KUD-011: No hay Kudos para mostrar. |
-|  |  |  |  |  | filtro | FiltroKudo | Categoría o persona (opcional). |  |  |
-| public | consultarHistorial | static | final | Lista los Kudos recibidos y emitidos por una persona. | persona | UUID | Persona consultada. | Lista de Kudo |  |
-| public | marcarReportado | no static | final | Registra que el Kudo recibió un reporte. |  |  |  | Kudo | P-KUD-013: El Kudo está vetado. |
-| public | iniciarRevision | no static | final | El Kudo entra en revisión de un moderador. |  |  |  | Kudo | P-KUD-014: El Kudo no está reportado. |
-| public | liberar | no static | final | El Kudo vuelve a estar visible tras la revisión. |  |  |  | Kudo | P-KUD-015: El Kudo no está en revisión. |
-| public | vetar | no static | final | Inhabilita el Kudo de forma definitiva. |  |  |  | Kudo | P-KUD-016: El Kudo ya está vetado. |
-| public | admiteInteraccion | no static | final | Indica si el Kudo acepta réplicas, calificaciones y reportes. |  |  |  | boolean | P-KUD-018: El Kudo está vetado. |
-| public | actualizarResumenCalificaciones | no static | final | Recalcula el promedio y la cantidad de calificaciones activas. | calificaciones | Lista de Estrellas | Calificaciones activas. | Kudo |  |
+| Modificador de acceso | Nombre | Parámetros | Tipo dato de retorno | Descripción |
+|---|---|---|---|---|
+| public | publicar | — | void | Transición del patrón State: CREADO → VISIBLE. |
+| public | reportar | — | void | Registra que el Kudo recibió un reporte. |
+| public | iniciarRevision | — | void | El Kudo entra en revisión de un moderador. |
+| public | liberar | — | void | El Kudo vuelve a estar visible tras la revisión. |
+| public | vetar | — | void | Inhabilita el Kudo de forma definitiva. |
+| public | admiteInteraccion | — | boolean | Indica si el Kudo acepta réplicas, calificaciones y reportes. |
+| public | esAutor | UUID idUsuario | boolean | Indica si el usuario dado es el autor. |
+| public | actualizarResumenCalificaciones | List<Integer> estrellasActivas | void | Recalcula el promedio y la cantidad de calificaciones activas. |
+| public | registrarVisualizacion | — | void | Muestra el Kudo completo y registra la visualización. |
+
+## Operaciones del caso de uso (capa de negocio)
+
+Responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/Kudo.md#responsabilidades) que coordinan varios objetos o consultan la base de datos. Las implementa: KudoNegocioImpl.
+
+| Operación | Descripción | Políticas que protege |
+|---|---|---|
+| crear | Crea y publica un reconocimiento de un usuario activo a otro. | P-KUD-001, P-KUD-002, P-KUD-003, P-KUD-004, P-KUD-005, P-KUD-006, P-KUD-007 |
+| consultarMuro | Lista los Kudos no vetados, del más reciente al más antiguo. | P-KUD-011 |
+| consultarHistorial | Lista los Kudos recibidos y emitidos por una persona. | P-KUD-012 |
 
 ## Builder (clase interna public static)
 
@@ -95,7 +99,7 @@ Patrón **Builder**, igual que en Sigma: reúne los valores, los sanea (nulos a 
 | public | autor | no static | Asigna el valor recibido; si es nulo, asigna: Instancia por defecto de Usuario. | autor | Usuario | Builder |
 | public | destinatario | no static | Asigna el valor recibido; si es nulo, asigna: Instancia por defecto de Usuario. | destinatario | Usuario | Builder |
 | public | categoria | no static | Asigna el valor recibido; si es nulo, asigna: Instancia por defecto de Categoria. | categoria | Categoria | Builder |
-| public | contenido | no static | Asigna el valor recibido; si es nulo, asigna: Instancia vacía de ContenidoTexto. | contenido | ContenidoTexto | Builder |
+| public | contenido | no static | Asigna el texto recibido sin espacios en blanco al inicio y al final; si es nulo, asigna una cadena vacía. | contenido | String | Builder |
 | public | fechaCreacion | no static | Asigna la fecha recibida; si es nula, asigna la fecha por defecto. | fechaCreacion | LocalDateTime | Builder |
 | public | estado | no static | Asigna el valor recibido; si es nulo, asigna: CREADO. | estado | EstadoContenido | Builder |
 | public | cantidadVisualizaciones | no static | Asigna el valor recibido; si es nulo o negativo, asigna 0. | cantidadVisualizaciones | int | Builder |

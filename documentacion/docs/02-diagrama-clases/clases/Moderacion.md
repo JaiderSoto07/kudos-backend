@@ -5,6 +5,7 @@
 | Campo | Valor |
 |---|---|
 | Clase | Moderacion |
+| Clase en el código | `ModeracionDominio` |
 | Estereotipo | class (entidad de dominio) |
 | Descripción | Revisión y decisión institucional sobre un Kudo o una réplica, tomada por el Rector o el Coordinador Académico. El histórico de vetos son las moderaciones con decisión VETAR. |
 | Modificador acceso | public |
@@ -58,20 +59,26 @@ Solo hay métodos de lectura (getters). No hay setters públicos: el estado camb
 | public | getDecision | getter | Obtiene el valor del atributo decision. | Otro | DecisionModeracion |
 | public | getMotivoDecision | getter | Obtiene el valor del atributo motivoDecision. | String |  |
 
-## Métodos
+## Métodos de negocio
 
-Métodos de negocio: salen de las responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/Moderacion.md#responsabilidades). Las consultas se marcan `static`, como en Sigma: en la implementación las resuelve la capa de negocio con su DAO.
+Métodos **reales** de `ModeracionDominio` (comportamiento del dominio rico, D-29).
 
-| Modificador de acceso | Nombre | Tipo acceso método | Tipo modificación método | Descripción | Parámetros · Nombre | Parámetros · Tipo de dato | Parámetros · Descripción | Tipo dato de retorno | Excepciones (políticas que puede incumplir) |
-|---|---|---|---|---|---|---|---|---|---|
-| public | iniciar | no static | final | Un moderador abre la revisión de un contenido reportado. | contenido | Kudo o Replica | Contenido a revisar. | Moderacion | P-MOD-001: El actor no puede moderar.<br>P-MOD-002: El contenido no está reportado o ya está en revisión. |
-|  |  |  |  |  | moderador | Usuario | Rector o Coordinador Académico. |  |  |
-| public | vetar | no static | final | El moderador veta el contenido y cierra la revisión. | moderador | Usuario | Rector o Coordinador Académico. | Moderacion | P-MOD-001: El actor no puede moderar.<br>P-MOD-004: El contenido ya está vetado.<br>P-MOD-005: Falta el motivo o es muy corto. |
-|  |  |  |  |  | motivo | String | Justificación. |  |  |
-| public | liberar | no static | final | El moderador libera el contenido y cierra la revisión. | moderador | Usuario | Rector o Coordinador Académico. | Moderacion | P-MOD-001: El actor no puede moderar.<br>P-MOD-007: El contenido no está en revisión.<br>P-MOD-005: Falta el motivo o es muy corto. |
-|  |  |  |  |  | motivo | String | Justificación. |  |  |
-| public | consultarHistoricoVetos | static | final | Lista las moderaciones que terminaron en veto. | moderador | Usuario | Quien consulta. | Lista de Moderacion |  |
-|  |  |  |  |  | filtro | FiltroModeracion | Fecha, moderador, tipo de contenido. |  |  |
+| Modificador de acceso | Nombre | Parámetros | Tipo dato de retorno | Descripción |
+|---|---|---|---|---|
+| public | estaEnCurso | — | boolean | Indica si la moderación sigue EN_CURSO. |
+| public | terminoEnVeto | — | boolean | Indica si la decisión fue VETAR. |
+| public | vetar | String motivo | void | El moderador veta el contenido y cierra la revisión. |
+| public | liberar | String motivo | void | El moderador libera el contenido y cierra la revisión. |
+| public | esSobreKudo | — | boolean | Indica si el objeto se refiere a un Kudo (si no, a una réplica). |
+
+## Operaciones del caso de uso (capa de negocio)
+
+Responsabilidades del [modelo enriquecido](../../01-modelo-dominio/objetos/Moderacion.md#responsabilidades) que coordinan varios objetos o consultan la base de datos. Las implementa: ModeracionNegocioImpl.
+
+| Operación | Descripción | Políticas que protege |
+|---|---|---|
+| iniciar | Un moderador abre la revisión de un contenido reportado. | P-MOD-001, P-MOD-002, P-MOD-003 |
+| consultarHistoricoVetos | Lista las moderaciones que terminaron en veto. | P-MOD-009 |
 
 ## Builder (clase interna public static)
 
