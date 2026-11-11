@@ -1,0 +1,22 @@
+info:
+  name: VetarKudoMotivoCorto
+  type: http
+  seq: 8
+
+http:
+  method: POST
+  url: "{{baseUrl}}/moderacion/kudos/{{idKudo}}/veto"
+  body:
+    type: json
+    data: |-
+      {
+        "motivo": "Feo"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

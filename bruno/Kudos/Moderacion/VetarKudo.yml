@@ -1,0 +1,22 @@
+info:
+  name: VetarKudo
+  type: http
+  seq: 9
+
+http:
+  method: POST
+  url: "{{baseUrl}}/moderacion/kudos/{{idKudo}}/veto"
+  body:
+    type: json
+    data: |-
+      {
+        "motivo": "Contiene burlas hacia la destinataria"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

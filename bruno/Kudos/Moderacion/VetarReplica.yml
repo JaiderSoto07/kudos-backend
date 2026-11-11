@@ -1,0 +1,22 @@
+info:
+  name: VetarReplica
+  type: http
+  seq: 11
+
+http:
+  method: POST
+  url: "{{baseUrl}}/moderacion/replicas/{{idReplica}}/veto"
+  body:
+    type: json
+    data: |-
+      {
+        "motivo": "Lenguaje ofensivo comprobado"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

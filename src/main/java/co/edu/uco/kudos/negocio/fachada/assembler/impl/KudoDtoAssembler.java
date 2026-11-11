@@ -1,10 +1,12 @@
 package co.edu.uco.kudos.negocio.fachada.assembler.impl;
 
 import co.edu.uco.kudos.dominio.CategoriaDominio;
+import co.edu.uco.kudos.dominio.EstadoContenido;
 import co.edu.uco.kudos.dominio.KudoDominio;
 import co.edu.uco.kudos.dominio.UsuarioDominio;
 import co.edu.uco.kudos.dto.KudoDto;
 import co.edu.uco.kudos.negocio.fachada.assembler.DTOAssembler;
+import co.edu.uco.kudos.transversal.catalogo.CatalogoMensajes;
 import co.edu.uco.kudos.transversal.utilitario.UtilEnum;
 import co.edu.uco.kudos.transversal.utilitario.UtilObjeto;
 
@@ -25,6 +27,7 @@ public final class KudoDtoAssembler implements DTOAssembler<KudoDominio, KudoDto
     @Override
     public KudoDto convertirADTO(KudoDominio dominio) {
         var dominioSeguro = UtilObjeto.obtenerValorDefectoSiValorOriginalEsNulo(dominio, new KudoDominio.Builder().build());
+        var vetado = dominioSeguro.getEstado() == EstadoContenido.VETADO;
         var dto = new KudoDto();
         dto.setId(dominioSeguro.getId());
         dto.setIdAutor(dominioSeguro.getAutor().getId());
@@ -33,9 +36,10 @@ public final class KudoDtoAssembler implements DTOAssembler<KudoDominio, KudoDto
         dto.setNombreDestinatario(dominioSeguro.getDestinatario().nombreCompleto());
         dto.setIdCategoria(dominioSeguro.getCategoria().getId());
         dto.setNombreCategoria(dominioSeguro.getCategoria().getNombre());
-        dto.setContenido(dominioSeguro.getContenido());
+        dto.setContenido(vetado ? CatalogoMensajes.Replica.CONTENIDO_VETADO : dominioSeguro.getContenido());
         dto.setFechaCreacion(dominioSeguro.getFechaCreacion());
         dto.setEstado(UtilEnum.obtenerTexto(dominioSeguro.getEstado()));
+        dto.setVetado(vetado);
         dto.setCantidadVisualizaciones(dominioSeguro.getCantidadVisualizaciones());
         dto.setPromedioCalificacion(dominioSeguro.getPromedioCalificacion());
         dto.setCantidadCalificaciones(dominioSeguro.getCantidadCalificaciones());

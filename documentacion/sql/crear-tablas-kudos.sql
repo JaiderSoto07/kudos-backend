@@ -409,7 +409,7 @@ fecha_lectura datetime2(0) null,
 constraint fk_notificacion_id_destinatario
   foreign key (id_destinatario) references usuario(id_usuario),
 constraint ck_notificacion_tipo
-  check (tipo in ('KUDO_RECIBIDO', 'REPLICA_RECIBIDA', 'SOLICITUD_APROBADA', 'SOLICITUD_RECHAZADA', 'SOLICITUD_PENDIENTE', 'CONTENIDO_VETADO', 'CODIGO_VERIFICACION', 'CUENTA_SUSPENDIDA', 'CUENTA_REACTIVADA')),
+  check (tipo in ('KUDO_RECIBIDO', 'REPLICA_RECIBIDA', 'SOLICITUD_APROBADA', 'SOLICITUD_RECHAZADA', 'SOLICITUD_PENDIENTE', 'CONTENIDO_VETADO', 'REPORTE_RECHAZADO', 'CODIGO_VERIFICACION', 'CUENTA_SUSPENDIDA', 'CUENTA_REACTIVADA')),
 constraint ck_notificacion_lectura
   check ((leida = 0 and fecha_lectura is null) or (leida = 1 and fecha_lectura is not null))
 );

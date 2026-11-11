@@ -128,7 +128,7 @@ El diagrama UML de casos de uso está en [`04-diagrama-casos-uso`](../04-diagram
 |---|---|
 | **Actor** | Usuario activo |
 | **Precondiciones** | El Kudo existe y **no está `VETADO`** |
-| **Postcondición** | La conversación se amplía. El autor del Kudo recibe una notificación |
+| **Postcondición** | La conversación se amplía. El autor y el destinatario del Kudo reciben una notificación (nunca quien responde) |
 | **Evento** | `ReplicaPublicada` (EVT-028, RN-232) |
 
 **Flujo principal**
@@ -136,7 +136,7 @@ El diagrama UML de casos de uso está en [`04-diagrama-casos-uso`](../04-diagram
 2. El actor elige "Responder".
 3. El actor escribe el contenido.
 4. El actor confirma.
-5. El sistema crea la réplica con el Kudo como padre, la publica (`VISIBLE`) y notifica al autor del Kudo.
+5. El sistema crea la réplica con el Kudo como padre, la publica (`VISIBLE`) y notifica al autor y al destinatario del Kudo.
 
 **Excepciones**: 5a. El Kudo fue vetado → se rechaza: *"La conversación está cerrada"* (D-21). 5b. Contenido vacío → se rechaza.
 

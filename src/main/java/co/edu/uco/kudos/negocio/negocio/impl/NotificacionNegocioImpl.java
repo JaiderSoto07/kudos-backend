@@ -16,6 +16,9 @@ import java.util.UUID;
 
 public class NotificacionNegocioImpl implements NotificacionNegocio {
 
+    private static final int LONGITUD_MAXIMA_MENSAJE = 500;
+    private static final String PUNTOS_SUSPENSIVOS = "...";
+
     private final DAOFactory daoFactory;
 
     public NotificacionNegocioImpl(DAOFactory daoFactory) {
@@ -28,7 +31,7 @@ public class NotificacionNegocioImpl implements NotificacionNegocio {
                 .id(UtilId.generarId())
                 .destinatario(datos.getDestinatario())
                 .tipo(datos.getTipo())
-                .mensaje(datos.getMensaje())
+                .mensaje(recortar(datos.getMensaje()))
                 .tipoReferencia(datos.getTipoReferencia())
                 .idReferencia(datos.getIdReferencia())
                 .fechaCreacion(UtilFecha.fechaActual())
@@ -47,5 +50,12 @@ public class NotificacionNegocioImpl implements NotificacionNegocio {
                 .build();
         var notificaciones = daoFactory.obtenerNotificacionDAO().consultarPorFiltro(filtro);
         return NotificacionEntidadAssembler.getInstance().convertirADominio(notificaciones);
+    }
+
+    private String recortar(String mensaje) {
+        if (mensaje.length() <= LONGITUD_MAXIMA_MENSAJE) {
+            return mensaje;
+        }
+        return mensaje.substring(0, LONGITUD_MAXIMA_MENSAJE - PUNTOS_SUSPENSIVOS.length()) + PUNTOS_SUSPENSIVOS;
     }
 }

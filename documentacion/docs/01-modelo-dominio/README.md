@@ -455,6 +455,7 @@ Tipos de aviso (D-27).
 | `SOLICITUD_RECHAZADA` | Su solicitud fue rechazada |
 | `SOLICITUD_PENDIENTE` | Tiene una solicitud por decidir (para la autoridad) |
 | `CONTENIDO_VETADO` | Un contenido suyo fue vetado |
+| `REPORTE_RECHAZADO` | El contenido que reportó fue revisado y liberado |
 | `CODIGO_VERIFICACION` | Código para verificar correo o celular |
 | `CUENTA_SUSPENDIDA` | Su cuenta fue suspendida |
 | `CUENTA_REACTIVADA` | Su cuenta fue reactivada |

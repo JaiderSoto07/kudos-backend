@@ -1,0 +1,22 @@
+info:
+  name: LiberarReplica
+  type: http
+  seq: 12
+
+http:
+  method: POST
+  url: "{{baseUrl}}/moderacion/replicas/{{idReplica}}/liberacion"
+  body:
+    type: json
+    data: |-
+      {
+        "motivo": "Revisado: no incumple las normas de convivencia"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

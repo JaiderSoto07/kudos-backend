@@ -20,6 +20,7 @@ public class KudoDto {
     private String contenido;
     private LocalDateTime fechaCreacion;
     private String estado;
+    private boolean vetado;
     private int cantidadVisualizaciones;
     private BigDecimal promedioCalificacion;
     private int cantidadCalificaciones;
@@ -35,6 +36,7 @@ public class KudoDto {
         setContenido(UtilTexto.VACIO);
         setFechaCreacion(UtilFecha.FECHA_HORA_POR_DEFECTO);
         setEstado(UtilTexto.VACIO);
+        setVetado(false);
         setCantidadVisualizaciones(0);
         setPromedioCalificacion(BigDecimal.ZERO);
         setCantidadCalificaciones(0);
@@ -118,6 +120,14 @@ public class KudoDto {
 
     public void setEstado(String estado) {
         this.estado = UtilTexto.getUtilTexto().quitarEspaciosEnBlanco(estado);
+    }
+
+    public boolean isVetado() {
+        return vetado;
+    }
+
+    public void setVetado(boolean vetado) {
+        this.vetado = vetado;
     }
 
     public int getCantidadVisualizaciones() {

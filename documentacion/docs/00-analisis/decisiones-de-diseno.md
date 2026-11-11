@@ -233,7 +233,7 @@ CREADO ──publicar──► VISIBLE ──reportar──► REPORTADO ──i
 
 | | |
 |---|---|
-| **Decisión** | Son notificaciones dentro de la aplicación: Kudo recibido, respuesta recibida, solicitud aprobada o rechazada, contenido vetado y códigos de verificación (D-10). Se marcan como leídas. |
+| **Decisión** | Son notificaciones dentro de la aplicación: Kudo recibido, respuesta recibida, solicitud aprobada o rechazada, contenido vetado, reporte rechazado (el contenido reportado se liberó) y códigos de verificación (D-10). Se marcan como leídas. |
 
 ### D-28 — Nada se borra
 

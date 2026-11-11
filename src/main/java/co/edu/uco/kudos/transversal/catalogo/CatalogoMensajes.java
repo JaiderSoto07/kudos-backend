@@ -619,6 +619,49 @@ public final class CatalogoMensajes {
         public static final String CALIFICACION_GUARDADA = "Tu calificación quedó guardada.";
     }
 
+    public static final class Moderacion {
+
+        private Moderacion() {
+        }
+
+        public static final String CONTENIDO_YA_VETADO = "Este contenido ya fue vetado por moderación.";
+        public static final String CONTENIDO_PROPIO = "No puedes reportar lo que tú mismo escribiste.";
+        public static final String MOTIVO_OBLIGATORIO = "Elige el motivo del reporte.";
+        public static final String DESCRIPCION_OBLIGATORIA = "Cuando el motivo es \"Otro\", describe qué problema tiene el contenido.";
+        public static final String DESCRIPCION_MUY_LARGA = "La descripción del reporte admite máximo 500 caracteres.";
+        public static final String REPORTE_ABIERTO = "Ya reportaste este contenido. Espera la decisión del moderador.";
+        public static final String ACTOR_NO_ES_MODERADOR = "Solo el Rector o el Coordinador Académico pueden moderar contenido.";
+        public static final String MOTIVO_DECISION_OBLIGATORIO = "Escribe el motivo de la decisión.";
+        public static final String MOTIVO_DECISION_LONGITUD_INVALIDA = "El motivo de la decisión debe tener entre 10 y 500 caracteres.";
+        public static final String CONTENIDO_SIN_REPORTES = "Solo se puede revisar un contenido que tiene reportes pendientes.";
+        public static final String REVISION_EN_CURSO = "Este contenido ya tiene una revisión en curso.";
+        public static final String CONTENIDO_NO_EN_REVISION = "Solo se puede liberar un contenido que está en revisión.";
+        public static final String MENSAJE_KUDO_VETADO = "Tu Kudo para %s fue vetado por moderación. Motivo: %s";
+        public static final String MENSAJE_REPLICA_VETADA = "Tu réplica en el Kudo para %s fue vetada por moderación. Motivo: %s";
+        public static final String MENSAJE_REPORTE_RECHAZADO = "Revisamos el contenido que reportaste en el Kudo para %s y sigue visible. Motivo: %s";
+    }
+
+    public static final class ModeracionFachada {
+
+        private ModeracionFachada() {
+        }
+
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_REPORTANDO = "Se presentó un problema inesperado registrando el reporte." + INTENTE_DE_NUEVO;
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_MODERANDO = "Se presentó un problema inesperado guardando la decisión de moderación." + INTENTE_DE_NUEVO;
+        public static final String USUARIO_ERROR_PROBLEMA_INESPERADO_CONSULTANDO = "Se presentó un problema inesperado consultando los reportes." + INTENTE_DE_NUEVO;
+    }
+
+    public static final class ModeracionControlador {
+
+        private ModeracionControlador() {
+        }
+
+        public static final String REPORTE_REGISTRADO = "Tu reporte quedó registrado. Un moderador lo revisará.";
+        public static final String REVISION_INICIADA = "La revisión quedó iniciada.";
+        public static final String CONTENIDO_VETADO = "El contenido quedó vetado y se avisó a su autor.";
+        public static final String CONTENIDO_LIBERADO = "El contenido quedó liberado y vuelve a estar visible.";
+    }
+
     public static final class OrganizacionFachada {
 
         private OrganizacionFachada() {

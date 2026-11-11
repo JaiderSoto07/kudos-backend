@@ -1,0 +1,23 @@
+info:
+  name: ReportarKudoOtroSinDescripcion
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseUrl}}/kudos/{{idKudo}}/reportes"
+  body:
+    type: json
+    data: |-
+      {
+        "motivo": "OTRO",
+        "descripcion": ""
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
